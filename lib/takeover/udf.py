@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -23,10 +23,10 @@ from lib.core.enums import CHARSET_TYPE
 from lib.core.enums import DBMS
 from lib.core.enums import EXPECTED
 from lib.core.enums import OS
-from lib.core.exception import SqlmapFilePathException
-from lib.core.exception import SqlmapMissingMandatoryOptionException
-from lib.core.exception import SqlmapUnsupportedFeatureException
-from lib.core.exception import SqlmapUserQuitException
+from lib.core.exception import FsqliFilePathException
+from lib.core.exception import FsqliMissingMandatoryOptionException
+from lib.core.exception import FsqliUnsupportedFeatureException
+from lib.core.exception import FsqliUserQuitException
 from lib.core.unescaper import unescaper
 from lib.request import inject
 
@@ -124,15 +124,15 @@ class UDF(object):
 
     def udfSetRemotePath(self):
         errMsg = "udfSetRemotePath() method must be defined within the plugin"
-        raise SqlmapUnsupportedFeatureException(errMsg)
+        raise FsqliUnsupportedFeatureException(errMsg)
 
     def udfSetLocalPaths(self):
         errMsg = "udfSetLocalPaths() method must be defined within the plugin"
-        raise SqlmapUnsupportedFeatureException(errMsg)
+        raise FsqliUnsupportedFeatureException(errMsg)
 
     def udfCreateFromSharedLib(self, udf, inpRet):
         errMsg = "udfCreateFromSharedLib() method must be defined within the plugin"
-        raise SqlmapUnsupportedFeatureException(errMsg)
+        raise FsqliUnsupportedFeatureException(errMsg)
 
     def udfInjectCore(self, udfDict):
         written = False
@@ -215,21 +215,21 @@ class UDF(object):
 
         if not os.path.exists(self.udfLocalFile):
             errMsg = "the specified shared library file does not exist"
-            raise SqlmapFilePathException(errMsg)
+            raise FsqliFilePathException(errMsg)
 
         if not self.udfLocalFile.endswith(".dll") and not self.udfLocalFile.endswith(".so"):
             errMsg = "shared library file must end with '.dll' or '.so'"
-            raise SqlmapMissingMandatoryOptionException(errMsg)
+            raise FsqliMissingMandatoryOptionException(errMsg)
 
         elif self.udfLocalFile.endswith(".so") and Backend.isOs(OS.WINDOWS):
             errMsg = "you provided a shared object as shared library, but "
             errMsg += "the database underlying operating system is Windows"
-            raise SqlmapMissingMandatoryOptionException(errMsg)
+            raise FsqliMissingMandatoryOptionException(errMsg)
 
         elif self.udfLocalFile.endswith(".dll") and Backend.isOs(OS.LINUX):
             errMsg = "you provided a dynamic-link library as shared library, "
             errMsg += "but the database underlying operating system is Linux"
-            raise SqlmapMissingMandatoryOptionException(errMsg)
+            raise FsqliMissingMandatoryOptionException(errMsg)
 
         self.udfSharedLibName = os.path.basename(self.udfLocalFile).split(".")[0]
         self.udfSharedLibExt = os.path.basename(self.udfLocalFile).split(".")[1]
@@ -323,7 +323,7 @@ class UDF(object):
             return
         elif choice == 'Q':
             self.cleanup(udfDict=self.udfs)
-            raise SqlmapUserQuitException
+            raise FsqliUserQuitException
 
         while True:
             udfList = []

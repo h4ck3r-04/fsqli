@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -15,7 +15,7 @@ from lib.core.compat import xrange
 from lib.core.data import conf
 from lib.core.data import paths
 from lib.core.datatype import AttribDict
-from lib.core.exception import SqlmapInstallationException
+from lib.core.exception import FsqliInstallationException
 from lib.core.settings import PAYLOAD_XML_FILES
 
 def cleanupVals(text, tag):
@@ -92,7 +92,7 @@ def loadBoundaries():
         errMsg = "something appears to be wrong with "
         errMsg += "the file '%s' ('%s'). Please make " % (paths.BOUNDARIES_XML, getSafeExString(ex))
         errMsg += "sure that you haven't made any changes to it"
-        raise SqlmapInstallationException(errMsg)
+        raise FsqliInstallationException(errMsg)
 
     root = doc.getroot()
     parseXmlNode(root)
@@ -108,7 +108,7 @@ def loadPayloads():
     """
 
     for payloadFile in PAYLOAD_XML_FILES:
-        payloadFilePath = os.path.join(paths.SQLMAP_XML_PAYLOADS_PATH, payloadFile)
+        payloadFilePath = os.path.join(paths.FSQLI_XML_PAYLOADS_PATH, payloadFile)
 
         try:
             doc = et.parse(payloadFilePath)
@@ -116,7 +116,7 @@ def loadPayloads():
             errMsg = "something appears to be wrong with "
             errMsg += "the file '%s' ('%s'). Please make " % (payloadFilePath, getSafeExString(ex))
             errMsg += "sure that you haven't made any changes to it"
-            raise SqlmapInstallationException(errMsg)
+            raise FsqliInstallationException(errMsg)
 
         root = doc.getroot()
         parseXmlNode(root)

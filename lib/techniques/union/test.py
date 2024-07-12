@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -283,7 +283,7 @@ def _unionPosition(comment, place, parameter, prefix, suffix, count, where=PAYLO
 
                 if unionErrorCase and count > 1:
                     warnMsg = "combined UNION/error-based SQL injection case found on "
-                    warnMsg += "column %d. sqlmap will try to find another " % (position + 1)
+                    warnMsg += "column %d. fsqli will try to find another " % (position + 1)
                     warnMsg += "column with better characteristics"
                     logger.warning(warnMsg)
                 else:

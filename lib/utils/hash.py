@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -9,7 +9,7 @@ from __future__ import print_function
 
 try:
     from crypt import crypt
-except:  # removed ImportError because of https://github.com/sqlmapproject/sqlmap/issues/3171
+except:  # removed ImportError because of https://github.com/fsqliproject/fsqli/issues/3171
     from thirdparty.fcrypt.fcrypt import crypt
 
 try:
@@ -68,8 +68,8 @@ from lib.core.datatype import OrderedSet
 from lib.core.enums import DBMS
 from lib.core.enums import HASH
 from lib.core.enums import MKSTEMP_PREFIX
-from lib.core.exception import SqlmapDataException
-from lib.core.exception import SqlmapUserQuitException
+from lib.core.exception import FsqliDataException
+from lib.core.exception import FsqliUserQuitException
 from lib.core.settings import COMMON_PASSWORD_SUFFIXES
 from lib.core.settings import COMMON_USER_COLUMNS
 from lib.core.settings import DEV_EMAIL_ADDRESS
@@ -583,7 +583,7 @@ def _finalize(retVal, results, processes, attack_info=None):
     if _multiprocessing:
         gc.enable()
 
-    # NOTE: https://github.com/sqlmapproject/sqlmap/issues/4367
+    # NOTE: https://github.com/fsqliproject/fsqli/issues/4367
     # NOTE: https://dzone.com/articles/python-101-creating-multiple-processes
     for process in processes:
         try:
@@ -750,7 +750,7 @@ def attackDumpedTable():
             if choice == 'N':
                 return
             elif choice == 'Q':
-                raise SqlmapUserQuitException
+                raise FsqliUserQuitException
 
             results = dictionaryAttack(attack_dict)
             lut = dict()
@@ -983,14 +983,14 @@ def dictionaryAttack(attack_dict):
     if conf.disableMulti:
         _multiprocessing = None
     else:
-        # Note: https://github.com/sqlmapproject/sqlmap/issues/4367
+        # Note: https://github.com/fsqliproject/fsqli/issues/4367
         try:
             import multiprocessing
 
             # problems on FreeBSD (Reference: https://web.archive.org/web/20110710041353/http://www.eggheadcafe.com/microsoft/Python/35880259/multiprocessing-on-freebsd.aspx)
             _ = multiprocessing.Queue()
 
-            # problems with ctypes (Reference: https://github.com/sqlmapproject/sqlmap/issues/2952)
+            # problems with ctypes (Reference: https://github.com/fsqliproject/fsqli/issues/2952)
             _ = multiprocessing.Value('i')
         except (ImportError, OSError, AttributeError):
             pass
@@ -1125,7 +1125,7 @@ def dictionaryAttack(attack_dict):
                             _ = zipfile.ZipFile(dictPath, 'r')
                             if len(_.namelist()) == 0:
                                 errMsg = "no file(s) inside '%s'" % dictPath
-                                raise SqlmapDataException(errMsg)
+                                raise FsqliDataException(errMsg)
                             else:
                                 _.open(_.namelist()[0])
 

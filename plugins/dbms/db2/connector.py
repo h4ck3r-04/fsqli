@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -15,7 +15,7 @@ import logging
 from lib.core.common import getSafeExString
 from lib.core.data import conf
 from lib.core.data import logger
-from lib.core.exception import SqlmapConnectionException
+from lib.core.exception import FsqliConnectionException
 from plugins.generic.connector import Connector as GenericConnector
 
 class Connector(GenericConnector):
@@ -33,7 +33,7 @@ class Connector(GenericConnector):
             database = "DRIVER={IBM DB2 ODBC DRIVER};DATABASE=%s;HOSTNAME=%s;PORT=%s;PROTOCOL=TCPIP;" % (self.db, self.hostname, self.port)
             self.connector = ibm_db_dbi.connect(database, self.user, self.password)
         except ibm_db_dbi.OperationalError as ex:
-            raise SqlmapConnectionException(getSafeExString(ex))
+            raise FsqliConnectionException(getSafeExString(ex))
 
         self.initCursor()
         self.printConnected()
@@ -51,7 +51,7 @@ class Connector(GenericConnector):
         except (ibm_db_dbi.OperationalError, ibm_db_dbi.ProgrammingError) as ex:
             logger.log(logging.WARN if conf.dbmsHandler else logging.DEBUG, "(remote) '%s'" % getSafeExString(ex))
         except ibm_db_dbi.InternalError as ex:
-            raise SqlmapConnectionException(getSafeExString(ex))
+            raise FsqliConnectionException(getSafeExString(ex))
 
         self.connector.commit()
 

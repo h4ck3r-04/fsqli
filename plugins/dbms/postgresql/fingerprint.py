@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -157,7 +157,7 @@ class Fingerprint(GenericFingerprint):
                 Backend.setVersionList([">= 9.3.0", "< 9.4.0"])
             elif inject.checkBooleanExpression("ROW_TO_JSON(NULL) IS NULL"):
                 Backend.setVersionList([">= 9.2.0", "< 9.3.0"])
-            elif inject.checkBooleanExpression("REVERSE('sqlmap')='pamlqs'"):
+            elif inject.checkBooleanExpression("REVERSE('fsqli')='pamlqs'"):
                 Backend.setVersionList([">= 9.1.0", "< 9.2.0"])
             elif inject.checkBooleanExpression("LENGTH(TO_CHAR(1,'EEEE'))>0"):
                 Backend.setVersionList([">= 9.0.0", "< 9.1.0"])
@@ -171,7 +171,7 @@ class Fingerprint(GenericFingerprint):
                 Backend.setVersionList([">= 8.1.0", "< 8.2.0"])
             elif inject.checkBooleanExpression("3=(SELECT WIDTH_BUCKET(5.35,0.024,10.06,5))"):
                 Backend.setVersionList([">= 8.0.0", "< 8.1.0"])
-            elif inject.checkBooleanExpression("'d'=(SELECT SUBSTR(MD5('sqlmap'),1,1))"):
+            elif inject.checkBooleanExpression("'d'=(SELECT SUBSTR(MD5('fsqli'),1,1))"):
                 Backend.setVersionList([">= 7.4.0", "< 8.0.0"])
             elif inject.checkBooleanExpression("'p'=(SELECT SUBSTR(CURRENT_SCHEMA(),1,1))"):
                 Backend.setVersionList([">= 7.3.0", "< 7.4.0"])
@@ -187,7 +187,7 @@ class Fingerprint(GenericFingerprint):
                 Backend.setVersionList([">= 6.4.0", "< 6.5.0"])
             elif inject.checkBooleanExpression("2=(SELECT SUBSTR(CURRENT_DATE,1,1))"):
                 Backend.setVersionList([">= 6.3.0", "< 6.4.0"])
-            elif inject.checkBooleanExpression("'s'=(SELECT SUBSTRING('sqlmap',1,1))"):
+            elif inject.checkBooleanExpression("'s'=(SELECT SUBSTRING('fsqli',1,1))"):
                 Backend.setVersionList([">= 6.2.0", "< 6.3.0"])
             else:
                 Backend.setVersion("< 6.2.0")

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -14,7 +14,7 @@ from lib.core.data import kb
 from lib.core.data import logger
 from lib.core.enums import CHARSET_TYPE
 from lib.core.enums import DBMS
-from lib.core.exception import SqlmapUnsupportedFeatureException
+from lib.core.exception import FsqliUnsupportedFeatureException
 from lib.request import inject
 from lib.request.connect import Connect as Request
 from plugins.generic.filesystem import Filesystem as GenericFilesystem
@@ -56,4 +56,4 @@ class Filesystem(GenericFilesystem):
     def writeFile(self, localFile, remoteFile, fileType=None, forceCheck=False):
         errMsg = "File system write access not yet implemented for "
         errMsg += "Oracle"
-        raise SqlmapUnsupportedFeatureException(errMsg)
+        raise FsqliUnsupportedFeatureException(errMsg)

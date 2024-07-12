@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -39,7 +39,7 @@ def vulnTest():
 
     TESTS = (
         ("-h", ("to see full list of options run with '-hh'",)),
-        ("--dependencies", ("sqlmap requires", "third-party library")),
+        ("--dependencies", ("fsqli requires", "third-party library")),
         ("-u <url> --data=\"reflect=1\" --flush-session --wizard --disable-coloring", ("Please choose:", "back-end DBMS: SQLite", "current user is DBA: True", "banner: '3.")),
         ("-u <url> --data=\"code=1\" --code=200 --technique=B --banner --no-cast --flush-session", ("back-end DBMS: SQLite", "banner: '3.", "~COALESCE(CAST(")),
         (u"-c <config> --flush-session --output-dir=\"<tmpdir>\" --smart --roles --statements --hostname --privileges --sql-query=\"SELECT '\u0161u\u0107uraj'\" --technique=U", (u": '\u0161u\u0107uraj'", "on SQLite it is not possible", "as the output directory")),
@@ -162,7 +162,7 @@ def vulnTest():
     direct = "sqlite3://%s" % database
     tmpdir = tempfile.mkdtemp()
 
-    with open(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "sqlmap.conf"))) as f:
+    with open(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "fsqli.conf"))) as f:
         content = f.read().replace("url =", "url = %s" % url)
 
     with open(config, "w+") as f:
@@ -185,7 +185,7 @@ def vulnTest():
         for tag, value in (("<url>", url), ("<base>", base), ("<direct>", direct), ("<tmpdir>", tmpdir), ("<request>", request), ("<log>", log), ("<multiple>", multiple), ("<config>", config), ("<base64>", url.replace("id=1", "id=MZ=%3d"))):
             options = options.replace(tag, value)
 
-        cmd = "%s \"%s\" %s --batch --non-interactive --debug --time-sec=1" % (sys.executable if ' ' not in sys.executable else '"%s"' % sys.executable, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "sqlmap.py")), options)
+        cmd = "%s \"%s\" %s --batch --non-interactive --debug --time-sec=1" % (sys.executable if ' ' not in sys.executable else '"%s"' % sys.executable, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "fsqli.py")), options)
 
         if "<tmpfile>" in cmd:
             handle, tmp = tempfile.mkstemp()
@@ -230,7 +230,7 @@ def smokeTest():
     retVal = True
     count, length = 0, 0
 
-    for root, _, files in os.walk(paths.SQLMAP_ROOT_PATH):
+    for root, _, files in os.walk(paths.FSQLI_ROOT_PATH):
         if any(_ in root for _ in ("thirdparty", "extra", "interbase")):
             continue
 
@@ -238,14 +238,14 @@ def smokeTest():
             if os.path.splitext(filename)[1].lower() == ".py" and filename != "__init__.py":
                 length += 1
 
-    for root, _, files in os.walk(paths.SQLMAP_ROOT_PATH):
+    for root, _, files in os.walk(paths.FSQLI_ROOT_PATH):
         if any(_ in root for _ in ("thirdparty", "extra", "interbase")):
             continue
 
         for filename in files:
             if os.path.splitext(filename)[1].lower() == ".py" and filename not in ("__init__.py", "gui.py"):
                 path = os.path.join(root, os.path.splitext(filename)[0])
-                path = path.replace(paths.SQLMAP_ROOT_PATH, '.')
+                path = path.replace(paths.FSQLI_ROOT_PATH, '.')
                 path = path.replace(os.sep, '.').lstrip('.')
                 try:
                     __import__(path)

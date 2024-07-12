@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -77,9 +77,9 @@ from lib.core.data import logger
 from lib.core.defaults import defaults
 from lib.core.dicts import DEPRECATED_OPTIONS
 from lib.core.enums import AUTOCOMPLETE_TYPE
-from lib.core.exception import SqlmapShellQuitException
-from lib.core.exception import SqlmapSilentQuitException
-from lib.core.exception import SqlmapSyntaxException
+from lib.core.exception import FsqliShellQuitException
+from lib.core.exception import FsqliSilentQuitException
+from lib.core.exception import FsqliSyntaxException
 from lib.core.option import _createHomeDirectories
 from lib.core.settings import BASIC_HELP_ITEMS
 from lib.core.settings import DUMMY_URL
@@ -298,7 +298,7 @@ def cmdLineParser(argv=None):
             help="Evaluate provided Python code before the request (e.g. \"import hashlib;id2=hashlib.md5(id).hexdigest()\")")
 
         # Optimization options
-        optimization = parser.add_argument_group("Optimization", "These options can be used to optimize the performance of sqlmap")
+        optimization = parser.add_argument_group("Optimization", "These options can be used to optimize the performance of fsqli")
 
         optimization.add_argument("-o", dest="optimize", action="store_true",
             help="Turn on all optimization switches")
@@ -656,7 +656,7 @@ def cmdLineParser(argv=None):
             help="Check Internet connection before assessing the target")
 
         general.add_argument("--cleanup", dest="cleanup", action="store_true",
-            help="Clean up the DBMS from sqlmap specific UDF and tables")
+            help="Clean up the DBMS from fsqli specific UDF and tables")
 
         general.add_argument("--crawl", dest="crawlDepth", type=int,
             help="Crawl the website starting from the target URL")
@@ -758,7 +758,7 @@ def cmdLineParser(argv=None):
             help="Beep on question and/or when vulnerability is found")
 
         miscellaneous.add_argument("--dependencies", dest="dependencies", action="store_true",
-            help="Check for missing (optional) sqlmap dependencies")
+            help="Check for missing (optional) fsqli dependencies")
 
         miscellaneous.add_argument("--disable-coloring", dest="disableColoring", action="store_true",
             help="Disable console output coloring")
@@ -773,13 +773,13 @@ def cmdLineParser(argv=None):
             help="Work in offline mode (only use session data)")
 
         miscellaneous.add_argument("--purge", dest="purge", action="store_true",
-            help="Safely remove all content from sqlmap data directory")
+            help="Safely remove all content from fsqli data directory")
 
         miscellaneous.add_argument("--results-file", dest="resultsFile",
             help="Location of CSV results file in multiple targets mode")
 
         miscellaneous.add_argument("--shell", dest="shell", action="store_true",
-            help="Prompt for an interactive sqlmap shell")
+            help="Prompt for an interactive fsqli shell")
 
         miscellaneous.add_argument("--tmp-dir", dest="tmpDir",
             help="Local directory for storing temporary files")
@@ -788,7 +788,7 @@ def cmdLineParser(argv=None):
             help="Adjust options for unstable connections")
 
         miscellaneous.add_argument("--update", dest="updateAll", action="store_true",
-            help="Update sqlmap")
+            help="Update fsqli")
 
         miscellaneous.add_argument("--wizard", dest="wizard", action="store_true",
             help="Simple wizard interface for beginner users")
@@ -925,29 +925,29 @@ def cmdLineParser(argv=None):
 
             runGui(parser)
 
-            raise SqlmapSilentQuitException
+            raise FsqliSilentQuitException
 
         elif "--shell" in argv:
             _createHomeDirectories()
 
             parser.usage = ""
-            cmdLineOptions.sqlmapShell = True
+            cmdLineOptions.fsqliShell = True
 
             commands = set(("x", "q", "exit", "quit", "clear"))
             commands.update(get_all_options(parser))
 
-            autoCompletion(AUTOCOMPLETE_TYPE.SQLMAP, commands=commands)
+            autoCompletion(AUTOCOMPLETE_TYPE.FSQLI, commands=commands)
 
             while True:
                 command = None
-                prompt = "sqlmap > "
+                prompt = "fsqli > "
 
                 try:
                     # Note: in Python2 command should not be converted to Unicode before passing to shlex (Reference: https://bugs.python.org/issue1170)
                     command = _input(prompt).strip()
                 except (KeyboardInterrupt, EOFError):
                     print()
-                    raise SqlmapShellQuitException
+                    raise FsqliShellQuitException
 
                 command = re.sub(r"(?i)\Anew\s+", "", command or "")
 
@@ -956,23 +956,23 @@ def cmdLineParser(argv=None):
                 elif command.lower() == "clear":
                     clearHistory()
                     dataToStdout("[i] history cleared\n")
-                    saveHistory(AUTOCOMPLETE_TYPE.SQLMAP)
+                    saveHistory(AUTOCOMPLETE_TYPE.FSQLI)
                 elif command.lower() in ("x", "q", "exit", "quit"):
-                    raise SqlmapShellQuitException
+                    raise FsqliShellQuitException
                 elif command[0] != '-':
                     if not re.search(r"(?i)\A(\?|help)\Z", command):
                         dataToStdout("[!] invalid option(s) provided\n")
                     dataToStdout("[i] valid example: '-u http://www.site.com/vuln.php?id=1 --banner'\n")
                 else:
-                    saveHistory(AUTOCOMPLETE_TYPE.SQLMAP)
-                    loadHistory(AUTOCOMPLETE_TYPE.SQLMAP)
+                    saveHistory(AUTOCOMPLETE_TYPE.FSQLI)
+                    loadHistory(AUTOCOMPLETE_TYPE.FSQLI)
                     break
 
             try:
                 for arg in shlex.split(command):
                     argv.append(getUnicode(arg, encoding=sys.stdin.encoding))
             except ValueError as ex:
-                raise SqlmapSyntaxException("something went wrong during command line parsing ('%s')" % getSafeExString(ex))
+                raise FsqliSyntaxException("something went wrong during command line parsing ('%s')" % getSafeExString(ex))
 
         longOptions = set(re.findall(r"\-\-([^= ]+?)=", parser.format_help()))
         longSwitches = set(re.findall(r"\-\-([^= ]+?)\s", parser.format_help()))

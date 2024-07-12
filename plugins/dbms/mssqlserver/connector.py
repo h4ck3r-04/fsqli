@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -17,7 +17,7 @@ from lib.core.common import getSafeExString
 from lib.core.convert import getText
 from lib.core.data import conf
 from lib.core.data import logger
-from lib.core.exception import SqlmapConnectionException
+from lib.core.exception import FsqliConnectionException
 from plugins.generic.connector import Connector as GenericConnector
 
 class Connector(GenericConnector):
@@ -40,9 +40,9 @@ class Connector(GenericConnector):
         try:
             self.connector = pymssql.connect(host="%s:%d" % (self.hostname, self.port), user=self.user, password=self.password, database=self.db, login_timeout=conf.timeout, timeout=conf.timeout)
         except (pymssql.Error, _mssql.MssqlDatabaseException) as ex:
-            raise SqlmapConnectionException(getSafeExString(ex))
+            raise FsqliConnectionException(getSafeExString(ex))
         except ValueError:
-            raise SqlmapConnectionException
+            raise FsqliConnectionException
 
         self.initCursor()
         self.printConnected()
@@ -63,7 +63,7 @@ class Connector(GenericConnector):
         except (pymssql.OperationalError, pymssql.ProgrammingError) as ex:
             logger.log(logging.WARN if conf.dbmsHandler else logging.DEBUG, "(remote) '%s'" % getSafeExString(ex).replace("\n", " "))
         except pymssql.InternalError as ex:
-            raise SqlmapConnectionException(getSafeExString(ex))
+            raise FsqliConnectionException(getSafeExString(ex))
 
         return retVal
 

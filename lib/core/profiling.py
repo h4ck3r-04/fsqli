@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -17,13 +17,13 @@ def profile(profileOutputFile=None):
     """
 
     if profileOutputFile is None:
-        profileOutputFile = os.path.join(paths.SQLMAP_OUTPUT_PATH, "sqlmap_profile.raw")
+        profileOutputFile = os.path.join(paths.FSQLI_OUTPUT_PATH, "fsqli_profile.raw")
 
     if os.path.exists(profileOutputFile):
         os.remove(profileOutputFile)
 
-    # Start sqlmap main function and generate a raw profile file
+    # Start fsqli main function and generate a raw profile file
     cProfile.run("start()", profileOutputFile)
 
-    infoMsg = "execution profiled and stored into file '%s' (e.g. 'gprof2dot -f pstats %s | dot -Tpng -o /tmp/sqlmap_profile.png')" % (profileOutputFile, profileOutputFile)
+    infoMsg = "execution profiled and stored into file '%s' (e.g. 'gprof2dot -f pstats %s | dot -Tpng -o /tmp/fsqli_profile.png')" % (profileOutputFile, profileOutputFile)
     logger.info(infoMsg)

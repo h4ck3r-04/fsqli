@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -15,7 +15,7 @@ except:
 
 from lib.core.common import getSafeExString
 from lib.core.data import logger
-from lib.core.exception import SqlmapConnectionException
+from lib.core.exception import FsqliConnectionException
 from plugins.generic.connector import Connector as GenericConnector
 
 class Connector(GenericConnector):
@@ -35,7 +35,7 @@ class Connector(GenericConnector):
         try:
             self.connector = psycopg2.connect(host=self.hostname, user=self.user, password=self.password, database=self.db, port=self.port)
         except psycopg2.OperationalError as ex:
-            raise SqlmapConnectionException(getSafeExString(ex))
+            raise FsqliConnectionException(getSafeExString(ex))
 
         self.connector.set_client_encoding('UNICODE')
 
@@ -58,7 +58,7 @@ class Connector(GenericConnector):
         except (psycopg2.OperationalError, psycopg2.ProgrammingError) as ex:
             logger.warning(("(remote) '%s'" % getSafeExString(ex)).strip())
         except psycopg2.InternalError as ex:
-            raise SqlmapConnectionException(getSafeExString(ex))
+            raise FsqliConnectionException(getSafeExString(ex))
 
         self.connector.commit()
 

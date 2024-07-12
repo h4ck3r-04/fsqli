@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -34,9 +34,9 @@ from lib.core.decorators import stackedmethod
 from lib.core.enums import DBMS
 from lib.core.enums import HASHDB_KEYS
 from lib.core.enums import PAYLOAD
-from lib.core.exception import SqlmapDataException
-from lib.core.exception import SqlmapMissingMandatoryOptionException
-from lib.core.exception import SqlmapNoneDataException
+from lib.core.exception import FsqliDataException
+from lib.core.exception import FsqliMissingMandatoryOptionException
+from lib.core.exception import FsqliNoneDataException
 from lib.core.settings import BRUTE_COLUMN_EXISTS_TEMPLATE
 from lib.core.settings import BRUTE_TABLE_EXISTS_TEMPLATE
 from lib.core.settings import METADB_SUFFIX
@@ -79,7 +79,7 @@ def tableExists(tableFile, regex=None):
         errMsg = "can't use table existence check because of detected invalid results "
         errMsg += "(most likely caused by inability of the used injection "
         errMsg += "to distinguish erroneous results)"
-        raise SqlmapDataException(errMsg)
+        raise FsqliDataException(errMsg)
 
     pushValue(conf.db)
 
@@ -158,7 +158,7 @@ def tableExists(tableFile, regex=None):
             runThreads(conf.threads, tableExistsThread, threadChoice=True)
         except KeyboardInterrupt:
             warnMsg = "user aborted during table existence "
-            warnMsg += "check. sqlmap will display partial output"
+            warnMsg += "check. fsqli will display partial output"
             logger.warning(warnMsg)
 
         clearConsoleLine(True)
@@ -199,7 +199,7 @@ def columnExists(columnFile, regex=None):
 
     if not conf.tbl:
         errMsg = "missing table parameter"
-        raise SqlmapMissingMandatoryOptionException(errMsg)
+        raise FsqliMissingMandatoryOptionException(errMsg)
 
     if conf.db and Backend.getIdentifiedDbms() in UPPER_CASE_DBMSES:
         conf.db = conf.db.upper()
@@ -210,7 +210,7 @@ def columnExists(columnFile, regex=None):
         errMsg = "can't use column existence check because of detected invalid results "
         errMsg += "(most likely caused by inability of the used injection "
         errMsg += "to distinguish erroneous results)"
-        raise SqlmapDataException(errMsg)
+        raise FsqliDataException(errMsg)
 
     message = "which common columns (wordlist) file do you want to use?\n"
     message += "[1] default '%s' (press Enter)\n" % columnFile
@@ -279,7 +279,7 @@ def columnExists(columnFile, regex=None):
         runThreads(conf.threads, columnExistsThread, threadChoice=True)
     except KeyboardInterrupt:
         warnMsg = "user aborted during column existence "
-        warnMsg += "check. sqlmap will display partial output"
+        warnMsg += "check. fsqli will display partial output"
         logger.warning(warnMsg)
     finally:
         kb.bruteMode = False
@@ -340,7 +340,7 @@ def fileExists(pathFile):
 
     try:
         conf.dbmsHandler.readFile(randomStr())
-    except SqlmapNoneDataException:
+    except FsqliNoneDataException:
         pass
     except:
         kb.bruteMode = False
@@ -366,7 +366,7 @@ def fileExists(pathFile):
 
             try:
                 result = unArrayizeValue(conf.dbmsHandler.readFile(path))
-            except SqlmapNoneDataException:
+            except FsqliNoneDataException:
                 result = None
 
             kb.locks.io.acquire()
@@ -389,7 +389,7 @@ def fileExists(pathFile):
         runThreads(conf.threads, fileExistsThread, threadChoice=True)
     except KeyboardInterrupt:
         warnMsg = "user aborted during file existence "
-        warnMsg += "check. sqlmap will display partial output"
+        warnMsg += "check. fsqli will display partial output"
         logger.warning(warnMsg)
     finally:
         kb.bruteMode = False

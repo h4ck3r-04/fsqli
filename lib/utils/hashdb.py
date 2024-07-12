@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -19,7 +19,7 @@ from lib.core.compat import xrange
 from lib.core.convert import getBytes
 from lib.core.convert import getUnicode
 from lib.core.data import logger
-from lib.core.exception import SqlmapConnectionException
+from lib.core.exception import FsqliConnectionException
 from lib.core.settings import HASHDB_END_TRANSACTION_RETRIES
 from lib.core.settings import HASHDB_FLUSH_RETRIES
 from lib.core.settings import HASHDB_FLUSH_THRESHOLD
@@ -48,7 +48,7 @@ class HashDB(object):
             except Exception as ex:
                 errMsg = "error occurred while opening a session "
                 errMsg += "file '%s' ('%s')" % (self.filepath, getSafeExString(ex))
-                raise SqlmapConnectionException(errMsg)
+                raise FsqliConnectionException(errMsg)
 
         return threadData.hashDBCursor
 
@@ -103,7 +103,7 @@ class HashDB(object):
                         else:
                             errMsg = "error occurred while accessing session file '%s' ('%s'). " % (self.filepath, getSafeExString(ex))
                             errMsg += "If the problem persists please rerun with '--flush-session'"
-                            raise SqlmapConnectionException(errMsg)
+                            raise FsqliConnectionException(errMsg)
                     else:
                         break
 

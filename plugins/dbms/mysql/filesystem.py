@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -23,7 +23,7 @@ from lib.core.enums import DBMS
 from lib.core.enums import EXPECTED
 from lib.core.enums import PAYLOAD
 from lib.core.enums import PLACE
-from lib.core.exception import SqlmapNoneDataException
+from lib.core.exception import FsqliNoneDataException
 from lib.request import inject
 from lib.request.connect import Connect as Request
 from lib.techniques.union.use import unionUse
@@ -71,7 +71,7 @@ class Filesystem(GenericFilesystem):
                     logger.warning(warnMsg)
                 result = self.nonStackedReadFile(remoteFile)
             else:
-                raise SqlmapNoneDataException(warnMsg)
+                raise FsqliNoneDataException(warnMsg)
         else:
             length = int(length)
             chunkSize = 1024
@@ -163,7 +163,7 @@ class Filesystem(GenericFilesystem):
 
         logger.debug("inserting the hexadecimal encoded file to the support table")
 
-        inject.goStacked("SET GLOBAL max_allowed_packet = %d" % (1024 * 1024))  # 1MB (Note: https://github.com/sqlmapproject/sqlmap/issues/3230)
+        inject.goStacked("SET GLOBAL max_allowed_packet = %d" % (1024 * 1024))  # 1MB (Note: https://github.com/fsqliproject/fsqli/issues/3230)
 
         for sqlQuery in sqlQueries:
             inject.goStacked(sqlQuery)

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -21,7 +21,7 @@ _defaults = {
     "level": 1,
     "risk": 1,
     "dumpFormat": "CSV",
-    "tablePrefix": "sqlmap",
+    "tablePrefix": "fsqli",
     "technique": "BEUSTQ",
     "torType": "SOCKS5",
 }

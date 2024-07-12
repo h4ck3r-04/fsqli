@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -87,13 +87,13 @@ from lib.core.enums import PLACE
 from lib.core.enums import POST_HINT
 from lib.core.enums import REDIRECTION
 from lib.core.enums import WEB_PLATFORM
-from lib.core.exception import SqlmapCompressionException
-from lib.core.exception import SqlmapConnectionException
-from lib.core.exception import SqlmapGenericException
-from lib.core.exception import SqlmapSkipTargetException
-from lib.core.exception import SqlmapSyntaxException
-from lib.core.exception import SqlmapTokenException
-from lib.core.exception import SqlmapValueException
+from lib.core.exception import FsqliCompressionException
+from lib.core.exception import FsqliConnectionException
+from lib.core.exception import FsqliGenericException
+from lib.core.exception import FsqliSkipTargetException
+from lib.core.exception import FsqliSyntaxException
+from lib.core.exception import FsqliTokenException
+from lib.core.exception import FsqliValueException
 from lib.core.settings import ASTERISK_MARKER
 from lib.core.settings import BOUNDARY_BACKSLASH_MARKER
 from lib.core.settings import DEFAULT_CONTENT_TYPE
@@ -152,9 +152,9 @@ class Connect(object):
     @staticmethod
     def _getPageProxy(**kwargs):
         try:
-            if (len(inspect.stack()) > sys.getrecursionlimit() // 2):   # Note: https://github.com/sqlmapproject/sqlmap/issues/4525
+            if (len(inspect.stack()) > sys.getrecursionlimit() // 2):   # Note: https://github.com/fsqliproject/fsqli/issues/4525
                 warnMsg = "unable to connect to the target URL"
-                raise SqlmapConnectionException(warnMsg)
+                raise FsqliConnectionException(warnMsg)
         except (TypeError, UnicodeError):
             pass
 
@@ -234,7 +234,7 @@ class Connect(object):
                     warnMsg = "large compressed response detected. Disabling compression"
                     singleTimeWarnMessage(warnMsg)
                     kb.pageCompress = False
-                    raise SqlmapCompressionException
+                    raise FsqliCompressionException
             else:
                 while True:
                     if not conn:
@@ -346,7 +346,7 @@ class Connect(object):
 
                     if not valid:
                         errMsg = "problem occurred while loading cookies from file '%s'" % conf.liveCookies
-                        raise SqlmapValueException(errMsg)
+                        raise FsqliValueException(errMsg)
 
                 cookie = openFile(conf.liveCookies).read().strip()
                 cookie = re.sub(r"(?i)\ACookie:\s*", "", cookie)
@@ -576,7 +576,7 @@ class Connect(object):
                     except Exception as ex:
                         errMsg = "error occurred while running preprocess "
                         errMsg += "function '%s' ('%s')" % (function.__name__, getSafeExString(ex))
-                        raise SqlmapGenericException(errMsg)
+                        raise FsqliGenericException(errMsg)
                     else:
                         post, headers = req.data, req.headers
 
@@ -693,7 +693,7 @@ class Connect(object):
 
                         try:
                             return Connect._getPageProxy(**kwargs)
-                        except SqlmapSyntaxException:
+                        except FsqliSyntaxException:
                             pass
 
             # Explicit closing of connection object
@@ -706,7 +706,7 @@ class Connect(object):
                     warnMsg = "problem occurred during connection closing ('%s')" % getSafeExString(ex)
                     logger.warning(warnMsg)
 
-        except SqlmapConnectionException as ex:
+        except FsqliConnectionException as ex:
             if conf.proxyList and not kb.threadException:
                 warnMsg = "unable to connect to the target URL ('%s')" % getSafeExString(ex)
                 logger.critical(warnMsg)
@@ -775,7 +775,7 @@ class Connect(object):
                     errMsg += "authentication type and valid credentials (%d). " % code
                     errMsg += "If this is intended, try to rerun by providing "
                     errMsg += "a valid value for option '--ignore-code'"
-                    raise SqlmapConnectionException(errMsg)
+                    raise FsqliConnectionException(errMsg)
                 elif chunked and ex.code in (_http_client.METHOD_NOT_ALLOWED, _http_client.LENGTH_REQUIRED):
                     warnMsg = "turning off HTTP chunked transfer encoding "
                     warnMsg += "as it seems that the target site doesn't support it (%d)" % code
@@ -789,7 +789,7 @@ class Connect(object):
                 elif ex.code == _http_client.NOT_FOUND:
                     if raise404:
                         errMsg = "page not found (%d)" % code
-                        raise SqlmapConnectionException(errMsg)
+                        raise FsqliConnectionException(errMsg)
                     else:
                         debugMsg = "page not found (%d)" % code
                         singleTimeLogMessage(debugMsg, logging.DEBUG)
@@ -799,19 +799,19 @@ class Connect(object):
                     else:
                         warnMsg = "unable to connect to the target URL (%d - %s)" % (ex.code, _http_client.responses[ex.code])
                         if threadData.retriesCount < conf.retries and not kb.threadException:
-                            warnMsg += ". sqlmap is going to retry the request"
+                            warnMsg += ". fsqli is going to retry the request"
                             logger.critical(warnMsg)
                             return Connect._retryProxy(**kwargs)
                         elif kb.testMode:
                             logger.critical(warnMsg)
                             return None, None, None
                         else:
-                            raise SqlmapConnectionException(warnMsg)
+                            raise FsqliConnectionException(warnMsg)
                 else:
                     debugMsg = "got HTTP error code: %d ('%s')" % (code, status)
                     logger.debug(debugMsg)
 
-        except (_urllib.error.URLError, socket.error, socket.timeout, _http_client.HTTPException, struct.error, binascii.Error, ProxyError, SqlmapCompressionException, WebSocketException, TypeError, ValueError, OverflowError, AttributeError, OSError, AssertionError, KeyError):
+        except (_urllib.error.URLError, socket.error, socket.timeout, _http_client.HTTPException, struct.error, binascii.Error, ProxyError, FsqliCompressionException, WebSocketException, TypeError, ValueError, OverflowError, AttributeError, OSError, AssertionError, KeyError):
             tbMsg = traceback.format_exc()
 
             if conf.debug:
@@ -831,7 +831,7 @@ class Connect(object):
                     raise
             elif "no host given" in tbMsg:
                 warnMsg = "invalid URL address used (%s)" % repr(url)
-                raise SqlmapSyntaxException(warnMsg)
+                raise FsqliSyntaxException(warnMsg)
             elif any(_ in tbMsg for _ in ("forcibly closed", "Connection is already closed", "ConnectionAbortedError")):
                 warnMsg = "connection was forcibly closed by the target URL"
             elif "timed out" in tbMsg:
@@ -869,8 +869,8 @@ class Connect(object):
             elif "Handshake status" in tbMsg:
                 status = re.search(r"Handshake status ([\d]{3})", tbMsg)
                 errMsg = "websocket handshake status %s" % status.group(1) if status else "unknown"
-                raise SqlmapConnectionException(errMsg)
-            elif "SqlmapCompressionException" in tbMsg:
+                raise FsqliConnectionException(errMsg)
+            elif "FsqliCompressionException" in tbMsg:
                 warnMsg = "problems with response (de)compression"
                 retrying = True
             else:
@@ -892,7 +892,7 @@ class Connect(object):
                     kb.choices.connError = readInput(message, default='N', boolean=True)
 
                 if kb.choices.connError is False:
-                    raise SqlmapSkipTargetException
+                    raise FsqliSkipTargetException
 
             if "forcibly closed" in tbMsg:
                 logger.critical(warnMsg)
@@ -900,7 +900,7 @@ class Connect(object):
             elif ignoreTimeout and any(_ in tbMsg for _ in ("timed out", "IncompleteRead", "Interrupted system call")):
                 return None if not conf.ignoreTimeouts else "", None, None
             elif threadData.retriesCount < conf.retries and not kb.threadException:
-                warnMsg += ". sqlmap is going to retry the request"
+                warnMsg += ". fsqli is going to retry the request"
                 if not retrying:
                     warnMsg += "(s)"
                     logger.critical(warnMsg)
@@ -911,7 +911,7 @@ class Connect(object):
                 logger.critical(warnMsg)
                 return None, None, None
             else:
-                raise SqlmapConnectionException(warnMsg)
+                raise FsqliConnectionException(warnMsg)
 
         finally:
             for function in kb.postprocessFunctions:
@@ -920,7 +920,7 @@ class Connect(object):
                 except Exception as ex:
                     errMsg = "error occurred while running postprocess "
                     errMsg += "function '%s' ('%s')" % (function.__name__, getSafeExString(ex))
-                    raise SqlmapGenericException(errMsg)
+                    raise FsqliGenericException(errMsg)
 
             if isinstance(page, six.binary_type):
                 if HTTP_HEADER.CONTENT_TYPE in (responseHeaders or {}) and not re.search(TEXT_CONTENT_TYPE_REGEX, responseHeaders[HTTP_HEADER.CONTENT_TYPE]):
@@ -939,7 +939,7 @@ class Connect(object):
 
             socket.setdefaulttimeout(conf.timeout)
 
-        # Dirty patch for Python3.11.0a7 (e.g. https://github.com/sqlmapproject/sqlmap/issues/5091)
+        # Dirty patch for Python3.11.0a7 (e.g. https://github.com/fsqliproject/fsqli/issues/5091)
         if not sys.version.startswith("3.11."):
             if conf.retryOn and re.search(conf.retryOn, page, re.I):
                 if threadData.retriesCount < conf.retries:
@@ -1025,7 +1025,7 @@ class Connect(object):
 
             if (kb.postHint or conf.skipUrlEncode) and postUrlEncode:
                 postUrlEncode = False
-                if not (conf.skipUrlEncode and contentType):    # NOTE: https://github.com/sqlmapproject/sqlmap/issues/5092
+                if not (conf.skipUrlEncode and contentType):    # NOTE: https://github.com/fsqliproject/fsqli/issues/5092
                     conf.httpHeaders = [_ for _ in conf.httpHeaders if _[1] != contentType]
                     contentType = POST_HINT_CONTENT_TYPES.get(kb.postHint, PLAIN_TEXT_CONTENT_TYPE)
                     conf.httpHeaders.append((HTTP_HEADER.CONTENT_TYPE, contentType))
@@ -1044,12 +1044,12 @@ class Connect(object):
                     except Exception as ex:
                         errMsg = "error occurred while running tamper "
                         errMsg += "function '%s' ('%s')" % (function.__name__, getSafeExString(ex))
-                        raise SqlmapGenericException(errMsg)
+                        raise FsqliGenericException(errMsg)
 
                     if not isinstance(payload, six.string_types):
                         errMsg = "tamper function '%s' returns " % function.__name__
                         errMsg += "invalid payload type ('%s')" % type(payload)
-                        raise SqlmapValueException(errMsg)
+                        raise FsqliValueException(errMsg)
 
                 value = agent.replacePayload(value, payload)
 
@@ -1195,7 +1195,7 @@ class Connect(object):
 
                 if attempt > 0:
                     warnMsg = "unable to find anti-CSRF token '%s' at '%s'" % (conf.csrfToken._original, conf.csrfUrl or conf.url)
-                    warnMsg += ". sqlmap is going to retry the request"
+                    warnMsg += ". fsqli is going to retry the request"
                     logger.warning(warnMsg)
 
                 page, headers, code = Connect.getPage(url=conf.csrfUrl or conf.url, data=conf.csrfData or (conf.data if conf.csrfUrl == conf.url else None), method=conf.csrfMethod or (conf.method if conf.csrfUrl == conf.url else None), cookie=conf.parameters.get(PLACE.COOKIE), direct=True, silent=True, ua=conf.parameters.get(PLACE.USER_AGENT), referer=conf.parameters.get(PLACE.REFERER), host=conf.parameters.get(PLACE.HOST))
@@ -1249,7 +1249,7 @@ class Connect(object):
                 if not conf.csrfUrl:
                     errMsg += ". You can try to rerun by providing "
                     errMsg += "a valid value for option '--csrf-url'"
-                raise SqlmapTokenException(errMsg)
+                raise FsqliTokenException(errMsg)
 
             if token:
                 token.value = token.value.strip("'\"")

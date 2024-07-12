@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -369,7 +369,7 @@ OBSOLETE_OPTIONS = {
     "--ignore-401": "use '--ignore-code' instead",
     "--second-order": "use '--second-url' instead",
     "--purge-output": "use '--purge' instead",
-    "--sqlmap-shell": "use '--shell' instead",
+    "--fsqli-shell": "use '--shell' instead",
     "--check-payload": None,
     "--check-waf": None,
     "--pickled-options": "use '--api -c ...' instead",

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -47,8 +47,8 @@ from lib.core.dicts import FROM_DUMMY_TABLE
 from lib.core.enums import DBMS
 from lib.core.enums import HTTP_HEADER
 from lib.core.enums import PAYLOAD
-from lib.core.exception import SqlmapDataException
-from lib.core.exception import SqlmapSyntaxException
+from lib.core.exception import FsqliDataException
+from lib.core.exception import FsqliSyntaxException
 from lib.core.settings import MAX_BUFFERED_PARTIAL_UNION_LENGTH
 from lib.core.settings import NULL
 from lib.core.settings import SQL_SCALAR_REGEX
@@ -96,7 +96,7 @@ def _oneShotUnionUse(expression, unpack=True, limited=False):
         page, headers, _ = Request.queryPage(payload, content=True, raise404=False)
 
         if page and kb.chars.start.upper() in page and kb.chars.start not in page:
-            singleTimeWarnMessage("results seems to be upper-cased by force. sqlmap will automatically lower-case them")
+            singleTimeWarnMessage("results seems to be upper-cased by force. fsqli will automatically lower-case them")
 
             page = page.lower()
 
@@ -209,14 +209,14 @@ def configUnion(char=None, columns=None):
             colsStart, colsStop = columns, columns
 
         if not isDigit(colsStart) or not isDigit(colsStop):
-            raise SqlmapSyntaxException("--union-cols must be a range of integers")
+            raise FsqliSyntaxException("--union-cols must be a range of integers")
 
         conf.uColsStart, conf.uColsStop = int(colsStart), int(colsStop)
 
         if conf.uColsStart > conf.uColsStop:
             errMsg = "--union-cols range has to represent lower to "
             errMsg += "higher number of columns"
-            raise SqlmapSyntaxException(errMsg)
+            raise FsqliSyntaxException(errMsg)
 
     _configUnionChar(char)
     _configUnionCols(conf.uCols or columns)
@@ -302,7 +302,7 @@ def unionUse(expression, unpack=True, dump=False):
             elif count and (not isinstance(count, six.string_types) or not count.isdigit()):
                 warnMsg = "it was not possible to count the number "
                 warnMsg += "of entries for the SQL query provided. "
-                warnMsg += "sqlmap will assume that it returns only "
+                warnMsg += "fsqli will assume that it returns only "
                 warnMsg += "one entry"
                 logger.warning(warnMsg)
 
@@ -325,7 +325,7 @@ def unionUse(expression, unpack=True, dump=False):
                 except OverflowError:
                     errMsg = "boundary limits (%d,%d) are too large. Please rerun " % (startLimit, stopLimit)
                     errMsg += "with switch '--fresh-queries'"
-                    raise SqlmapDataException(errMsg)
+                    raise FsqliDataException(errMsg)
 
                 numThreads = min(conf.threads, (stopLimit - startLimit))
                 threadData.shared.value = BigArray()
@@ -427,7 +427,7 @@ def unionUse(expression, unpack=True, dump=False):
                 except KeyboardInterrupt:
                     abortedFlag = True
 
-                    warnMsg = "user aborted during enumeration. sqlmap "
+                    warnMsg = "user aborted during enumeration. fsqli "
                     warnMsg += "will display partial output"
                     logger.warning(warnMsg)
 

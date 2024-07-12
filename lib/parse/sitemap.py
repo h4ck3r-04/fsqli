@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -11,7 +11,7 @@ from lib.core.common import readInput
 from lib.core.data import kb
 from lib.core.data import logger
 from lib.core.datatype import OrderedSet
-from lib.core.exception import SqlmapSyntaxException
+from lib.core.exception import FsqliSyntaxException
 from lib.request.connect import Connect as Request
 from thirdparty.six.moves import http_client as _http_client
 
@@ -32,7 +32,7 @@ def parseSitemap(url, retVal=None):
             content = Request.getPage(url=url, raise404=True)[0] if not abortedFlag else ""
         except _http_client.InvalidURL:
             errMsg = "invalid URL given for sitemap ('%s')" % url
-            raise SqlmapSyntaxException(errMsg)
+            raise FsqliSyntaxException(errMsg)
 
         for match in re.finditer(r"<loc>\s*([^<]+)", content or ""):
             if abortedFlag:
@@ -49,7 +49,7 @@ def parseSitemap(url, retVal=None):
 
     except KeyboardInterrupt:
         abortedFlag = True
-        warnMsg = "user aborted during sitemap parsing. sqlmap "
+        warnMsg = "user aborted during sitemap parsing. fsqli "
         warnMsg += "will use partial list"
         logger.warning(warnMsg)
 

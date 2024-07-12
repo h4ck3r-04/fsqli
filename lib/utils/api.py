@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -44,7 +44,7 @@ from lib.core.dicts import PART_RUN_CONTENT_TYPES
 from lib.core.enums import AUTOCOMPLETE_TYPE
 from lib.core.enums import CONTENT_STATUS
 from lib.core.enums import MKSTEMP_PREFIX
-from lib.core.exception import SqlmapConnectionException
+from lib.core.exception import FsqliConnectionException
 from lib.core.log import LOGGER_HANDLER
 from lib.core.optiondict import optDict
 from lib.core.settings import IS_WIN
@@ -144,7 +144,7 @@ class Task(object):
                 type_ = unArrayizeValue(type_)
                 self.options[name] = _defaults.get(name, datatype[type_])
 
-        # Let sqlmap engine knows it is getting called by the API,
+        # Let fsqli engine knows it is getting called by the API,
         # the task ID and the file path of the IPC database
         self.options.api = True
         self.options.taskid = taskid
@@ -174,14 +174,14 @@ class Task(object):
         os.close(handle)
         saveConfig(self.options, configFile)
 
-        if os.path.exists("sqlmap.py"):
-            self.process = Popen([sys.executable or "python", "sqlmap.py", "--api", "-c", configFile], shell=False, close_fds=not IS_WIN)
-        elif os.path.exists(os.path.join(os.getcwd(), "sqlmap.py")):
-            self.process = Popen([sys.executable or "python", "sqlmap.py", "--api", "-c", configFile], shell=False, cwd=os.getcwd(), close_fds=not IS_WIN)
-        elif os.path.exists(os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), "sqlmap.py")):
-            self.process = Popen([sys.executable or "python", "sqlmap.py", "--api", "-c", configFile], shell=False, cwd=os.path.join(os.path.abspath(os.path.dirname(sys.argv[0]))), close_fds=not IS_WIN)
+        if os.path.exists("fsqli.py"):
+            self.process = Popen([sys.executable or "python", "fsqli.py", "--api", "-c", configFile], shell=False, close_fds=not IS_WIN)
+        elif os.path.exists(os.path.join(os.getcwd(), "fsqli.py")):
+            self.process = Popen([sys.executable or "python", "fsqli.py", "--api", "-c", configFile], shell=False, cwd=os.getcwd(), close_fds=not IS_WIN)
+        elif os.path.exists(os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), "fsqli.py")):
+            self.process = Popen([sys.executable or "python", "fsqli.py", "--api", "-c", configFile], shell=False, cwd=os.path.join(os.path.abspath(os.path.dirname(sys.argv[0]))), close_fds=not IS_WIN)
         else:
-            self.process = Popen(["sqlmap", "--api", "-c", configFile], shell=False, close_fds=not IS_WIN)
+            self.process = Popen(["fsqli", "--api", "-c", configFile], shell=False, close_fds=not IS_WIN)
 
     def engine_stop(self):
         if self.process:
@@ -218,7 +218,7 @@ class Task(object):
     def engine_has_terminated(self):
         return isinstance(self.engine_get_returncode(), int)
 
-# Wrapper functions for sqlmap engine
+# Wrapper functions for fsqli engine
 class StdDbOut(object):
     def __init__(self, taskid, messagetype="stdout"):
         # Overwrite system standard output and standard error to write
@@ -284,7 +284,7 @@ def setRestAPILog():
             conf.databaseCursor = Database(conf.database)
             conf.databaseCursor.connect("client")
         except sqlite3.OperationalError as ex:
-            raise SqlmapConnectionException("%s ('%s')" % (ex, conf.database))
+            raise FsqliConnectionException("%s ('%s')" % (ex, conf.database))
 
         # Set a logging handler that writes log messages to a IPC database
         logger.removeHandler(LOGGER_HANDLER)
@@ -435,7 +435,7 @@ def task_flush(token=None):
     return jsonize({"success": True})
 
 ##################################
-# sqlmap core interact functions #
+# fsqli core interact functions #
 ##################################
 
 # Handle task's options
@@ -514,11 +514,11 @@ def scan_start(taskid):
             logger.warning("[%s] Unsupported option '%s' provided to scan_start()" % (taskid, key))
             return jsonize({"success": False, "message": "Unsupported option '%s'" % key})
 
-    # Initialize sqlmap engine's options with user's provided options, if any
+    # Initialize fsqli engine's options with user's provided options, if any
     for option, value in request.json.items():
         DataStore.tasks[taskid].set_option(option, value)
 
-    # Launch sqlmap engine in a separate process
+    # Launch fsqli engine in a separate process
     DataStore.tasks[taskid].engine_start()
 
     logger.debug("(%s) Started scan" % taskid)
@@ -657,9 +657,9 @@ def download(taskid, target, filename):
         logger.warning("[%s] Invalid task ID provided to download()" % taskid)
         return jsonize({"success": False, "message": "Invalid task ID"})
 
-    path = os.path.abspath(os.path.join(paths.SQLMAP_OUTPUT_PATH, target, filename))
+    path = os.path.abspath(os.path.join(paths.FSQLI_OUTPUT_PATH, target, filename))
     # Prevent file path traversal
-    if not path.startswith(paths.SQLMAP_OUTPUT_PATH):
+    if not path.startswith(paths.FSQLI_OUTPUT_PATH):
         logger.warning("[%s] Forbidden path (%s)" % (taskid, target))
         return jsonize({"success": False, "message": "Forbidden path"})
 
@@ -834,7 +834,7 @@ def client(host=RESTAPI_DEFAULT_ADDRESS, port=RESTAPI_DEFAULT_PORT, username=Non
                 continue
 
             try:
-                argv = ["sqlmap.py"] + shlex.split(command)[1:]
+                argv = ["fsqli.py"] + shlex.split(command)[1:]
             except Exception as ex:
                 logger.error("Error occurred while parsing arguments ('%s')" % getSafeExString(ex))
                 taskid = None

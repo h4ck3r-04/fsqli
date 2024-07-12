@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -412,23 +412,23 @@ class AUTH_TYPE(object):
 class AUTOCOMPLETE_TYPE(object):
     SQL = 0
     OS = 1
-    SQLMAP = 2
+    FSQLI = 2
     API = 3
 
 class NOTE(object):
     FALSE_POSITIVE_OR_UNEXPLOITABLE = "false positive or unexploitable"
 
 class MKSTEMP_PREFIX(object):
-    HASHES = "sqlmaphashes-"
-    CRAWLER = "sqlmapcrawler-"
-    IPC = "sqlmapipc-"
-    CONFIG = "sqlmapconfig-"
-    TESTING = "sqlmaptesting-"
-    RESULTS = "sqlmapresults-"
-    COOKIE_JAR = "sqlmapcookiejar-"
-    BIG_ARRAY = "sqlmapbigarray-"
-    SPECIFIC_RESPONSE = "sqlmapresponse-"
-    PREPROCESS = "sqlmappreprocess-"
+    HASHES = "fsqlihashes-"
+    CRAWLER = "fsqlicrawler-"
+    IPC = "fsqliipc-"
+    CONFIG = "fsqliconfig-"
+    TESTING = "fsqlitesting-"
+    RESULTS = "fsqliresults-"
+    COOKIE_JAR = "fsqlicookiejar-"
+    BIG_ARRAY = "fsqlibigarray-"
+    SPECIFIC_RESPONSE = "fsqliresponse-"
+    PREPROCESS = "fsqlipreprocess-"
 
 class TIMEOUT_STATE(object):
     NORMAL = 0

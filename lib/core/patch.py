@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -56,7 +56,7 @@ def dirtyPatches():
     # accept overly long result lines (e.g. SQLi results in HTTP header responses)
     _http_client._MAXLINE = 1 * 1024 * 1024
 
-    # prevent double chunked encoding in case of sqlmap chunking (Note: Python3 does it automatically if 'Content-length' is missing)
+    # prevent double chunked encoding in case of fsqli chunking (Note: Python3 does it automatically if 'Content-length' is missing)
     if six.PY3:
         if not hasattr(_http_client.HTTPConnection, "__send_output"):
             _http_client.HTTPConnection.__send_output = _http_client.HTTPConnection._send_output
@@ -90,7 +90,7 @@ def dirtyPatches():
     if match and match.group(1).upper() != PLACE.POST:
         PLACE.CUSTOM_POST = PLACE.CUSTOM_POST.replace("POST", "%s (body)" % match.group(1))
 
-    # Reference: https://github.com/sqlmapproject/sqlmap/issues/4314
+    # Reference: https://github.com/fsqliproject/fsqli/issues/4314
     try:
         os.urandom(1)
     except NotImplementedError:
@@ -99,7 +99,7 @@ def dirtyPatches():
         else:
             os.urandom = lambda size: "".join(chr(random.randint(0, 255)) for _ in xrange(size))
 
-    # Reference: https://github.com/sqlmapproject/sqlmap/issues/5727
+    # Reference: https://github.com/fsqliproject/fsqli/issues/5727
     # Reference: https://stackoverflow.com/a/14076841
     try:
         import pymysql
@@ -136,7 +136,7 @@ def dirtyPatches():
 
     codecs.register_error("reversible", _reversible)
 
-    # Reference: https://github.com/sqlmapproject/sqlmap/issues/5731
+    # Reference: https://github.com/fsqliproject/fsqli/issues/5731
     if not hasattr(logging, "_acquireLock"):
         def _acquireLock():
             if logging._lock:

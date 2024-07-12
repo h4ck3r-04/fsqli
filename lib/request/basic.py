@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -39,7 +39,7 @@ from lib.core.dicts import HTML_ENTITIES
 from lib.core.enums import DBMS
 from lib.core.enums import HTTP_HEADER
 from lib.core.enums import PLACE
-from lib.core.exception import SqlmapCompressionException
+from lib.core.exception import FsqliCompressionException
 from lib.core.settings import BLOCKED_IP_REGEX
 from lib.core.settings import DEFAULT_COOKIE_DELIMITER
 from lib.core.settings import EVENTVALIDATION_REGEX
@@ -309,7 +309,7 @@ def decodePage(page, contentEncoding, contentType, percentDecode=True):
                 singleTimeWarnMessage(warnMsg)
 
                 kb.pageCompress = False
-                raise SqlmapCompressionException
+                raise FsqliCompressionException
 
     if not conf.encoding:
         httpCharset, metaCharset = None, None

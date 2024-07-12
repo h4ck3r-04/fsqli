@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -21,12 +21,12 @@ def headersParser(headers):
 
     if not kb.headerPaths:
         kb.headerPaths = {
-            "microsoftsharepointteamservices": os.path.join(paths.SQLMAP_XML_BANNER_PATH, "sharepoint.xml"),
-            "server": os.path.join(paths.SQLMAP_XML_BANNER_PATH, "server.xml"),
-            "servlet-engine": os.path.join(paths.SQLMAP_XML_BANNER_PATH, "servlet-engine.xml"),
-            "set-cookie": os.path.join(paths.SQLMAP_XML_BANNER_PATH, "set-cookie.xml"),
-            "x-aspnet-version": os.path.join(paths.SQLMAP_XML_BANNER_PATH, "x-aspnet-version.xml"),
-            "x-powered-by": os.path.join(paths.SQLMAP_XML_BANNER_PATH, "x-powered-by.xml"),
+            "microsoftsharepointteamservices": os.path.join(paths.FSQLI_XML_BANNER_PATH, "sharepoint.xml"),
+            "server": os.path.join(paths.FSQLI_XML_BANNER_PATH, "server.xml"),
+            "servlet-engine": os.path.join(paths.FSQLI_XML_BANNER_PATH, "servlet-engine.xml"),
+            "set-cookie": os.path.join(paths.FSQLI_XML_BANNER_PATH, "set-cookie.xml"),
+            "x-aspnet-version": os.path.join(paths.FSQLI_XML_BANNER_PATH, "x-aspnet-version.xml"),
+            "x-powered-by": os.path.join(paths.FSQLI_XML_BANNER_PATH, "x-powered-by.xml"),
         }
 
     for header in (_.lower() for _ in headers if _.lower() in kb.headerPaths):

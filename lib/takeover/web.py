@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -50,7 +50,7 @@ from lib.core.enums import OS
 from lib.core.enums import PAYLOAD
 from lib.core.enums import PLACE
 from lib.core.enums import WEB_PLATFORM
-from lib.core.exception import SqlmapNoneDataException
+from lib.core.exception import FsqliNoneDataException
 from lib.core.settings import BACKDOOR_RUN_CMD_TIMEOUT
 from lib.core.settings import EVENTVALIDATION_REGEX
 from lib.core.settings import SHELL_RUNCMD_EXE_TAG
@@ -105,7 +105,7 @@ class Web(object):
         if content is not None:
             stream = io.BytesIO(getBytes(content))  # string content
 
-            # Reference: https://github.com/sqlmapproject/sqlmap/issues/3560
+            # Reference: https://github.com/fsqliproject/fsqli/issues/3560
             # Reference: https://stackoverflow.com/a/4677542
             stream.seek(0, os.SEEK_END)
             stream.len = stream.tell()
@@ -142,7 +142,7 @@ class Web(object):
             else:
                 return True
         else:
-            logger.error("sqlmap hasn't got a web backdoor nor a web file stager for %s" % self.webPlatform)
+            logger.error("fsqli hasn't got a web backdoor nor a web file stager for %s" % self.webPlatform)
             return False
 
     def _webFileInject(self, fileContent, fileName, directory):
@@ -212,7 +212,7 @@ class Web(object):
                 break
 
         if not kb.absFilePaths:
-            message = "do you want sqlmap to further try to "
+            message = "do you want fsqli to further try to "
             message += "provoke the full path disclosure? [Y/n] "
 
             if readInput(message, default='Y', boolean=True):
@@ -279,9 +279,9 @@ class Web(object):
             directories = _
 
         backdoorName = "tmpb%s.%s" % (randomStr(lowercase=True), self.webPlatform)
-        backdoorContent = getText(decloak(os.path.join(paths.SQLMAP_SHELL_PATH, "backdoors", "backdoor.%s_" % self.webPlatform)))
+        backdoorContent = getText(decloak(os.path.join(paths.FSQLI_SHELL_PATH, "backdoors", "backdoor.%s_" % self.webPlatform)))
 
-        stagerContent = getText(decloak(os.path.join(paths.SQLMAP_SHELL_PATH, "stagers", "stager.%s_" % self.webPlatform)))
+        stagerContent = getText(decloak(os.path.join(paths.FSQLI_SHELL_PATH, "stagers", "stager.%s_" % self.webPlatform)))
 
         for directory in directories:
             if not directory:
@@ -314,7 +314,7 @@ class Web(object):
                 uplPage, _, _ = Request.getPage(url=self.webStagerUrl, direct=True, raise404=False)
                 uplPage = uplPage or ""
 
-                if "sqlmap file uploader" in uplPage:
+                if "fsqli file uploader" in uplPage:
                     uploaded = True
                     break
 
@@ -336,7 +336,7 @@ class Web(object):
                     os.close(handle)
 
                     with openFile(filename, "w+b") as f:
-                        _ = getText(decloak(os.path.join(paths.SQLMAP_SHELL_PATH, "stagers", "stager.%s_" % self.webPlatform)))
+                        _ = getText(decloak(os.path.join(paths.FSQLI_SHELL_PATH, "stagers", "stager.%s_" % self.webPlatform)))
                         _ = _.replace(SHELL_WRITABLE_DIR_TAG, directory.replace('/', '\\\\') if Backend.isOs(OS.WINDOWS) else directory)
                         f.write(_)
 
@@ -352,7 +352,7 @@ class Web(object):
                         uplPage, _, _ = Request.getPage(url=self.webStagerUrl, direct=True, raise404=False)
                         uplPage = uplPage or ""
 
-                        if "sqlmap file uploader" in uplPage:
+                        if "fsqli file uploader" in uplPage:
                             uploaded = True
                             break
 
@@ -383,7 +383,7 @@ class Web(object):
 
                 _ = "tmpe%s.exe" % randomStr(lowercase=True)
                 if self.webUpload(backdoorName, backdoorDirectory, content=backdoorContent.replace(SHELL_WRITABLE_DIR_TAG, backdoorDirectory).replace(SHELL_RUNCMD_EXE_TAG, _)):
-                    self.webUpload(_, backdoorDirectory, filepath=os.path.join(paths.SQLMAP_EXTRAS_PATH, "runcmd", "runcmd.exe_"))
+                    self.webUpload(_, backdoorDirectory, filepath=os.path.join(paths.FSQLI_EXTRAS_PATH, "runcmd", "runcmd.exe_"))
                     self.webBackdoorUrl = "%s/Scripts/%s" % (self.webBaseUrl, backdoorName)
                     self.webDirectory = backdoorDirectory
                 else:
@@ -420,7 +420,7 @@ class Web(object):
             if output == "0":
                 warnMsg = "the backdoor has been uploaded but required privileges "
                 warnMsg += "for running the system commands are missing"
-                raise SqlmapNoneDataException(warnMsg)
+                raise FsqliNoneDataException(warnMsg)
             elif output and testStr in output:
                 infoMsg = "the backdoor has been successfully "
             else:

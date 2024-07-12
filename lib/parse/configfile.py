@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -15,8 +15,8 @@ from lib.core.data import cmdLineOptions
 from lib.core.data import conf
 from lib.core.data import logger
 from lib.core.enums import OPTION_TYPE
-from lib.core.exception import SqlmapMissingMandatoryOptionException
-from lib.core.exception import SqlmapSyntaxException
+from lib.core.exception import FsqliMissingMandatoryOptionException
+from lib.core.exception import FsqliSyntaxException
 from lib.core.optiondict import optDict
 
 config = None
@@ -40,7 +40,7 @@ def configFileProxy(section, option, datatype):
         except ValueError as ex:
             errMsg = "error occurred while processing the option "
             errMsg += "'%s' in provided configuration file ('%s')" % (option, getUnicode(ex))
-            raise SqlmapSyntaxException(errMsg)
+            raise FsqliSyntaxException(errMsg)
 
         if value:
             conf[option] = value
@@ -74,11 +74,11 @@ def configFileParser(configFile):
             config.readfp(configFP)
     except Exception as ex:
         errMsg = "you have provided an invalid and/or unreadable configuration file ('%s')" % getSafeExString(ex)
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if not config.has_section("Target"):
         errMsg = "missing a mandatory section 'Target' in the configuration file"
-        raise SqlmapMissingMandatoryOptionException(errMsg)
+        raise FsqliMissingMandatoryOptionException(errMsg)
 
     mandatory = False
 
@@ -90,7 +90,7 @@ def configFileParser(configFile):
     if not mandatory:
         errMsg = "missing a mandatory option in the configuration file "
         errMsg += "(direct, url, logFile, bulkFile, googleDork, requestFile or wizard)"
-        raise SqlmapMissingMandatoryOptionException(errMsg)
+        raise FsqliMissingMandatoryOptionException(errMsg)
 
     for family, optionData in optDict.items():
         for option, datatype in optionData.items():

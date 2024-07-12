@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -15,7 +15,7 @@ logging.addLevelName(CUSTOM_LOGGING.PAYLOAD, "PAYLOAD")
 logging.addLevelName(CUSTOM_LOGGING.TRAFFIC_OUT, "TRAFFIC OUT")
 logging.addLevelName(CUSTOM_LOGGING.TRAFFIC_IN, "TRAFFIC IN")
 
-LOGGER = logging.getLogger("sqlmapLog")
+LOGGER = logging.getLogger("fsqliLog")
 
 LOGGER_HANDLER = None
 try:

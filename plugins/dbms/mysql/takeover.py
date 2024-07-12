@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -83,7 +83,7 @@ class Takeover(GenericTakeover):
             self.udfRemoteFile = "%s/%s.%s" % (self.__datadir, self.udfSharedLibName, self.udfSharedLibExt)
 
     def udfSetLocalPaths(self):
-        self.udfLocalFile = paths.SQLMAP_UDF_PATH
+        self.udfLocalFile = paths.FSQLI_UDF_PATH
         self.udfSharedLibName = "libs%s" % randomStr(lowercase=True)
 
         if Backend.isOs(OS.WINDOWS):

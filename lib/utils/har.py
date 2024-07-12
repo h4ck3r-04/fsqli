@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -44,7 +44,7 @@ class HTTPCollector(object):
     def obtain(self):
         return {"log": {
             "version": "1.2",
-            "creator": {"name": "sqlmap", "version": VERSION},
+            "creator": {"name": "fsqli", "version": VERSION},
             "entries": [pair.toEntry().toDict() for pair in self.messages],
         }}
 

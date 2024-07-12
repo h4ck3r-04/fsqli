@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -19,14 +19,14 @@ from lib.core.data import kb
 from lib.core.data import logger
 from lib.core.enums import DBMS
 from lib.core.enums import OS
-from lib.core.exception import SqlmapFilePathException
-from lib.core.exception import SqlmapMissingDependence
-from lib.core.exception import SqlmapMissingMandatoryOptionException
-from lib.core.exception import SqlmapMissingPrivileges
-from lib.core.exception import SqlmapNotVulnerableException
-from lib.core.exception import SqlmapSystemException
-from lib.core.exception import SqlmapUndefinedMethod
-from lib.core.exception import SqlmapUnsupportedDBMSException
+from lib.core.exception import FsqliFilePathException
+from lib.core.exception import FsqliMissingDependence
+from lib.core.exception import FsqliMissingMandatoryOptionException
+from lib.core.exception import FsqliMissingPrivileges
+from lib.core.exception import FsqliNotVulnerableException
+from lib.core.exception import FsqliSystemException
+from lib.core.exception import FsqliUndefinedMethod
+from lib.core.exception import FsqliUnsupportedDBMSException
 from lib.takeover.abstraction import Abstraction
 from lib.takeover.icmpsh import ICMPsh
 from lib.takeover.metasploit import Metasploit
@@ -54,7 +54,7 @@ class Takeover(Abstraction, Metasploit, ICMPsh, Registry):
         else:
             errMsg = "unable to execute operating system commands via "
             errMsg += "the back-end DBMS"
-            raise SqlmapNotVulnerableException(errMsg)
+            raise FsqliNotVulnerableException(errMsg)
 
         self.getRemoteTempPath()
         self.initEnv(web=web)
@@ -77,13 +77,13 @@ class Takeover(Abstraction, Metasploit, ICMPsh, Registry):
             errMsg = "unable to prompt for an interactive operating "
             errMsg += "system shell via the back-end DBMS because "
             errMsg += "stacked queries SQL injection is not supported"
-            raise SqlmapNotVulnerableException(errMsg)
+            raise FsqliNotVulnerableException(errMsg)
 
         self.getRemoteTempPath()
 
         try:
             self.initEnv(web=web)
-        except SqlmapFilePathException:
+        except FsqliFilePathException:
             if not web and not conf.direct:
                 infoMsg = "falling back to web backdoor method..."
                 logger.info(infoMsg)
@@ -134,19 +134,19 @@ class Takeover(Abstraction, Metasploit, ICMPsh, Registry):
             isAdmin = runningAsAdmin()
 
             if not isAdmin:
-                errMsg = "you need to run sqlmap as an administrator "
+                errMsg = "you need to run fsqli as an administrator "
                 errMsg += "if you want to establish an out-of-band ICMP "
                 errMsg += "tunnel because icmpsh uses raw sockets to "
                 errMsg += "sniff and craft ICMP packets"
-                raise SqlmapMissingPrivileges(errMsg)
+                raise FsqliMissingPrivileges(errMsg)
 
             try:
                 __import__("impacket")
             except ImportError:
-                errMsg = "sqlmap requires 'python-impacket' third-party library "
+                errMsg = "fsqli requires 'python-impacket' third-party library "
                 errMsg += "in order to run icmpsh master. You can get it at "
                 errMsg += "https://github.com/SecureAuthCorp/impacket"
-                raise SqlmapMissingDependence(errMsg)
+                raise FsqliMissingDependence(errMsg)
 
             filename = "/proc/sys/net/ipv4/icmp_echo_ignore_all"
 
@@ -157,7 +157,7 @@ class Takeover(Abstraction, Metasploit, ICMPsh, Registry):
                 except IOError as ex:
                     errMsg = "there has been a file opening/writing error "
                     errMsg += "for filename '%s' ('%s')" % (filename, getSafeExString(ex))
-                    raise SqlmapSystemException(errMsg)
+                    raise FsqliSystemException(errMsg)
             else:
                 errMsg = "you need to disable ICMP replies by your machine "
                 errMsg += "system-wide. For example run on Linux/Unix:\n"
@@ -214,7 +214,7 @@ class Takeover(Abstraction, Metasploit, ICMPsh, Registry):
                             fallbackToWeb = True
                         else:
                             msg = "unable to mount the operating system takeover"
-                            raise SqlmapFilePathException(msg)
+                            raise FsqliFilePathException(msg)
 
                 if Backend.isOs(OS.WINDOWS) and Backend.isDbms(DBMS.MYSQL) and conf.privEsc:
                     debugMsg = "by default MySQL on Windows runs as SYSTEM "
@@ -229,7 +229,7 @@ class Takeover(Abstraction, Metasploit, ICMPsh, Registry):
                         fallbackToWeb = True
                     else:
                         msg = "unable to mount the operating system takeover"
-                        raise SqlmapFilePathException(msg)
+                        raise FsqliFilePathException(msg)
 
         if not setupSuccess and Backend.isDbms(DBMS.MYSQL) and not conf.direct and (not isStackingAvailable() or fallbackToWeb):
             web = True
@@ -248,7 +248,7 @@ class Takeover(Abstraction, Metasploit, ICMPsh, Registry):
                     # system is not Windows
                     conf.privEsc = False
 
-                    warnMsg = "sqlmap does not implement any operating system "
+                    warnMsg = "fsqli does not implement any operating system "
                     warnMsg += "user privilege escalation technique when the "
                     warnMsg += "back-end DBMS underlying system is not Windows"
                     logger.warning(warnMsg)
@@ -259,14 +259,14 @@ class Takeover(Abstraction, Metasploit, ICMPsh, Registry):
 
                     if setupSuccess is not True:
                         msg = "unable to mount the operating system takeover"
-                        raise SqlmapFilePathException(msg)
+                        raise FsqliFilePathException(msg)
 
                 elif tunnel == 2:
                     setupSuccess = self.uploadIcmpshSlave(web=web)
 
                     if setupSuccess is not True:
                         msg = "unable to mount the operating system takeover"
-                        raise SqlmapFilePathException(msg)
+                        raise FsqliFilePathException(msg)
 
         if setupSuccess:
             if tunnel == 1:
@@ -275,7 +275,7 @@ class Takeover(Abstraction, Metasploit, ICMPsh, Registry):
                 self.icmpPwn()
         else:
             errMsg = "unable to prompt for an out-of-band session"
-            raise SqlmapNotVulnerableException(errMsg)
+            raise FsqliNotVulnerableException(errMsg)
 
         if not conf.cleanup:
             self.cleanup(web=web)
@@ -287,18 +287,18 @@ class Takeover(Abstraction, Metasploit, ICMPsh, Registry):
             errMsg = "the back-end DBMS underlying operating system is "
             errMsg += "not Windows: it is not possible to perform the SMB "
             errMsg += "relay attack"
-            raise SqlmapUnsupportedDBMSException(errMsg)
+            raise FsqliUnsupportedDBMSException(errMsg)
 
         if not isStackingAvailable() and not conf.direct:
             if Backend.getIdentifiedDbms() in (DBMS.PGSQL, DBMS.MSSQL):
                 errMsg = "on this back-end DBMS it is only possible to "
                 errMsg += "perform the SMB relay attack if stacked "
                 errMsg += "queries are supported"
-                raise SqlmapUnsupportedDBMSException(errMsg)
+                raise FsqliUnsupportedDBMSException(errMsg)
 
             elif Backend.isDbms(DBMS.MYSQL):
                 debugMsg = "since stacked queries are not supported, "
-                debugMsg += "sqlmap is going to perform the SMB relay "
+                debugMsg += "fsqli is going to perform the SMB relay "
                 debugMsg += "attack via inference blind SQL injection"
                 logger.debug(debugMsg)
 
@@ -339,7 +339,7 @@ class Takeover(Abstraction, Metasploit, ICMPsh, Registry):
             errMsg += "2000 or 2005 to be able to exploit the heap-based "
             errMsg += "buffer overflow in the 'sp_replwritetovarbin' "
             errMsg += "stored procedure (MS09-004)"
-            raise SqlmapUnsupportedDBMSException(errMsg)
+            raise FsqliUnsupportedDBMSException(errMsg)
 
         infoMsg = "going to exploit the Microsoft SQL Server %s " % Backend.getVersion()
         infoMsg += "'sp_replwritetovarbin' stored procedure heap-based "
@@ -358,7 +358,7 @@ class Takeover(Abstraction, Metasploit, ICMPsh, Registry):
     def uncPathRequest(self):
         errMsg = "'uncPathRequest' method must be defined "
         errMsg += "into the specific DBMS plugin"
-        raise SqlmapUndefinedMethod(errMsg)
+        raise FsqliUndefinedMethod(errMsg)
 
     def _regInit(self):
         if not isStackingAvailable() and not conf.direct:
@@ -369,7 +369,7 @@ class Takeover(Abstraction, Metasploit, ICMPsh, Registry):
         if not Backend.isOs(OS.WINDOWS):
             errMsg = "the back-end DBMS underlying operating system is "
             errMsg += "not Windows"
-            raise SqlmapUnsupportedDBMSException(errMsg)
+            raise FsqliUnsupportedDBMSException(errMsg)
 
         self.initEnv()
         self.getRemoteTempPath()
@@ -406,7 +406,7 @@ class Takeover(Abstraction, Metasploit, ICMPsh, Registry):
             regKey = readInput(msg)
 
             if not regKey:
-                raise SqlmapMissingMandatoryOptionException(errMsg)
+                raise FsqliMissingMandatoryOptionException(errMsg)
         else:
             regKey = conf.regKey
 
@@ -415,7 +415,7 @@ class Takeover(Abstraction, Metasploit, ICMPsh, Registry):
             regVal = readInput(msg)
 
             if not regVal:
-                raise SqlmapMissingMandatoryOptionException(errMsg)
+                raise FsqliMissingMandatoryOptionException(errMsg)
         else:
             regVal = conf.regVal
 
@@ -424,7 +424,7 @@ class Takeover(Abstraction, Metasploit, ICMPsh, Registry):
             regData = readInput(msg)
 
             if not regData:
-                raise SqlmapMissingMandatoryOptionException(errMsg)
+                raise FsqliMissingMandatoryOptionException(errMsg)
         else:
             regData = conf.regData
 
@@ -454,7 +454,7 @@ class Takeover(Abstraction, Metasploit, ICMPsh, Registry):
             regKey = readInput(msg)
 
             if not regKey:
-                raise SqlmapMissingMandatoryOptionException(errMsg)
+                raise FsqliMissingMandatoryOptionException(errMsg)
         else:
             regKey = conf.regKey
 
@@ -463,7 +463,7 @@ class Takeover(Abstraction, Metasploit, ICMPsh, Registry):
             regVal = readInput(msg)
 
             if not regVal:
-                raise SqlmapMissingMandatoryOptionException(errMsg)
+                raise FsqliMissingMandatoryOptionException(errMsg)
         else:
             regVal = conf.regVal
 

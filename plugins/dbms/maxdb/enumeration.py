@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -19,9 +19,9 @@ from lib.core.data import paths
 from lib.core.data import queries
 from lib.core.enums import DBMS
 from lib.core.enums import PAYLOAD
-from lib.core.exception import SqlmapMissingMandatoryOptionException
-from lib.core.exception import SqlmapNoneDataException
-from lib.core.exception import SqlmapUserQuitException
+from lib.core.exception import FsqliMissingMandatoryOptionException
+from lib.core.exception import FsqliNoneDataException
+from lib.core.exception import FsqliUserQuitException
 from lib.core.settings import CURRENT_DB
 from lib.utils.brute import columnExists
 from lib.utils.pivotdumptable import pivotDumpTable
@@ -105,7 +105,7 @@ class Enumeration(GenericEnumeration):
 
         if conf.db is None or conf.db == CURRENT_DB:
             if conf.db is None:
-                warnMsg = "missing database parameter. sqlmap is going "
+                warnMsg = "missing database parameter. fsqli is going "
                 warnMsg += "to use the current database to enumerate "
                 warnMsg += "table(s) columns"
                 logger.warning(warnMsg)
@@ -116,7 +116,7 @@ class Enumeration(GenericEnumeration):
             if ',' in conf.db:
                 errMsg = "only one database name is allowed when enumerating "
                 errMsg += "the tables' columns"
-                raise SqlmapMissingMandatoryOptionException(errMsg)
+                raise FsqliMissingMandatoryOptionException(errMsg)
 
         conf.db = safeSQLIdentificatorNaming(conf.db)
 
@@ -144,7 +144,7 @@ class Enumeration(GenericEnumeration):
             else:
                 errMsg = "unable to retrieve the tables "
                 errMsg += "on database '%s'" % unsafeSQLIdentificatorNaming(conf.db)
-                raise SqlmapNoneDataException(errMsg)
+                raise FsqliNoneDataException(errMsg)
 
         for tbl in tblList:
             tblList[tblList.index(tbl)] = safeSQLIdentificatorNaming(tbl, True)
@@ -182,7 +182,7 @@ class Enumeration(GenericEnumeration):
             if choice == 'N':
                 return
             elif choice == 'Q':
-                raise SqlmapUserQuitException
+                raise FsqliUserQuitException
             else:
                 return columnExists(paths.COMMON_COLUMNS)
 

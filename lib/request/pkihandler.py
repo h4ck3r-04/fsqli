@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
 from lib.core.data import conf
 from lib.core.common import getSafeExString
-from lib.core.exception import SqlmapConnectionException
+from lib.core.exception import FsqliConnectionException
 from thirdparty.six.moves import http_client as _http_client
 from thirdparty.six.moves import urllib as _urllib
 
@@ -26,4 +26,4 @@ class HTTPSPKIAuthHandler(_urllib.request.HTTPSHandler):
         except IOError as ex:
             errMsg = "error occurred while using key "
             errMsg += "file '%s' ('%s')" % (self.auth_file, getSafeExString(ex))
-            raise SqlmapConnectionException(errMsg)
+            raise FsqliConnectionException(errMsg)

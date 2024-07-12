@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -11,7 +11,7 @@ from lib.core.common import randomInt
 from lib.core.compat import xrange
 from lib.core.data import kb
 from lib.core.data import logger
-from lib.core.exception import SqlmapUnsupportedFeatureException
+from lib.core.exception import FsqliUnsupportedFeatureException
 from lib.core.settings import LOBLKSIZE
 from lib.request import inject
 from plugins.generic.filesystem import Filesystem as GenericFilesystem
@@ -35,7 +35,7 @@ class Filesystem(GenericFilesystem):
     def unionWriteFile(self, localFile, remoteFile, fileType=None, forceCheck=False):
         errMsg = "PostgreSQL does not support file upload with UNION "
         errMsg += "query SQL injection technique"
-        raise SqlmapUnsupportedFeatureException(errMsg)
+        raise FsqliUnsupportedFeatureException(errMsg)
 
     def stackedWriteFile(self, localFile, remoteFile, fileType, forceCheck=False):
         localFileSize = os.path.getsize(localFile)

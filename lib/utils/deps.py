@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -61,7 +61,7 @@ def checkDependencies():
             elif dbmsName == DBMS.CLICKHOUSE:
                 __import__("clickhouse_connect")       
         except:
-            warnMsg = "sqlmap requires '%s' third-party library " % data[1]
+            warnMsg = "fsqli requires '%s' third-party library " % data[1]
             warnMsg += "in order to directly connect to the DBMS "
             warnMsg += "'%s'. Download from '%s'" % (dbmsName, data[2])
             logger.warning(warnMsg)
@@ -77,7 +77,7 @@ def checkDependencies():
         debugMsg = "'python-impacket' third-party library is found"
         logger.debug(debugMsg)
     except ImportError:
-        warnMsg = "sqlmap requires 'python-impacket' third-party library for "
+        warnMsg = "fsqli requires 'python-impacket' third-party library for "
         warnMsg += "out-of-band takeover feature. Download from "
         warnMsg += "'https://github.com/coresecurity/impacket'"
         logger.warning(warnMsg)
@@ -88,7 +88,7 @@ def checkDependencies():
         debugMsg = "'python-ntlm' third-party library is found"
         logger.debug(debugMsg)
     except ImportError:
-        warnMsg = "sqlmap requires 'python-ntlm' third-party library "
+        warnMsg = "fsqli requires 'python-ntlm' third-party library "
         warnMsg += "if you plan to attack a web application behind NTLM "
         warnMsg += "authentication. Download from 'https://github.com/mullender/python-ntlm'"
         logger.warning(warnMsg)
@@ -99,7 +99,7 @@ def checkDependencies():
         debugMsg = "'websocket-client' library is found"
         logger.debug(debugMsg)
     except ImportError:
-        warnMsg = "sqlmap requires 'websocket-client' third-party library "
+        warnMsg = "fsqli requires 'websocket-client' third-party library "
         warnMsg += "if you plan to attack a web application using WebSocket. "
         warnMsg += "Download from 'https://pypi.python.org/pypi/websocket-client/'"
         logger.warning(warnMsg)
@@ -110,7 +110,7 @@ def checkDependencies():
         debugMsg = "'tkinter' library is found"
         logger.debug(debugMsg)
     except ImportError:
-        warnMsg = "sqlmap requires 'tkinter' library "
+        warnMsg = "fsqli requires 'tkinter' library "
         warnMsg += "if you plan to run a GUI"
         logger.warning(warnMsg)
         missing_libraries.add('tkinter')
@@ -120,7 +120,7 @@ def checkDependencies():
         debugMsg = "'tkinter.ttk' library is found"
         logger.debug(debugMsg)
     except ImportError:
-        warnMsg = "sqlmap requires 'tkinter.ttk' library "
+        warnMsg = "fsqli requires 'tkinter.ttk' library "
         warnMsg += "if you plan to run a GUI"
         logger.warning(warnMsg)
         missing_libraries.add('tkinter.ttk')
@@ -131,8 +131,8 @@ def checkDependencies():
             debugMsg = "'python-pyreadline' third-party library is found"
             logger.debug(debugMsg)
         except ImportError:
-            warnMsg = "sqlmap requires 'pyreadline' third-party library to "
-            warnMsg += "be able to take advantage of the sqlmap TAB "
+            warnMsg = "fsqli requires 'pyreadline' third-party library to "
+            warnMsg += "be able to take advantage of the fsqli TAB "
             warnMsg += "completion and history support features in the SQL "
             warnMsg += "shell and OS shell. Download from "
             warnMsg += "'https://pypi.org/project/pyreadline/'"

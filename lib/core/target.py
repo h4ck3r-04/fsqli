@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -45,12 +45,12 @@ from lib.core.enums import HTTPMETHOD
 from lib.core.enums import MKSTEMP_PREFIX
 from lib.core.enums import PLACE
 from lib.core.enums import POST_HINT
-from lib.core.exception import SqlmapFilePathException
-from lib.core.exception import SqlmapGenericException
-from lib.core.exception import SqlmapMissingPrivileges
-from lib.core.exception import SqlmapNoneDataException
-from lib.core.exception import SqlmapSystemException
-from lib.core.exception import SqlmapUserQuitException
+from lib.core.exception import FsqliFilePathException
+from lib.core.exception import FsqliGenericException
+from lib.core.exception import FsqliMissingPrivileges
+from lib.core.exception import FsqliNoneDataException
+from lib.core.exception import FsqliSystemException
+from lib.core.exception import FsqliUserQuitException
 from lib.core.option import _setAuthCred
 from lib.core.option import _setDBMS
 from lib.core.option import _setKnowledgeBaseAttributes
@@ -137,7 +137,7 @@ def _setRequestParams():
             choice = readInput(message, default='Y').upper()
 
             if choice == 'Q':
-                raise SqlmapUserQuitException
+                raise FsqliUserQuitException
             else:
                 kb.processUserMarks = choice == 'Y'
 
@@ -150,7 +150,7 @@ def _setRequestParams():
             choice = readInput(message, default='Y').upper()
 
             if choice == 'Q':
-                raise SqlmapUserQuitException
+                raise FsqliUserQuitException
             elif choice == 'Y':
                 kb.postHint = POST_HINT.JSON
                 if not (kb.processUserMarks and kb.customInjectionMark in conf.data):
@@ -174,7 +174,7 @@ def _setRequestParams():
             choice = readInput(message, default='Y').upper()
 
             if choice == 'Q':
-                raise SqlmapUserQuitException
+                raise FsqliUserQuitException
             elif choice == 'Y':
                 kb.postHint = POST_HINT.JSON_LIKE
                 if not (kb.processUserMarks and kb.customInjectionMark in conf.data):
@@ -193,7 +193,7 @@ def _setRequestParams():
             choice = readInput(message, default='Y').upper()
 
             if choice == 'Q':
-                raise SqlmapUserQuitException
+                raise FsqliUserQuitException
             elif choice == 'Y':
                 kb.postHint = POST_HINT.ARRAY_LIKE
                 if not (kb.processUserMarks and kb.customInjectionMark in conf.data):
@@ -206,7 +206,7 @@ def _setRequestParams():
             choice = readInput(message, default='Y').upper()
 
             if choice == 'Q':
-                raise SqlmapUserQuitException
+                raise FsqliUserQuitException
             elif choice == 'Y':
                 kb.postHint = POST_HINT.SOAP if "soap" in conf.data.lower() else POST_HINT.XML
                 if not (kb.processUserMarks and kb.customInjectionMark in conf.data):
@@ -220,7 +220,7 @@ def _setRequestParams():
             choice = readInput(message, default='Y').upper()
 
             if choice == 'Q':
-                raise SqlmapUserQuitException
+                raise FsqliUserQuitException
             elif choice == 'Y':
                 kb.postHint = POST_HINT.MULTIPART
                 if not (kb.processUserMarks and kb.customInjectionMark in conf.data):
@@ -259,7 +259,7 @@ def _setRequestParams():
         choice = readInput(message, default='Y').upper()
 
         if choice == 'Q':
-            raise SqlmapUserQuitException
+            raise FsqliUserQuitException
         elif choice == 'Y':
             conf.url = "%s%s" % (conf.url, kb.customInjectionMark)
             kb.processUserMarks = True
@@ -277,7 +277,7 @@ def _setRequestParams():
                 choice = readInput(message, default='Y').upper()
 
                 if choice == 'Q':
-                    raise SqlmapUserQuitException
+                    raise FsqliUserQuitException
                 else:
                     kb.processUserMarks = choice == 'Y'
 
@@ -287,7 +287,7 @@ def _setRequestParams():
                         if "=%s" % kb.customInjectionMark in _:
                             warnMsg = "it seems that you've provided empty parameter value(s) "
                             warnMsg += "for testing. Please, always use only valid parameter values "
-                            warnMsg += "so sqlmap could be able to run properly"
+                            warnMsg += "so fsqli could be able to run properly"
                             logger.warning(warnMsg)
 
             if not kb.processUserMarks:
@@ -311,7 +311,7 @@ def _setRequestParams():
 
             else:
                 if place == PLACE.URI:
-                    value = conf.url = conf.url.replace('+', "%20")  # NOTE: https://github.com/sqlmapproject/sqlmap/issues/5123
+                    value = conf.url = conf.url.replace('+', "%20")  # NOTE: https://github.com/fsqliproject/fsqli/issues/5123
 
                 conf.parameters[place] = value
                 conf.paramDict[place] = OrderedDict()
@@ -404,18 +404,18 @@ def _setRequestParams():
     if not conf.parameters:
         errMsg = "you did not provide any GET, POST and Cookie "
         errMsg += "parameter, neither an User-Agent, Referer or Host header value"
-        raise SqlmapGenericException(errMsg)
+        raise FsqliGenericException(errMsg)
 
     elif not testableParameters:
         errMsg = "all testable parameters you provided are not present "
         errMsg += "within the given request data"
-        raise SqlmapGenericException(errMsg)
+        raise FsqliGenericException(errMsg)
 
     if conf.csrfToken:
         if not any(re.search(conf.csrfToken, ' '.join(_), re.I) for _ in (conf.paramDict.get(PLACE.GET, {}), conf.paramDict.get(PLACE.POST, {}), conf.paramDict.get(PLACE.COOKIE, {}))) and not re.search(r"\b%s\b" % conf.csrfToken, conf.data or "") and conf.csrfToken not in set(_[0].lower() for _ in conf.httpHeaders) and conf.csrfToken not in conf.paramDict.get(PLACE.COOKIE, {}) and not all(re.search(conf.csrfToken, _, re.I) for _ in conf.paramDict.get(PLACE.URI, {}).values()):
             errMsg = "anti-CSRF token parameter '%s' not " % conf.csrfToken._original
             errMsg += "found in provided GET, POST, Cookie or header values"
-            raise SqlmapGenericException(errMsg)
+            raise FsqliGenericException(errMsg)
     else:
         for place in (PLACE.GET, PLACE.POST, PLACE.COOKIE):
             if conf.csrfToken:
@@ -424,7 +424,7 @@ def _setRequestParams():
             for parameter in conf.paramDict.get(place, {}):
                 if any(parameter.lower().count(_) for _ in CSRF_TOKEN_PARAMETER_INFIXES):
                     message = "%sparameter '%s' appears to hold anti-CSRF token. " % ("%s " % place if place != parameter else "", parameter)
-                    message += "Do you want sqlmap to automatically update it in further requests? [y/N] "
+                    message += "Do you want fsqli to automatically update it in further requests? [y/N] "
 
                     if readInput(message, default='N', boolean=True):
                         class _(six.text_type):
@@ -451,7 +451,7 @@ def _setHashDB():
                 logger.info("flushing session file")
             except OSError as ex:
                 errMsg = "unable to flush the session file ('%s')" % getSafeExString(ex)
-                raise SqlmapFilePathException(errMsg)
+                raise FsqliFilePathException(errMsg)
 
     conf.hashDB = HashDB(conf.hashDBFile)
 
@@ -499,7 +499,7 @@ def _resumeDBMS():
             errMsg = "unable to continue in offline mode "
             errMsg += "because of lack of usable "
             errMsg += "session data"
-            raise SqlmapNoneDataException(errMsg)
+            raise FsqliNoneDataException(errMsg)
         else:
             return
 
@@ -522,7 +522,7 @@ def _resumeDBMS():
         if not check:
             message = "you provided '%s' as a back-end DBMS, " % conf.dbms
             message += "but from a past scan information on the target URL "
-            message += "sqlmap assumes the back-end DBMS is '%s'. " % dbms
+            message += "fsqli assumes the back-end DBMS is '%s'. " % dbms
             message += "Do you really want to force the back-end "
             message += "DBMS value? [y/N] "
 
@@ -556,7 +556,7 @@ def _resumeOS():
         if conf.os and conf.os.lower() != os.lower():
             message = "you provided '%s' as back-end DBMS operating " % conf.os
             message += "system, but from a past scan information on the "
-            message += "target URL sqlmap assumes the back-end DBMS "
+            message += "target URL fsqli assumes the back-end DBMS "
             message += "operating system is %s. " % os
             message += "Do you really want to force the back-end DBMS "
             message += "OS value? [y/N] "
@@ -578,7 +578,7 @@ def _setResultsFile():
         return
 
     if not conf.resultsFP:
-        conf.resultsFile = conf.resultsFile or os.path.join(paths.SQLMAP_OUTPUT_PATH, time.strftime(RESULTS_FILE_FORMAT).lower())
+        conf.resultsFile = conf.resultsFile or os.path.join(paths.FSQLI_OUTPUT_PATH, time.strftime(RESULTS_FILE_FORMAT).lower())
         found = os.path.exists(conf.resultsFile)
 
         try:
@@ -596,7 +596,7 @@ def _setResultsFile():
                 errMsg += "Please make sure that your disk is not full and "
                 errMsg += "that you have sufficient write permissions to "
                 errMsg += "create temporary files and/or directories"
-                raise SqlmapSystemException(errMsg)
+                raise FsqliSystemException(errMsg)
 
         if not found:
             conf.resultsFP.writelines("Target URL,Place,Parameter,Technique(s),Note(s)%s" % os.linesep)
@@ -611,13 +611,13 @@ def _createFilesDir():
     if not any((conf.fileRead, conf.commonFiles)):
         return
 
-    conf.filePath = paths.SQLMAP_FILES_PATH % conf.hostname
+    conf.filePath = paths.FSQLI_FILES_PATH % conf.hostname
 
     if not os.path.isdir(conf.filePath):
         try:
             os.makedirs(conf.filePath)
         except OSError as ex:
-            tempDir = tempfile.mkdtemp(prefix="sqlmapfiles")
+            tempDir = tempfile.mkdtemp(prefix="fsqlifiles")
             warnMsg = "unable to create files directory "
             warnMsg += "'%s' (%s). " % (conf.filePath, getUnicode(ex))
             warnMsg += "Using temporary directory '%s' instead" % getUnicode(tempDir)
@@ -633,13 +633,13 @@ def _createDumpDir():
     if not conf.dumpTable and not conf.dumpAll and not conf.search:
         return
 
-    conf.dumpPath = safeStringFormat(paths.SQLMAP_DUMP_PATH, conf.hostname)
+    conf.dumpPath = safeStringFormat(paths.FSQLI_DUMP_PATH, conf.hostname)
 
     if not os.path.isdir(conf.dumpPath):
         try:
             os.makedirs(conf.dumpPath)
         except Exception as ex:
-            tempDir = tempfile.mkdtemp(prefix="sqlmapdump")
+            tempDir = tempfile.mkdtemp(prefix="fsqlidump")
             warnMsg = "unable to create dump directory "
             warnMsg += "'%s' (%s). " % (conf.dumpPath, getUnicode(ex))
             warnMsg += "Using temporary directory '%s' instead" % getUnicode(tempDir)
@@ -656,13 +656,13 @@ def _createTargetDirs():
     Create the output directory.
     """
 
-    conf.outputPath = os.path.join(getUnicode(paths.SQLMAP_OUTPUT_PATH), normalizeUnicode(getUnicode(conf.hostname)))
+    conf.outputPath = os.path.join(getUnicode(paths.FSQLI_OUTPUT_PATH), normalizeUnicode(getUnicode(conf.hostname)))
 
     try:
         if not os.path.isdir(conf.outputPath):
             os.makedirs(conf.outputPath)
     except (OSError, IOError, TypeError) as ex:
-        tempDir = tempfile.mkdtemp(prefix="sqlmapoutput")
+        tempDir = tempfile.mkdtemp(prefix="fsqlioutput")
         warnMsg = "unable to create output directory "
         warnMsg += "'%s' (%s). " % (conf.outputPath, getUnicode(ex))
         warnMsg += "Using temporary directory '%s' instead" % getUnicode(tempDir)
@@ -684,9 +684,9 @@ def _createTargetDirs():
             errMsg = "you don't have enough permissions "
         else:
             errMsg = "something went wrong while trying "
-        errMsg += "to write to the output directory '%s' (%s)" % (paths.SQLMAP_OUTPUT_PATH, getSafeExString(ex))
+        errMsg += "to write to the output directory '%s' (%s)" % (paths.FSQLI_OUTPUT_PATH, getSafeExString(ex))
 
-        raise SqlmapMissingPrivileges(errMsg)
+        raise FsqliMissingPrivileges(errMsg)
     except UnicodeError as ex:
         warnMsg = "something went wrong while saving target data ('%s')" % getSafeExString(ex)
         logger.warning(warnMsg)

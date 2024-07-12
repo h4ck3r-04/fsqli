@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -11,7 +11,7 @@ from lib.core.common import Backend
 from lib.core.compat import xrange
 from lib.core.convert import getBytes
 from lib.core.data import logger
-from lib.core.exception import SqlmapUnsupportedFeatureException
+from lib.core.exception import FsqliUnsupportedFeatureException
 from lib.request import inject
 from plugins.generic.takeover import Takeover as GenericTakeover
 
@@ -61,11 +61,11 @@ class Takeover(GenericTakeover):
                 break
 
         if not addrs:
-            errMsg = "sqlmap can not exploit the stored procedure buffer "
+            errMsg = "fsqli can not exploit the stored procedure buffer "
             errMsg += "overflow because it does not have a valid return "
             errMsg += "code for the underlying operating system (Windows "
             errMsg += "%s Service Pack %d)" % (Backend.getOsVersion(), Backend.getOsServicePack())
-            raise SqlmapUnsupportedFeatureException(errMsg)
+            raise FsqliUnsupportedFeatureException(errMsg)
 
         shellcodeChar = ""
         hexStr = binascii.hexlify(getBytes(self.shellcodeString[:-1]))

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -56,15 +56,15 @@ from lib.core.enums import HTTPMETHOD
 from lib.core.enums import NOTE
 from lib.core.enums import PAYLOAD
 from lib.core.enums import PLACE
-from lib.core.exception import SqlmapBaseException
-from lib.core.exception import SqlmapConnectionException
-from lib.core.exception import SqlmapNoneDataException
-from lib.core.exception import SqlmapNotVulnerableException
-from lib.core.exception import SqlmapSilentQuitException
-from lib.core.exception import SqlmapSkipTargetException
-from lib.core.exception import SqlmapSystemException
-from lib.core.exception import SqlmapUserQuitException
-from lib.core.exception import SqlmapValueException
+from lib.core.exception import FsqliBaseException
+from lib.core.exception import FsqliConnectionException
+from lib.core.exception import FsqliNoneDataException
+from lib.core.exception import FsqliNotVulnerableException
+from lib.core.exception import FsqliSilentQuitException
+from lib.core.exception import FsqliSkipTargetException
+from lib.core.exception import FsqliSystemException
+from lib.core.exception import FsqliUserQuitException
+from lib.core.exception import FsqliValueException
 from lib.core.settings import ASP_NET_CONTROL_REGEX
 from lib.core.settings import CSRF_TOKEN_PARAMETER_INFIXES
 from lib.core.settings import DEFAULT_GET_POST_DELIMITER
@@ -134,10 +134,10 @@ def _selectInjection():
         if isDigit(choice) and int(choice) < len(kb.injections) and int(choice) >= 0:
             index = int(choice)
         elif choice == 'Q':
-            raise SqlmapUserQuitException
+            raise FsqliUserQuitException
         else:
             errMsg = "invalid choice"
-            raise SqlmapValueException(errMsg)
+            raise FsqliValueException(errMsg)
 
         kb.injection = kb.injections[index]
 
@@ -172,10 +172,10 @@ def _showInjections():
         kb.wizardMode = False
 
     if kb.testQueryCount > 0:
-        header = "sqlmap identified the following injection point(s) with "
+        header = "fsqli identified the following injection point(s) with "
         header += "a total of %d HTTP(s) requests" % kb.testQueryCount
     else:
-        header = "sqlmap resumed the following injection point(s) from stored session"
+        header = "fsqli resumed the following injection point(s) from stored session"
 
     if conf.api:
         conf.dumper.string("", {"url": conf.url, "query": conf.parameters.get(PLACE.GET), "data": conf.parameters.get(PLACE.POST)}, content_type=CONTENT_TYPE.TARGET)
@@ -262,7 +262,7 @@ def _saveToResultsFile():
         conf.resultsFP.flush()
     except IOError as ex:
         errMsg = "unable to write to the results file '%s' ('%s'). " % (conf.resultsFile, getSafeExString(ex))
-        raise SqlmapSystemException(errMsg)
+        raise FsqliSystemException(errMsg)
 
 @stackedmethod
 def start():
@@ -320,7 +320,7 @@ def start():
 
                     if not valid:
                         errMsg = "please check your Internet connection and rerun"
-                        raise SqlmapConnectionException(errMsg)
+                        raise FsqliConnectionException(errMsg)
                     else:
                         dataToStdout("\n")
 
@@ -520,7 +520,7 @@ def start():
                                     choice = readInput(message, default='Y').upper()
 
                                     if choice == 'Q':
-                                        raise SqlmapUserQuitException
+                                        raise FsqliUserQuitException
                                     else:
                                         kb.processNonCustom = choice == 'Y'
 
@@ -661,7 +661,7 @@ def start():
                             advice.append("--crawl=2")
                         if advice:
                             errMsg += ". You are advised to rerun with '%s'" % ' '.join(advice)
-                    raise SqlmapNoneDataException(errMsg)
+                    raise FsqliNoneDataException(errMsg)
                 else:
                     errMsg = "all tested parameters do not appear to be injectable."
 
@@ -711,7 +711,7 @@ def start():
                         if not conf.randomAgent:
                             errMsg += " and/or switch '--random-agent'"
 
-                    raise SqlmapNotVulnerableException(errMsg.rstrip('.'))
+                    raise FsqliNotVulnerableException(errMsg.rstrip('.'))
             else:
                 # Flush the flag
                 kb.testMode = False
@@ -734,7 +734,7 @@ def start():
         except KeyboardInterrupt:
             if kb.lastCtrlCTime and (time.time() - kb.lastCtrlCTime < 1):
                 kb.multipleCtrlC = True
-                raise SqlmapUserQuitException("user aborted (Ctrl+C was pressed multiple times)")
+                raise FsqliUserQuitException("user aborted (Ctrl+C was pressed multiple times)")
 
             kb.lastCtrlCTime = time.time()
 
@@ -748,20 +748,20 @@ def start():
                 if choice == 'N':
                     return False
                 elif choice == 'Q':
-                    raise SqlmapUserQuitException
+                    raise FsqliUserQuitException
             else:
                 raise
 
-        except SqlmapSkipTargetException:
+        except FsqliSkipTargetException:
             pass
 
-        except SqlmapUserQuitException:
+        except FsqliUserQuitException:
             raise
 
-        except SqlmapSilentQuitException:
+        except FsqliSilentQuitException:
             raise
 
-        except SqlmapBaseException as ex:
+        except FsqliBaseException as ex:
             errMsg = getSafeExString(ex)
 
             if conf.multipleTargets:

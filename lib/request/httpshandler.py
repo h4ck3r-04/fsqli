@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -15,7 +15,7 @@ from lib.core.compat import xrange
 from lib.core.data import conf
 from lib.core.data import kb
 from lib.core.data import logger
-from lib.core.exception import SqlmapConnectionException
+from lib.core.exception import FsqliConnectionException
 from lib.core.settings import PYVERSION
 from thirdparty.six.moves import http_client as _http_client
 from thirdparty.six.moves import urllib as _urllib
@@ -41,7 +41,7 @@ class HTTPSConnection(_http_client.HTTPSConnection):
     """
 
     def __init__(self, *args, **kwargs):
-        # NOTE: Dirty patch for https://bugs.python.org/issue38251 / https://github.com/sqlmapproject/sqlmap/issues/4158
+        # NOTE: Dirty patch for https://bugs.python.org/issue38251 / https://github.com/fsqliproject/fsqli/issues/4158
         if hasattr(ssl, "_create_default_https_context"):
             if None not in _contexts:
                 _contexts[None] = ssl._create_default_https_context()
@@ -124,12 +124,12 @@ class HTTPSConnection(_http_client.HTTPSConnection):
                 for _ in xrange(conf.retries):
                     try:
                         self.connect()
-                    except SqlmapConnectionException:
+                    except FsqliConnectionException:
                         pass
                     else:
                         return
 
-            raise SqlmapConnectionException(errMsg)
+            raise FsqliConnectionException(errMsg)
         else:
             kb.sslSuccess = True
 

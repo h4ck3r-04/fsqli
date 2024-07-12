@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -41,9 +41,9 @@ from lib.core.enums import CONTENT_STATUS
 from lib.core.enums import CONTENT_TYPE
 from lib.core.enums import DBMS
 from lib.core.enums import DUMP_FORMAT
-from lib.core.exception import SqlmapGenericException
-from lib.core.exception import SqlmapSystemException
-from lib.core.exception import SqlmapValueException
+from lib.core.exception import FsqliGenericException
+from lib.core.exception import FsqliSystemException
+from lib.core.exception import FsqliValueException
 from lib.core.replication import Replication
 from lib.core.settings import DUMP_FILE_BUFFER_SIZE
 from lib.core.settings import HTML_DUMP_CSS_STYLE
@@ -88,7 +88,7 @@ class Dump(object):
                 self._outputFP.write(text)
             except IOError as ex:
                 errMsg = "error occurred while writing to log file ('%s')" % getSafeExString(ex)
-                raise SqlmapGenericException(errMsg)
+                raise FsqliGenericException(errMsg)
 
             if multiThreadMode:
                 self._lock.release()
@@ -112,7 +112,7 @@ class Dump(object):
             self._outputFP = openFile(self._outputFile, "ab" if not conf.flushSession else "wb")
         except IOError as ex:
             errMsg = "error occurred while opening log file ('%s')" % getSafeExString(ex)
-            raise SqlmapGenericException(errMsg)
+            raise FsqliGenericException(errMsg)
 
     def singleString(self, data, content_type=None):
         self._write(data, content_type=content_type)
@@ -418,7 +418,7 @@ class Dump(object):
             try:
                 dumpDbPath = os.path.join(conf.dumpPath, normalizeUnicode(unsafeSQLIdentificatorNaming(db)))
             except (UnicodeError, OSError):
-                tempDir = tempfile.mkdtemp(prefix="sqlmapdb")
+                tempDir = tempfile.mkdtemp(prefix="fsqlidb")
                 warnMsg = "currently unable to use regular dump directory. "
                 warnMsg += "Using temporary directory '%s' instead" % tempDir
                 logger.warning(warnMsg)
@@ -441,7 +441,7 @@ class Dump(object):
                         try:
                             os.makedirs(dumpDbPath)
                         except Exception as ex:
-                            tempDir = tempfile.mkdtemp(prefix="sqlmapdb")
+                            tempDir = tempfile.mkdtemp(prefix="fsqlidb")
                             warnMsg = "unable to create dump directory "
                             warnMsg += "'%s' (%s). " % (dumpDbPath, getSafeExString(ex))
                             warnMsg += "Using temporary directory '%s' instead" % tempDir
@@ -453,7 +453,7 @@ class Dump(object):
             if not checkFile(dumpFileName, False):
                 try:
                     openFile(dumpFileName, "w+b").close()
-                except SqlmapSystemException:
+                except FsqliSystemException:
                     raise
                 except:
                     warnFile = True
@@ -646,7 +646,7 @@ class Dump(object):
             if conf.dumpFormat == DUMP_FORMAT.SQLITE:
                 try:
                     rtable.insert(values)
-                except SqlmapValueException:
+                except FsqliValueException:
                     pass
             elif conf.dumpFormat == DUMP_FORMAT.CSV:
                 dataToDumpFile(dumpFP, "\n")

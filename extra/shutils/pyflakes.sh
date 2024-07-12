@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+# Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 # See the file 'LICENSE' for copying permission
 
 # Runs pyflakes on all python files (prerequisite: apt-get install pyflakes)

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -25,8 +25,8 @@ from lib.core.data import logger
 from lib.core.enums import CHARSET_TYPE
 from lib.core.enums import EXPECTED
 from lib.core.enums import PAYLOAD
-from lib.core.exception import SqlmapNoneDataException
-from lib.core.exception import SqlmapUnsupportedFeatureException
+from lib.core.exception import FsqliNoneDataException
+from lib.core.exception import FsqliUnsupportedFeatureException
 from lib.request import inject
 
 from plugins.generic.filesystem import Filesystem as GenericFilesystem
@@ -152,7 +152,7 @@ class Filesystem(GenericFilesystem):
             if not isNumPosStrValue(count):
                 errMsg = "unable to retrieve the content of the "
                 errMsg += "file '%s'" % remoteFile
-                raise SqlmapNoneDataException(errMsg)
+                raise FsqliNoneDataException(errMsg)
 
             indexRange = getLimitRange(count)
 
@@ -167,7 +167,7 @@ class Filesystem(GenericFilesystem):
     def unionWriteFile(self, localFile, remoteFile, fileType, forceCheck=False):
         errMsg = "Microsoft SQL Server does not support file upload with "
         errMsg += "UNION query SQL injection technique"
-        raise SqlmapUnsupportedFeatureException(errMsg)
+        raise FsqliUnsupportedFeatureException(errMsg)
 
     def _stackedWriteFilePS(self, tmpPath, localFileContent, remoteFile, fileType):
         infoMsg = "using PowerShell to write the %s file content " % fileType
@@ -234,7 +234,7 @@ class Filesystem(GenericFilesystem):
             self.execCmd(" & ".join(command for command in commands))
         else:
             debugMsg = "the file is larger than %d bytes. " % debugSize
-            debugMsg += "sqlmap will split it into chunks locally, upload "
+            debugMsg += "fsqli will split it into chunks locally, upload "
             debugMsg += "it chunk by chunk and recreate the original file "
             debugMsg += "on the server, please wait.."
             logger.debug(debugMsg)
@@ -333,7 +333,7 @@ class Filesystem(GenericFilesystem):
             Raq Vs
         Raq Shapgvba"""
 
-        # NOTE: https://github.com/sqlmapproject/sqlmap/issues/5581
+        # NOTE: https://github.com/fsqliproject/fsqli/issues/5581
         vbs = rot13(vbs)
         vbs = vbs.replace("    ", "")
         encodedFileContent = encodeBase64(localFileContent, binary=False)

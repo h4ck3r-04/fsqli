@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -11,7 +11,7 @@ from lib.core.data import conf
 from lib.core.data import kb
 from lib.core.data import logger
 from lib.core.dicts import FROM_DUMMY_TABLE
-from lib.core.exception import SqlmapNotVulnerableException
+from lib.core.exception import FsqliNotVulnerableException
 from lib.techniques.dns.use import dnsUse
 
 def dnsTest(payload):
@@ -27,7 +27,7 @@ def dnsTest(payload):
             errMsg += ". Turning off DNS exfiltration support"
             logger.error(errMsg)
         else:
-            raise SqlmapNotVulnerableException(errMsg)
+            raise FsqliNotVulnerableException(errMsg)
     else:
         infoMsg = "data retrieval through DNS channel was successful"
         logger.info(infoMsg)

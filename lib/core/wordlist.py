@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -9,8 +9,8 @@ import zipfile
 
 from lib.core.common import getSafeExString
 from lib.core.common import isZipFile
-from lib.core.exception import SqlmapDataException
-from lib.core.exception import SqlmapInstallationException
+from lib.core.exception import FsqliDataException
+from lib.core.exception import FsqliInstallationException
 from thirdparty import six
 
 class Wordlist(six.Iterator):
@@ -54,10 +54,10 @@ class Wordlist(six.Iterator):
                     errMsg = "something appears to be wrong with "
                     errMsg += "the file '%s' ('%s'). Please make " % (self.current, getSafeExString(ex))
                     errMsg += "sure that you haven't made any changes to it"
-                    raise SqlmapInstallationException(errMsg)
+                    raise FsqliInstallationException(errMsg)
                 if len(_.namelist()) == 0:
                     errMsg = "no file(s) inside '%s'" % self.current
-                    raise SqlmapDataException(errMsg)
+                    raise FsqliDataException(errMsg)
                 self.fp = _.open(_.namelist()[0])
             else:
                 self.fp = open(self.current, "rb")
@@ -80,7 +80,7 @@ class Wordlist(six.Iterator):
                 errMsg = "something appears to be wrong with "
                 errMsg += "the file '%s' ('%s'). Please make " % (self.current, getSafeExString(ex))
                 errMsg += "sure that you haven't made any changes to it"
-                raise SqlmapInstallationException(errMsg)
+                raise FsqliInstallationException(errMsg)
             except StopIteration:
                 self.adjust()
                 retVal = next(self.iter).rstrip()

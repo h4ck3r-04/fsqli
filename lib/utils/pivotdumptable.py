@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -26,8 +26,8 @@ from lib.core.data import queries
 from lib.core.dicts import DUMP_REPLACEMENTS
 from lib.core.enums import CHARSET_TYPE
 from lib.core.enums import EXPECTED
-from lib.core.exception import SqlmapConnectionException
-from lib.core.exception import SqlmapNoneDataException
+from lib.core.exception import FsqliConnectionException
+from lib.core.exception import FsqliNoneDataException
 from lib.core.settings import MAX_INT
 from lib.core.settings import NULL
 from lib.core.settings import SINGLE_QUOTE_MARKER
@@ -115,7 +115,7 @@ def pivotDumpTable(table, colList, count=None, blind=True, alias=None):
 
         if not validColumnList:
             errMsg = "all provided column name(s) are non-existent"
-            raise SqlmapNoneDataException(errMsg)
+            raise FsqliNoneDataException(errMsg)
 
         if not validPivotValue:
             warnMsg = "no proper pivot column provided (with unique values)."
@@ -175,12 +175,12 @@ def pivotDumpTable(table, colList, count=None, blind=True, alias=None):
     except KeyboardInterrupt:
         kb.dumpKeyboardInterrupt = True
 
-        warnMsg = "user aborted during enumeration. sqlmap "
+        warnMsg = "user aborted during enumeration. fsqli "
         warnMsg += "will display partial output"
         logger.warning(warnMsg)
 
-    except SqlmapConnectionException as ex:
-        errMsg = "connection exception detected ('%s'). sqlmap " % getSafeExString(ex)
+    except FsqliConnectionException as ex:
+        errMsg = "connection exception detected ('%s'). fsqli " % getSafeExString(ex)
         errMsg += "will display partial output"
 
         logger.critical(errMsg)

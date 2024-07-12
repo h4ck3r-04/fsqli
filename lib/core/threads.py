@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -20,12 +20,12 @@ from lib.core.data import kb
 from lib.core.data import logger
 from lib.core.datatype import AttribDict
 from lib.core.enums import PAYLOAD
-from lib.core.exception import SqlmapBaseException
-from lib.core.exception import SqlmapConnectionException
-from lib.core.exception import SqlmapSkipTargetException
-from lib.core.exception import SqlmapThreadException
-from lib.core.exception import SqlmapUserQuitException
-from lib.core.exception import SqlmapValueException
+from lib.core.exception import FsqliBaseException
+from lib.core.exception import FsqliConnectionException
+from lib.core.exception import FsqliSkipTargetException
+from lib.core.exception import FsqliThreadException
+from lib.core.exception import FsqliUserQuitException
+from lib.core.exception import FsqliValueException
 from lib.core.settings import MAX_NUMBER_OF_THREADS
 from lib.core.settings import PYVERSION
 
@@ -103,11 +103,11 @@ def exceptionHandledFunction(threadFunction, silent=False):
     except Exception as ex:
         from lib.core.common import getSafeExString
 
-        if not silent and kb.get("threadContinue") and not kb.get("multipleCtrlC") and not isinstance(ex, (SqlmapUserQuitException, SqlmapSkipTargetException)):
-            errMsg = getSafeExString(ex) if isinstance(ex, SqlmapBaseException) else "%s: %s" % (type(ex).__name__, getSafeExString(ex))
+        if not silent and kb.get("threadContinue") and not kb.get("multipleCtrlC") and not isinstance(ex, (FsqliUserQuitException, FsqliSkipTargetException)):
+            errMsg = getSafeExString(ex) if isinstance(ex, FsqliBaseException) else "%s: %s" % (type(ex).__name__, getSafeExString(ex))
             logger.error("thread %s: '%s'" % (threading.currentThread().getName(), errMsg))
 
-            if conf.get("verbose") > 1 and not isinstance(ex, SqlmapConnectionException):
+            if conf.get("verbose") > 1 and not isinstance(ex, FsqliConnectionException):
                 traceback.print_exc()
 
 def setDaemon(thread):
@@ -164,7 +164,7 @@ def runThreads(numThreads, threadFunction, cleanupFunction=None, forwardExceptio
         else:
             try:
                 _threadFunction()
-            except (SqlmapUserQuitException, SqlmapSkipTargetException):
+            except (FsqliUserQuitException, FsqliSkipTargetException):
                 pass
             finally:
                 return
@@ -195,7 +195,7 @@ def runThreads(numThreads, threadFunction, cleanupFunction=None, forwardExceptio
                     alive = True
                     time.sleep(0.1)
 
-    except (KeyboardInterrupt, SqlmapUserQuitException) as ex:
+    except (KeyboardInterrupt, FsqliUserQuitException) as ex:
         print()
         kb.prependFlag = False
         kb.threadContinue = False
@@ -203,7 +203,7 @@ def runThreads(numThreads, threadFunction, cleanupFunction=None, forwardExceptio
 
         if kb.lastCtrlCTime and (time.time() - kb.lastCtrlCTime < 1):
             kb.multipleCtrlC = True
-            raise SqlmapUserQuitException("user aborted (Ctrl+C was pressed multiple times)")
+            raise FsqliUserQuitException("user aborted (Ctrl+C was pressed multiple times)")
 
         kb.lastCtrlCTime = time.time()
 
@@ -215,17 +215,17 @@ def runThreads(numThreads, threadFunction, cleanupFunction=None, forwardExceptio
 
         except KeyboardInterrupt:
             kb.multipleCtrlC = True
-            raise SqlmapThreadException("user aborted (Ctrl+C was pressed multiple times)")
+            raise FsqliThreadException("user aborted (Ctrl+C was pressed multiple times)")
 
         if forwardException:
             raise
 
-    except (SqlmapConnectionException, SqlmapValueException) as ex:
+    except (FsqliConnectionException, FsqliValueException) as ex:
         print()
         kb.threadException = True
         logger.error("thread %s: '%s'" % (threading.currentThread().getName(), ex))
 
-        if conf.get("verbose") > 1 and isinstance(ex, SqlmapValueException):
+        if conf.get("verbose") > 1 and isinstance(ex, FsqliValueException):
             traceback.print_exc()
 
     except Exception as ex:

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -39,18 +39,18 @@ def update():
     success = False
 
     if TYPE == "pip":
-        infoMsg = "updating sqlmap to the latest stable version from the "
+        infoMsg = "updating fsqli to the latest stable version from the "
         infoMsg += "PyPI repository"
         logger.info(infoMsg)
 
-        debugMsg = "sqlmap will try to update itself using 'pip' command"
+        debugMsg = "fsqli will try to update itself using 'pip' command"
         logger.debug(debugMsg)
 
         dataToStdout("\r[%s] [INFO] update in progress" % time.strftime("%X"))
 
         output = ""
         try:
-            process = subprocess.Popen("pip install -U sqlmap", shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=paths.SQLMAP_ROOT_PATH)
+            process = subprocess.Popen("pip install -U fsqli", shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=paths.FSQLI_ROOT_PATH)
             pollProcess(process, True)
             output, _ = process.communicate()
             success = not process.returncode
@@ -61,13 +61,13 @@ def update():
             output = getText(output)
 
         if success:
-            logger.info("%s the latest revision '%s'" % ("already at" if "already up-to-date" in output else "updated to", extractRegexResult(r"\binstalled sqlmap-(?P<result>\d+\.\d+\.\d+)", output) or extractRegexResult(r"\((?P<result>\d+\.\d+\.\d+)\)", output)))
+            logger.info("%s the latest revision '%s'" % ("already at" if "already up-to-date" in output else "updated to", extractRegexResult(r"\binstalled fsqli-(?P<result>\d+\.\d+\.\d+)", output) or extractRegexResult(r"\((?P<result>\d+\.\d+\.\d+)\)", output)))
         else:
             logger.error("update could not be completed ('%s')" % re.sub(r"[^a-z0-9:/\\]+", " ", output).strip())
 
-    elif not os.path.exists(os.path.join(paths.SQLMAP_ROOT_PATH, ".git")):
-        warnMsg = "not a git repository. It is recommended to clone the 'sqlmapproject/sqlmap' repository "
-        warnMsg += "from GitHub (e.g. 'git clone --depth 1 %s sqlmap')" % GIT_REPOSITORY
+    elif not os.path.exists(os.path.join(paths.FSQLI_ROOT_PATH, ".git")):
+        warnMsg = "not a git repository. It is recommended to clone the 'fsqliproject/fsqli' repository "
+        warnMsg += "from GitHub (e.g. 'git clone --depth 1 %s fsqli')" % GIT_REPOSITORY
         logger.warning(warnMsg)
 
         if VERSION == getLatestRevision():
@@ -76,15 +76,15 @@ def update():
 
         message = "do you want to try to fetch the latest 'zipball' from repository and extract it (experimental) ? [y/N]"
         if readInput(message, default='N', boolean=True):
-            directory = os.path.abspath(paths.SQLMAP_ROOT_PATH)
+            directory = os.path.abspath(paths.FSQLI_ROOT_PATH)
 
             try:
-                open(os.path.join(directory, "sqlmap.py"), "w+b")
+                open(os.path.join(directory, "fsqli.py"), "w+b")
             except Exception as ex:
                 errMsg = "unable to update content of directory '%s' ('%s')" % (directory, getSafeExString(ex))
                 logger.error(errMsg)
             else:
-                attrs = os.stat(os.path.join(directory, "sqlmap.py")).st_mode
+                attrs = os.stat(os.path.join(directory, "fsqli.py")).st_mode
                 for wildcard in ('*', ".*"):
                     for _ in glob.glob(os.path.join(directory, wildcard)):
                         try:
@@ -104,11 +104,11 @@ def update():
 
                         with zipfile.ZipFile(archive) as f:
                             for info in f.infolist():
-                                info.filename = re.sub(r"\Asqlmap[^/]+", "", info.filename)
+                                info.filename = re.sub(r"\Afsqli[^/]+", "", info.filename)
                                 if info.filename:
                                     f.extract(info, directory)
 
-                        filepath = os.path.join(paths.SQLMAP_ROOT_PATH, "lib", "core", "settings.py")
+                        filepath = os.path.join(paths.FSQLI_ROOT_PATH, "lib", "core", "settings.py")
                         if os.path.isfile(filepath):
                             with openFile(filepath, "rb") as f:
                                 version = re.search(r"(?m)^VERSION\s*=\s*['\"]([^'\"]+)", f.read()).group(1)
@@ -121,23 +121,23 @@ def update():
                             logger.error("update could not be completed")
                         else:
                             try:
-                                os.chmod(os.path.join(directory, "sqlmap.py"), attrs)
+                                os.chmod(os.path.join(directory, "fsqli.py"), attrs)
                             except OSError:
-                                logger.warning("could not set the file attributes of '%s'" % os.path.join(directory, "sqlmap.py"))
+                                logger.warning("could not set the file attributes of '%s'" % os.path.join(directory, "fsqli.py"))
 
     else:
-        infoMsg = "updating sqlmap to the latest development revision from the "
+        infoMsg = "updating fsqli to the latest development revision from the "
         infoMsg += "GitHub repository"
         logger.info(infoMsg)
 
-        debugMsg = "sqlmap will try to update itself using 'git' command"
+        debugMsg = "fsqli will try to update itself using 'git' command"
         logger.debug(debugMsg)
 
         dataToStdout("\r[%s] [INFO] update in progress" % time.strftime("%X"))
 
         output = ""
         try:
-            process = subprocess.Popen("git checkout . && git pull %s HEAD" % GIT_REPOSITORY, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=paths.SQLMAP_ROOT_PATH)
+            process = subprocess.Popen("git checkout . && git pull %s HEAD" % GIT_REPOSITORY, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=paths.FSQLI_ROOT_PATH)
             pollProcess(process, True)
             output, _ = process.communicate()
             success = not process.returncode
@@ -151,8 +151,8 @@ def update():
             logger.info("%s the latest revision '%s'" % ("already at" if "Already" in output else "updated to", getRevisionNumber()))
         else:
             if "Not a git repository" in output:
-                errMsg = "not a valid git repository. Please checkout the 'sqlmapproject/sqlmap' repository "
-                errMsg += "from GitHub (e.g. 'git clone --depth 1 %s sqlmap')" % GIT_REPOSITORY
+                errMsg = "not a valid git repository. Please checkout the 'fsqliproject/fsqli' repository "
+                errMsg += "from GitHub (e.g. 'git clone --depth 1 %s fsqli')" % GIT_REPOSITORY
                 logger.error(errMsg)
             else:
                 logger.error("update could not be completed ('%s')" % re.sub(r"\W+", " ", output).strip())
@@ -163,7 +163,7 @@ def update():
             infoMsg += "to use a GitHub for Windows client for updating "
             infoMsg += "purposes (https://desktop.github.com/) or just "
             infoMsg += "download the latest snapshot from "
-            infoMsg += "https://github.com/sqlmapproject/sqlmap/downloads"
+            infoMsg += "https://github.com/fsqliproject/fsqli/downloads"
         else:
             infoMsg = "for Linux platform it's recommended "
             infoMsg += "to install a standard 'git' package (e.g.: 'apt install git')"

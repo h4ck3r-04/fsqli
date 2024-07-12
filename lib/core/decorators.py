@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -43,7 +43,7 @@ def cachedmethod(f):
     def _f(*args, **kwargs):
         try:
             key = int(hashlib.md5("|".join(str(_) for _ in (f, args, kwargs)).encode(UNICODE_ENCODING)).hexdigest(), 16) & 0x7fffffffffffffff
-        except ValueError:  # https://github.com/sqlmapproject/sqlmap/issues/4281 (NOTE: non-standard Python behavior where hexdigest returns binary value)
+        except ValueError:  # https://github.com/fsqliproject/fsqli/issues/4281 (NOTE: non-standard Python behavior where hexdigest returns binary value)
             result = f(*args, **kwargs)
         else:
             try:

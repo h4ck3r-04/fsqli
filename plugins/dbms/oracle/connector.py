@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -18,7 +18,7 @@ from lib.core.common import getSafeExString
 from lib.core.convert import getText
 from lib.core.data import conf
 from lib.core.data import logger
-from lib.core.exception import SqlmapConnectionException
+from lib.core.exception import FsqliConnectionException
 from plugins.generic.connector import Connector as GenericConnector
 
 os.environ["NLS_LANG"] = ".AL32UTF8"
@@ -46,12 +46,12 @@ class Connector(GenericConnector):
                 msg = re.sub(r"DPI-\d+:\s+", "", getSafeExString(ex))
                 msg = re.sub(r': ("[^"]+")', r" (\g<1>)", msg)
                 msg = re.sub(r". See (http[^ ]+)", r'. See "\g<1>"', msg)
-                raise SqlmapConnectionException(msg)
+                raise FsqliConnectionException(msg)
 
             try:
                 self.connector = cx_Oracle.connect(dsn=self.__dsn, user=self.user, password=self.password)
             except (cx_Oracle.OperationalError, cx_Oracle.DatabaseError, cx_Oracle.InterfaceError) as ex:
-                raise SqlmapConnectionException(ex)
+                raise FsqliConnectionException(ex)
 
         self.initCursor()
         self.printConnected()

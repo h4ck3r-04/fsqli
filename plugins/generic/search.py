@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -30,8 +30,8 @@ from lib.core.enums import CHARSET_TYPE
 from lib.core.enums import DBMS
 from lib.core.enums import EXPECTED
 from lib.core.enums import PAYLOAD
-from lib.core.exception import SqlmapMissingMandatoryOptionException
-from lib.core.exception import SqlmapUserQuitException
+from lib.core.exception import FsqliMissingMandatoryOptionException
+from lib.core.exception import FsqliUserQuitException
 from lib.core.settings import CURRENT_DB
 from lib.core.settings import METADB_SUFFIX
 from lib.core.settings import UPPER_CASE_DBMSES
@@ -155,7 +155,7 @@ class Search(object):
             if choice == 'N':
                 return
             elif choice == 'Q':
-                raise SqlmapUserQuitException
+                raise FsqliUserQuitException
             else:
                 regex = '|'.join(conf.tbl.split(','))
                 return tableExists(paths.COMMON_TABLES, regex)
@@ -362,7 +362,7 @@ class Search(object):
             if choice == 'N':
                 return
             elif choice == 'Q':
-                raise SqlmapUserQuitException
+                raise FsqliUserQuitException
             else:
                 regex = '|'.join(conf.col.split(','))
                 conf.dumper.dbTableColumns(columnExists(paths.COMMON_COLUMNS, regex))
@@ -637,4 +637,4 @@ class Search(object):
         else:
             errMsg = "missing parameter, provide -D, -T or -C along "
             errMsg += "with --search"
-            raise SqlmapMissingMandatoryOptionException(errMsg)
+            raise FsqliMissingMandatoryOptionException(errMsg)

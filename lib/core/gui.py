@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -19,8 +19,8 @@ from lib.core.common import saveConfig
 from lib.core.data import paths
 from lib.core.defaults import defaults
 from lib.core.enums import MKSTEMP_PREFIX
-from lib.core.exception import SqlmapMissingDependence
-from lib.core.exception import SqlmapSystemException
+from lib.core.exception import FsqliMissingDependence
+from lib.core.exception import FsqliSystemException
 from lib.core.settings import DEV_EMAIL_ADDRESS
 from lib.core.settings import IS_WIN
 from lib.core.settings import ISSUES_PAGE
@@ -42,7 +42,7 @@ def runGui(parser):
         from thirdparty.six.moves import tkinter_ttk as _tkinter_ttk
         from thirdparty.six.moves import tkinter_messagebox as _tkinter_messagebox
     except ImportError as ex:
-        raise SqlmapMissingDependence("missing dependence ('%s')" % getSafeExString(ex))
+        raise FsqliMissingDependence("missing dependence ('%s')" % getSafeExString(ex))
 
     # Reference: https://www.reddit.com/r/learnpython/comments/985umy/limit_user_input_to_only_int_with_tkinter/e4dj9k9?utm_source=share&utm_medium=web2x
     class ConstrainedEntry(_tkinter.Entry):
@@ -77,7 +77,7 @@ def runGui(parser):
         window = _tkinter.Tk()
     except Exception as ex:
         errMsg = "unable to create GUI window ('%s')" % getSafeExString(ex)
-        raise SqlmapSystemException(errMsg)
+        raise FsqliSystemException(errMsg)
 
     window.title(VERSION_STRING)
 
@@ -173,7 +173,7 @@ def runGui(parser):
 
         alive = True
 
-        process = subprocess.Popen([sys.executable or "python", os.path.join(paths.SQLMAP_ROOT_PATH, "sqlmap.py"), "-c", configFile], shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, bufsize=1, close_fds=not IS_WIN)
+        process = subprocess.Popen([sys.executable or "python", os.path.join(paths.FSQLI_ROOT_PATH, "fsqli.py"), "-c", configFile], shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, bufsize=1, close_fds=not IS_WIN)
 
         # Reference: https://stackoverflow.com/a/4896288
         queue = _queue.Queue()

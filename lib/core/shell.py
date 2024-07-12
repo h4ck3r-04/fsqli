@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -66,7 +66,7 @@ def saveHistory(completion=None):
         elif completion == AUTOCOMPLETE_TYPE.API:
             historyPath = paths.API_SHELL_HISTORY
         else:
-            historyPath = paths.SQLMAP_SHELL_HISTORY
+            historyPath = paths.FSQLI_SHELL_HISTORY
 
         try:
             with open(historyPath, "w+"):
@@ -96,7 +96,7 @@ def loadHistory(completion=None):
     elif completion == AUTOCOMPLETE_TYPE.API:
         historyPath = paths.API_SHELL_HISTORY
     else:
-        historyPath = paths.SQLMAP_SHELL_HISTORY
+        historyPath = paths.FSQLI_SHELL_HISTORY
 
     if os.path.exists(historyPath):
         try:

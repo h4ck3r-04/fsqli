@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -11,7 +11,7 @@ from lib.core.common import Backend
 from lib.core.convert import getBytes
 from lib.core.data import conf
 from lib.core.enums import DBMS
-from lib.core.exception import SqlmapUndefinedMethod
+from lib.core.exception import FsqliUndefinedMethod
 
 class Syntax(object):
     """
@@ -47,4 +47,4 @@ class Syntax(object):
     def escape(expression, quote=True):
         errMsg = "'escape' method must be defined "
         errMsg += "inside the specific DBMS plugin"
-        raise SqlmapUndefinedMethod(errMsg)
+        raise FsqliUndefinedMethod(errMsg)

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -20,7 +20,7 @@ from lib.core.convert import getBytes
 from lib.core.data import conf
 from lib.core.data import kb
 from lib.core.data import logger
-from lib.core.exception import SqlmapNoneDataException
+from lib.core.exception import FsqliNoneDataException
 from lib.core.settings import DEFAULT_PAGE_ENCODING
 from lib.core.settings import DIFF_TOLERANCE
 from lib.core.settings import HTML_TITLE_REGEX
@@ -106,9 +106,9 @@ def _comparison(page, headers, code, getRatioValue, pageLength):
     if kb.nullConnection and pageLength:
         if not seqMatcher.a:
             errMsg = "problem occurred while retrieving original page content "
-            errMsg += "which prevents sqlmap from continuation. Please rerun, "
+            errMsg += "which prevents fsqli from continuation. Please rerun, "
             errMsg += "and if the problem persists turn off any optimization switches"
-            raise SqlmapNoneDataException(errMsg)
+            raise FsqliNoneDataException(errMsg)
 
         ratio = 1. * pageLength / len(seqMatcher.a)
 

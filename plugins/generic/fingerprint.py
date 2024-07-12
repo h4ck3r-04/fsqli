@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -9,7 +9,7 @@ from lib.core.common import Backend
 from lib.core.common import readInput
 from lib.core.data import logger
 from lib.core.enums import OS
-from lib.core.exception import SqlmapUndefinedMethod
+from lib.core.exception import FsqliUndefinedMethod
 
 class Fingerprint(object):
     """
@@ -22,23 +22,23 @@ class Fingerprint(object):
     def getFingerprint(self):
         errMsg = "'getFingerprint' method must be defined "
         errMsg += "into the specific DBMS plugin"
-        raise SqlmapUndefinedMethod(errMsg)
+        raise FsqliUndefinedMethod(errMsg)
 
     def checkDbms(self):
         errMsg = "'checkDbms' method must be defined "
         errMsg += "into the specific DBMS plugin"
-        raise SqlmapUndefinedMethod(errMsg)
+        raise FsqliUndefinedMethod(errMsg)
 
     def checkDbmsOs(self, detailed=False):
         errMsg = "'checkDbmsOs' method must be defined "
         errMsg += "into the specific DBMS plugin"
-        raise SqlmapUndefinedMethod(errMsg)
+        raise FsqliUndefinedMethod(errMsg)
 
     def forceDbmsEnum(self):
         pass
 
     def userChooseDbmsOs(self):
-        warnMsg = "for some reason sqlmap was unable to fingerprint "
+        warnMsg = "for some reason fsqli was unable to fingerprint "
         warnMsg += "the back-end DBMS operating system"
         logger.warning(warnMsg)
 

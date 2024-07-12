@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -16,8 +16,8 @@ from lib.core.common import getSafeExString
 from lib.core.convert import getText
 from lib.core.data import conf
 from lib.core.data import logger
-from lib.core.exception import SqlmapConnectionException
-from lib.core.exception import SqlmapMissingDependence
+from lib.core.exception import FsqliConnectionException
+from lib.core.exception import FsqliMissingDependence
 from plugins.generic.connector import Connector as GenericConnector
 
 class Connector(GenericConnector):
@@ -54,14 +54,14 @@ class Connector(GenericConnector):
                 try:
                     import sqlite
                 except ImportError:
-                    errMsg = "sqlmap requires 'python-sqlite' third-party library "
+                    errMsg = "fsqli requires 'python-sqlite' third-party library "
                     errMsg += "in order to directly connect to the database '%s'" % self.db
-                    raise SqlmapMissingDependence(errMsg)
+                    raise FsqliMissingDependence(errMsg)
 
                 self.__sqlite = sqlite
                 self.connector = self.__sqlite.connect(database=self.db, check_same_thread=False, timeout=conf.timeout)
             except (self.__sqlite.DatabaseError, self.__sqlite.OperationalError) as ex:
-                raise SqlmapConnectionException(getSafeExString(ex))
+                raise FsqliConnectionException(getSafeExString(ex))
 
         self.initCursor()
         self.printConnected()
@@ -79,7 +79,7 @@ class Connector(GenericConnector):
         except self.__sqlite.OperationalError as ex:
             logger.log(logging.WARN if conf.dbmsHandler else logging.DEBUG, "(remote) '%s'" % getSafeExString(ex))
         except self.__sqlite.DatabaseError as ex:
-            raise SqlmapConnectionException(getSafeExString(ex))
+            raise FsqliConnectionException(getSafeExString(ex))
 
         self.connector.commit()
 

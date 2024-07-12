@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -18,7 +18,7 @@ from lib.core.common import getSafeExString
 from lib.core.common import readInput
 from lib.core.data import conf
 from lib.core.data import logger
-from lib.core.exception import SqlmapConnectionException
+from lib.core.exception import FsqliConnectionException
 from plugins.generic.connector import Connector as GenericConnector
 
 class Connector(GenericConnector):
@@ -40,14 +40,14 @@ class Connector(GenericConnector):
             jvm_path = jpype.getDefaultJVMPath()
             jpype.startJVM(jvm_path, args)
         except Exception as ex:
-            raise SqlmapConnectionException(getSafeExString(ex))
+            raise FsqliConnectionException(getSafeExString(ex))
 
         try:
             driver = 'org.hsqldb.jdbc.JDBCDriver'
             connection_string = 'jdbc:hsqldb:mem:.'  # 'jdbc:hsqldb:hsql://%s/%s' % (self.hostname, self.db)
             self.connector = jaydebeapi.connect(driver, connection_string, str(self.user), str(self.password))
         except Exception as ex:
-            raise SqlmapConnectionException(getSafeExString(ex))
+            raise FsqliConnectionException(getSafeExString(ex))
 
         self.initCursor()
         self.printConnected()

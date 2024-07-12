@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -22,9 +22,9 @@ from lib.core.decorators import stackedmethod
 from lib.core.enums import CUSTOM_LOGGING
 from lib.core.enums import HTTP_HEADER
 from lib.core.enums import REDIRECTION
-from lib.core.exception import SqlmapBaseException
-from lib.core.exception import SqlmapConnectionException
-from lib.core.exception import SqlmapUserQuitException
+from lib.core.exception import FsqliBaseException
+from lib.core.exception import FsqliConnectionException
+from lib.core.exception import FsqliUserQuitException
 from lib.core.settings import BING_REGEX
 from lib.core.settings import DUCKDUCKGO_REGEX
 from lib.core.settings import DUMMY_SEARCH_USER_AGENT
@@ -60,7 +60,7 @@ def _search(dork):
         conn = _urllib.request.urlopen(req)
     except Exception as ex:
         errMsg = "unable to connect to Google ('%s')" % getSafeExString(ex)
-        raise SqlmapConnectionException(errMsg)
+        raise FsqliConnectionException(errMsg)
 
     gpage = conf.googlePage if conf.googlePage > 1 else 1
     logger.info("using search result page #%d" % gpage)
@@ -102,7 +102,7 @@ def _search(dork):
             return None
     except (_urllib.error.URLError, _http_client.error, socket.error, socket.timeout, socks.ProxyError):
         errMsg = "unable to connect to Google"
-        raise SqlmapConnectionException(errMsg)
+        raise FsqliConnectionException(errMsg)
 
     page = decodePage(page, responseHeaders.get(HTTP_HEADER.CONTENT_ENCODING), responseHeaders.get(HTTP_HEADER.CONTENT_TYPE))
 
@@ -115,7 +115,7 @@ def _search(dork):
         warnMsg += "used IP address disabling further searches"
 
         if conf.proxyList:
-            raise SqlmapBaseException(warnMsg)
+            raise FsqliBaseException(warnMsg)
         else:
             logger.critical(warnMsg)
 
@@ -127,7 +127,7 @@ def _search(dork):
         choice = readInput(message, default='1')
 
         if choice == '3':
-            raise SqlmapUserQuitException
+            raise FsqliUserQuitException
         elif choice == '2':
             url = "https://www.bing.com/search?q=%s&first=%d" % (urlencode(dork, convall=True), (gpage - 1) * 10 + 1)
             regex = BING_REGEX
@@ -169,7 +169,7 @@ def _search(dork):
                 return None
         except:
             errMsg = "unable to connect"
-            raise SqlmapConnectionException(errMsg)
+            raise FsqliConnectionException(errMsg)
 
         page = getUnicode(page)  # Note: if decodePage call fails (Issue #4202)
 
@@ -180,7 +180,7 @@ def _search(dork):
             warnMsg += "used (Tor) IP address"
 
             if conf.proxyList:
-                raise SqlmapBaseException(warnMsg)
+                raise FsqliBaseException(warnMsg)
             else:
                 logger.critical(warnMsg)
 
@@ -193,7 +193,7 @@ def search(dork):
 
     try:
         return _search(dork)
-    except SqlmapBaseException as ex:
+    except FsqliBaseException as ex:
         if conf.proxyList:
             logger.critical(getSafeExString(ex))
 

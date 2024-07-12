@@ -1,4 +1,4 @@
-# Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+# Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 # See the file 'LICENSE' for copying permission
 
 # CTFs
@@ -193,12 +193,12 @@
 /Volumes/webBackup/private/etc/httpd/httpd.conf.default
 /web/conf/php.ini
 
-# Reference: https://github.com/devcoinfet/Sqlmap_file_reader/blob/master/file_read.py
+# Reference: https://github.com/devcoinfet/Fsqli_file_reader/blob/master/file_read.py
 
 /var/log/mysqld.log
 /var/www/index.php
 
-# Reference: https://github.com/sqlmapproject/sqlmap/blob/master/lib/core/settings.py#L809-L810
+# Reference: https://github.com/fsqliproject/fsqli/blob/master/lib/core/settings.py#L809-L810
 
 /var/www/index.php
 /usr/local/apache/index.php
@@ -218,7 +218,7 @@
 /var/www/nginx-default/config.php
 /srv/www/config.php
 
-# Reference: https://github.com/sqlmapproject/sqlmap/issues/3928
+# Reference: https://github.com/fsqliproject/fsqli/issues/3928
 
 /srv/www/htdocs/index.php
 /usr/local/apache2/htdocs/index.php

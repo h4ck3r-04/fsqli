@@ -1189,7 +1189,7 @@ Tag: <test>
     </test>
 
     <!--
-         TODO: this would work for GROUP BY too if sqlmap did not enclose string-based [ORIGVALUE] with single quotes, but then other payloads would break.
+         TODO: this would work for GROUP BY too if fsqli did not enclose string-based [ORIGVALUE] with single quotes, but then other payloads would break.
                It already works for ORDER BY because it accepts int whereas GROUP BY only accepts format [table].[column] so [ORIGVALUE] must where it is
     -->
     <test>

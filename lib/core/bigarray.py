@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -18,7 +18,7 @@ import zlib
 
 from lib.core.compat import xrange
 from lib.core.enums import MKSTEMP_PREFIX
-from lib.core.exception import SqlmapSystemException
+from lib.core.exception import FsqliSystemException
 from lib.core.settings import BIGARRAY_CHUNK_SIZE
 from lib.core.settings import BIGARRAY_COMPRESS_LEVEL
 
@@ -119,7 +119,7 @@ class BigArray(list):
             except IOError as ex:
                 errMsg = "exception occurred while retrieving data "
                 errMsg += "from a temporary file ('%s')" % ex
-                raise SqlmapSystemException(errMsg)
+                raise FsqliSystemException(errMsg)
 
         return self.chunks[-1].pop()
 
@@ -144,7 +144,7 @@ class BigArray(list):
             errMsg += "make sure that there is enough disk space left. If problem persists, "
             errMsg += "try to set environment variable 'TEMP' to a location "
             errMsg += "writeable by the current user"
-            raise SqlmapSystemException(errMsg)
+            raise FsqliSystemException(errMsg)
 
     def _checkcache(self, index):
         if (self.cache and self.cache.index != index and self.cache.dirty):
@@ -158,7 +158,7 @@ class BigArray(list):
             except Exception as ex:
                 errMsg = "exception occurred while retrieving data "
                 errMsg += "from a temporary file ('%s')" % ex
-                raise SqlmapSystemException(errMsg)
+                raise FsqliSystemException(errMsg)
 
     def __getstate__(self):
         return self.chunks, self.filenames

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -44,7 +44,7 @@ from lib.core.dicts import FROM_DUMMY_TABLE
 from lib.core.enums import DBMS
 from lib.core.enums import HASHDB_KEYS
 from lib.core.enums import HTTP_HEADER
-from lib.core.exception import SqlmapDataException
+from lib.core.exception import FsqliDataException
 from lib.core.settings import CHECK_ZERO_COLUMNS_THRESHOLD
 from lib.core.settings import MAX_ERROR_CHUNK_LENGTH
 from lib.core.settings import MIN_ERROR_CHUNK_LENGTH
@@ -349,7 +349,7 @@ def errorUse(expression, dump=False):
             elif count and not count.isdigit():
                 warnMsg = "it was not possible to count the number "
                 warnMsg += "of entries for the SQL query provided. "
-                warnMsg += "sqlmap will assume that it returns only "
+                warnMsg += "fsqli will assume that it returns only "
                 warnMsg += "one entry"
                 logger.warning(warnMsg)
 
@@ -381,7 +381,7 @@ def errorUse(expression, dump=False):
                 except OverflowError:
                     errMsg = "boundary limits (%d,%d) are too large. Please rerun " % (startLimit, stopLimit)
                     errMsg += "with switch '--fresh-queries'"
-                    raise SqlmapDataException(errMsg)
+                    raise FsqliDataException(errMsg)
 
                 threadData.shared.value = BigArray()
                 threadData.shared.buffered = []
@@ -443,7 +443,7 @@ def errorUse(expression, dump=False):
 
                 except KeyboardInterrupt:
                     abortedFlag = True
-                    warnMsg = "user aborted during enumeration. sqlmap "
+                    warnMsg = "user aborted during enumeration. fsqli "
                     warnMsg += "will display partial output"
                     logger.warning(warnMsg)
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -38,8 +38,8 @@ from lib.core.enums import ADJUST_TIME_DELAY
 from lib.core.enums import CHARSET_TYPE
 from lib.core.enums import DBMS
 from lib.core.enums import PAYLOAD
-from lib.core.exception import SqlmapThreadException
-from lib.core.exception import SqlmapUnsupportedFeatureException
+from lib.core.exception import FsqliThreadException
+from lib.core.exception import FsqliUnsupportedFeatureException
 from lib.core.settings import CHAR_INFERENCE_MARK
 from lib.core.settings import INFERENCE_BLANK_BREAK
 from lib.core.settings import INFERENCE_EQUALS_CHAR
@@ -456,7 +456,7 @@ def bisection(payload, expression, length=None, charsetType=None, firstChar=None
             else:
                 if "'%s'" % CHAR_INFERENCE_MARK in payload and conf.charset:
                     errMsg = "option '--charset' is not supported on '%s'" % Backend.getIdentifiedDbms()
-                    raise SqlmapUnsupportedFeatureException(errMsg)
+                    raise FsqliUnsupportedFeatureException(errMsg)
 
                 candidates = list(originalTbl)
                 bit = 0
@@ -517,7 +517,7 @@ def bisection(payload, expression, length=None, charsetType=None, firstChar=None
                         else:
                             break
 
-                        # NOTE: https://github.com/sqlmapproject/sqlmap/issues/4629
+                        # NOTE: https://github.com/fsqliproject/fsqli/issues/4629
                         if not isListLike(threadData.shared.value):
                             break
 
@@ -711,7 +711,7 @@ def bisection(payload, expression, length=None, charsetType=None, firstChar=None
             logger.info(infoMsg)
 
     if kb.threadException:
-        raise SqlmapThreadException("something unexpected happened inside the threads")
+        raise FsqliThreadException("something unexpected happened inside the threads")
 
     if abortedFlag:
         raise KeyboardInterrupt

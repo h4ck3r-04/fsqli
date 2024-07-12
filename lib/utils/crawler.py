@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -29,8 +29,8 @@ from lib.core.data import kb
 from lib.core.data import logger
 from lib.core.datatype import OrderedSet
 from lib.core.enums import MKSTEMP_PREFIX
-from lib.core.exception import SqlmapConnectionException
-from lib.core.exception import SqlmapSyntaxException
+from lib.core.exception import FsqliConnectionException
+from lib.core.exception import FsqliSyntaxException
 from lib.core.settings import CRAWL_EXCLUDE_EXTENSIONS
 from lib.core.threads import getCurrentThreadData
 from lib.core.threads import runThreads
@@ -73,11 +73,11 @@ def crawl(target, post=None, cookie=None):
                 try:
                     if current:
                         content = Request.getPage(url=current, post=post, cookie=None, crawling=True, raise404=False)[0]
-                except SqlmapConnectionException as ex:
+                except FsqliConnectionException as ex:
                     errMsg = "connection exception detected ('%s'). skipping " % getSafeExString(ex)
                     errMsg += "URL '%s'" % current
                     logger.critical(errMsg)
-                except SqlmapSyntaxException:
+                except FsqliSyntaxException:
                     errMsg = "invalid URL detected. skipping '%s'" % current
                     logger.critical(errMsg)
                 except _http_client.InvalidURL as ex:
@@ -159,7 +159,7 @@ def crawl(target, post=None, cookie=None):
             url = _urllib.parse.urljoin(target, "/sitemap.xml")
             try:
                 items = parseSitemap(url)
-            except SqlmapConnectionException as ex:
+            except FsqliConnectionException as ex:
                 if "page not found" in getSafeExString(ex):
                     found = False
                     logger.warning("'sitemap.xml' not found")
@@ -196,7 +196,7 @@ def crawl(target, post=None, cookie=None):
                 break
 
     except KeyboardInterrupt:
-        warnMsg = "user aborted during crawling. sqlmap "
+        warnMsg = "user aborted during crawling. fsqli "
         warnMsg += "will use partial list"
         logger.warning(warnMsg)
 

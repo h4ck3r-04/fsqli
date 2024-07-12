@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -20,7 +20,7 @@ from lib.core.common import readInput
 from lib.core.data import conf
 from lib.core.data import logger
 from lib.core.data import paths
-from lib.core.exception import SqlmapDataException
+from lib.core.exception import FsqliDataException
 
 class ICMPsh(object):
     """
@@ -32,7 +32,7 @@ class ICMPsh(object):
         self.rhostStr = None
         self.localIP = getLocalIP()
         self.remoteIP = getRemoteIP() or conf.hostname
-        self._icmpslave = normalizePath(os.path.join(paths.SQLMAP_EXTRAS_PATH, "icmpsh", "icmpsh.exe_"))
+        self._icmpslave = normalizePath(os.path.join(paths.FSQLI_EXTRAS_PATH, "icmpsh", "icmpsh.exe_"))
 
     def _selectRhost(self):
         address = None
@@ -45,7 +45,7 @@ class ICMPsh(object):
             address = readInput(message, default=self.remoteIP)
 
             if conf.batch and not address:
-                raise SqlmapDataException("remote host address is missing")
+                raise FsqliDataException("remote host address is missing")
 
         return address
 
@@ -69,7 +69,7 @@ class ICMPsh(object):
                 valid = valid and re.search(r"\d+\.\d+\.\d+\.\d+", address) is not None
 
             if conf.batch and not address:
-                raise SqlmapDataException("local host address is missing")
+                raise FsqliDataException("local host address is missing")
             elif address and not valid:
                 warnMsg = "invalid local host address"
                 logger.warning(warnMsg)

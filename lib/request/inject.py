@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -48,10 +48,10 @@ from lib.core.enums import CHARSET_TYPE
 from lib.core.enums import DBMS
 from lib.core.enums import EXPECTED
 from lib.core.enums import PAYLOAD
-from lib.core.exception import SqlmapConnectionException
-from lib.core.exception import SqlmapDataException
-from lib.core.exception import SqlmapNotVulnerableException
-from lib.core.exception import SqlmapUserQuitException
+from lib.core.exception import FsqliConnectionException
+from lib.core.exception import FsqliDataException
+from lib.core.exception import FsqliNotVulnerableException
+from lib.core.exception import FsqliUserQuitException
 from lib.core.settings import GET_VALUE_UPPERCASE_KEYWORDS
 from lib.core.settings import INFERENCE_MARKER
 from lib.core.settings import MAX_TECHNIQUES_PER_VALUE
@@ -188,7 +188,7 @@ def _goInferenceProxy(expression, fromUser=False, batch=False, unpack=True, char
 
     if len(expressionFieldsList) > 1:
         infoMsg = "the SQL query provided has more than one field. "
-        infoMsg += "sqlmap will now unpack it into distinct queries "
+        infoMsg += "fsqli will now unpack it into distinct queries "
         infoMsg += "to be able to retrieve the output even if we "
         infoMsg += "are going blind"
         logger.info(infoMsg)
@@ -237,12 +237,12 @@ def _goInferenceProxy(expression, fromUser=False, batch=False, unpack=True, char
                                 stopLimit = count
 
                             elif choice == 'Q':
-                                raise SqlmapUserQuitException
+                                raise FsqliUserQuitException
 
                             elif isDigit(choice) and int(choice) > 0 and int(choice) <= count:
                                 stopLimit = int(choice)
 
-                                infoMsg = "sqlmap is now going to retrieve the "
+                                infoMsg = "fsqli is now going to retrieve the "
                                 infoMsg += "first %d query output entries" % stopLimit
                                 logger.info(infoMsg)
 
@@ -268,7 +268,7 @@ def _goInferenceProxy(expression, fromUser=False, batch=False, unpack=True, char
                     elif count and not isDigit(count):
                         warnMsg = "it was not possible to count the number "
                         warnMsg += "of entries for the SQL query provided. "
-                        warnMsg += "sqlmap will assume that it returns only "
+                        warnMsg += "fsqli will assume that it returns only "
                         warnMsg += "one entry"
                         logger.warning(warnMsg)
 
@@ -293,7 +293,7 @@ def _goInferenceProxy(expression, fromUser=False, batch=False, unpack=True, char
                     except OverflowError:
                         errMsg = "boundary limits (%d,%d) are too large. Please rerun " % (startLimit, stopLimit)
                         errMsg += "with switch '--fresh-queries'"
-                        raise SqlmapDataException(errMsg)
+                        raise FsqliDataException(errMsg)
 
                 except KeyboardInterrupt:
                     print()
@@ -360,7 +360,7 @@ def _goUnion(expression, unpack=True, dump=False):
 @stackedmethod
 def getValue(expression, blind=True, union=True, error=True, time=True, fromUser=False, expected=None, batch=False, unpack=True, resumeValue=True, charsetType=None, firstChar=None, lastChar=None, dump=False, suppressOutput=None, expectingNone=False, safeCharEncode=True):
     """
-    Called each time sqlmap inject a SQL query on the SQL injection
+    Called each time fsqli inject a SQL query on the SQL injection
     affected parameter.
     """
 
@@ -421,7 +421,7 @@ def getValue(expression, blind=True, union=True, error=True, time=True, fromUser
 
                     try:
                         value = _goUnion(forgeCaseExpression if expected == EXPECTED.BOOL else query, unpack, dump)
-                    except SqlmapConnectionException:
+                    except FsqliConnectionException:
                         if not fallback:
                             raise
 
@@ -486,7 +486,7 @@ def getValue(expression, blind=True, union=True, error=True, time=True, fromUser
         else:
             errMsg = "none of the injection types identified can be "
             errMsg += "leveraged to retrieve queries output"
-            raise SqlmapNotVulnerableException(errMsg)
+            raise FsqliNotVulnerableException(errMsg)
 
     finally:
         kb.resumeValues = True

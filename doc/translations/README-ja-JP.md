@@ -1,51 +1,47 @@
-# sqlmap ![](https://i.imgur.com/fe85aVR.png)
+# fsqli ![](https://i.imgur.com/fe85aVR.png)
 
-[![.github/workflows/tests.yml](https://github.com/sqlmapproject/sqlmap/actions/workflows/tests.yml/badge.svg)](https://github.com/sqlmapproject/sqlmap/actions/workflows/tests.yml) [![Python 2.6|2.7|3.x](https://img.shields.io/badge/python-2.6|2.7|3.x-yellow.svg)](https://www.python.org/) [![License](https://img.shields.io/badge/license-GPLv2-red.svg)](https://raw.githubusercontent.com/sqlmapproject/sqlmap/master/LICENSE) [![Twitter](https://img.shields.io/badge/twitter-@sqlmap-blue.svg)](https://twitter.com/sqlmap)
+[![.github/workflows/tests.yml](https://github.com/fsqliproject/fsqli/actions/workflows/tests.yml/badge.svg)](https://github.com/fsqliproject/fsqli/actions/workflows/tests.yml) [![Python 2.6|2.7|3.x](https://img.shields.io/badge/python-2.6|2.7|3.x-yellow.svg)](https://www.python.org/) [![License](https://img.shields.io/badge/license-GPLv2-red.svg)](https://raw.githubusercontent.com/fsqliproject/fsqli/master/LICENSE) [![Twitter](https://img.shields.io/badge/twitter-@fsqli-blue.svg)](https://twitter.com/fsqli)
 
-sqlmapはオープンソースのペネトレーションテスティングツールです。SQLインジェクションの脆弱性の検出、活用、そしてデータベースサーバ奪取のプロセスを自動化します。
+fsqli はオープンソースのペネトレーションテスティングツールです。SQL インジェクションの脆弱性の検出、活用、そしてデータベースサーバ奪取のプロセスを自動化します。
 強力な検出エンジン、ペネトレーションテスターのための多くのニッチ機能、持続的なデータベースのフィンガープリンティングから、データベースのデータ取得やアウトオブバンド接続を介したオペレーティング・システム上でのコマンド実行、ファイルシステムへのアクセスなどの広範囲に及ぶスイッチを提供します。
 
-スクリーンショット
-----
+## スクリーンショット
 
-![Screenshot](https://raw.github.com/wiki/sqlmapproject/sqlmap/images/sqlmap_screenshot.png)
+![Screenshot](https://raw.github.com/wiki/fsqliproject/fsqli/images/fsqli_screenshot.png)
 
-wikiに載っているいくつかの機能のデモをスクリーンショットで見ることができます。 [スクリーンショット集](https://github.com/sqlmapproject/sqlmap/wiki/Screenshots)
+wiki に載っているいくつかの機能のデモをスクリーンショットで見ることができます。 [スクリーンショット集](https://github.com/fsqliproject/fsqli/wiki/Screenshots)
 
-インストール
-----
+## インストール
 
-最新のtarballを [こちら](https://github.com/sqlmapproject/sqlmap/tarball/master) から、最新のzipballを [こちら](https://github.com/sqlmapproject/sqlmap/zipball/master) からダウンロードできます。
+最新の tarball を [こちら](https://github.com/fsqliproject/fsqli/tarball/master) から、最新の zipball を [こちら](https://github.com/fsqliproject/fsqli/zipball/master) からダウンロードできます。
 
-[Git](https://github.com/sqlmapproject/sqlmap) レポジトリをクローンして、sqlmapをダウンロードすることも可能です。:
+[Git](https://github.com/fsqliproject/fsqli) レポジトリをクローンして、fsqli をダウンロードすることも可能です。:
 
-    git clone --depth 1 https://github.com/sqlmapproject/sqlmap.git sqlmap-dev
+    git clone --depth 1 https://github.com/fsqliproject/fsqli.git fsqli-dev
 
-sqlmapは、 [Python](https://www.python.org/download/) バージョン **2.6**, **2.7** または **3.x** がインストールされていれば、全てのプラットフォームですぐに使用できます。
+fsqli は、 [Python](https://www.python.org/download/) バージョン **2.6**, **2.7** または **3.x** がインストールされていれば、全てのプラットフォームですぐに使用できます。
 
-使用方法
-----
+## 使用方法
 
 基本的なオプションとスイッチの使用方法をリストで取得するには:
 
-    python sqlmap.py -h
+    python fsqli.py -h
 
 全てのオプションとスイッチの使用方法をリストで取得するには:
 
-    python sqlmap.py -hh
+    python fsqli.py -hh
 
 実行例を [こちら](https://asciinema.org/a/46601) で見ることができます。
-sqlmapの概要、機能の一覧、全てのオプションやスイッチの使用方法を例とともに、 [ユーザーマニュアル](https://github.com/sqlmapproject/sqlmap/wiki/Usage) で確認することができます。
+fsqli の概要、機能の一覧、全てのオプションやスイッチの使用方法を例とともに、 [ユーザーマニュアル](https://github.com/fsqliproject/fsqli/wiki/Usage) で確認することができます。
 
-リンク
-----
+## リンク
 
-* ホームページ: https://sqlmap.org
-* ダウンロード: [.tar.gz](https://github.com/sqlmapproject/sqlmap/tarball/master) or [.zip](https://github.com/sqlmapproject/sqlmap/zipball/master)
-* コミットのRSSフィード: https://github.com/sqlmapproject/sqlmap/commits/master.atom
-* 課題管理: https://github.com/sqlmapproject/sqlmap/issues
-* ユーザーマニュアル: https://github.com/sqlmapproject/sqlmap/wiki
-* よくある質問 (FAQ): https://github.com/sqlmapproject/sqlmap/wiki/FAQ
-* X: [@sqlmap](https://twitter.com/sqlmap)
-* デモ: [https://www.youtube.com/user/inquisb/videos](https://www.youtube.com/user/inquisb/videos)
-* スクリーンショット: https://github.com/sqlmapproject/sqlmap/wiki/Screenshots
+- ホームページ: https://fsqli.org
+- ダウンロード: [.tar.gz](https://github.com/fsqliproject/fsqli/tarball/master) or [.zip](https://github.com/fsqliproject/fsqli/zipball/master)
+- コミットの RSS フィード: https://github.com/fsqliproject/fsqli/commits/master.atom
+- 課題管理: https://github.com/fsqliproject/fsqli/issues
+- ユーザーマニュアル: https://github.com/fsqliproject/fsqli/wiki
+- よくある質問 (FAQ): https://github.com/fsqliproject/fsqli/wiki/FAQ
+- X: [@fsqli](https://twitter.com/fsqli)
+- デモ: [https://www.youtube.com/user/inquisb/videos](https://www.youtube.com/user/inquisb/videos)
+- スクリーンショット: https://github.com/fsqliproject/fsqli/wiki/Screenshots

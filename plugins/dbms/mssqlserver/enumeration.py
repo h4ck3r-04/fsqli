@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -28,7 +28,7 @@ from lib.core.enums import CHARSET_TYPE
 from lib.core.enums import DBMS
 from lib.core.enums import EXPECTED
 from lib.core.enums import PAYLOAD
-from lib.core.exception import SqlmapNoneDataException
+from lib.core.exception import FsqliNoneDataException
 from lib.core.settings import CURRENT_DB
 from lib.request import inject
 from plugins.generic.enumeration import Enumeration as GenericEnumeration
@@ -37,7 +37,7 @@ from thirdparty import six
 class Enumeration(GenericEnumeration):
     def getPrivileges(self, *args, **kwargs):
         warnMsg = "on Microsoft SQL Server it is not possible to fetch "
-        warnMsg += "database users privileges, sqlmap will check whether "
+        warnMsg += "database users privileges, fsqli will check whether "
         warnMsg += "or not the database users are database administrators"
         logger.warning(warnMsg)
 
@@ -163,7 +163,7 @@ class Enumeration(GenericEnumeration):
 
         if not kb.data.cachedTables and not conf.search:
             errMsg = "unable to retrieve the tables for any database"
-            raise SqlmapNoneDataException(errMsg)
+            raise FsqliNoneDataException(errMsg)
         else:
             for db, tables in kb.data.cachedTables.items():
                 kb.data.cachedTables[db] = sorted(tables) if tables else tables

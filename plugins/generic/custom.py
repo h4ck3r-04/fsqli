@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -20,7 +20,7 @@ from lib.core.data import logger
 from lib.core.dicts import SQL_STATEMENTS
 from lib.core.enums import AUTOCOMPLETE_TYPE
 from lib.core.enums import DBMS
-from lib.core.exception import SqlmapNoneDataException
+from lib.core.exception import FsqliNoneDataException
 from lib.core.settings import METADB_SUFFIX
 from lib.core.settings import NULL
 from lib.core.settings import PARAMETER_SPLITTING_REGEX
@@ -79,7 +79,7 @@ class Custom(object):
 
                 output = NULL
 
-        except SqlmapNoneDataException as ex:
+        except FsqliNoneDataException as ex:
             logger.warning(ex)
 
         return output

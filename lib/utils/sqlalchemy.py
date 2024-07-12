@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -34,9 +34,9 @@ except (ImportError, AttributeError):
 
 from lib.core.data import conf
 from lib.core.data import logger
-from lib.core.exception import SqlmapConnectionException
-from lib.core.exception import SqlmapFilePathException
-from lib.core.exception import SqlmapMissingDependence
+from lib.core.exception import FsqliConnectionException
+from lib.core.exception import FsqliFilePathException
+from lib.core.exception import FsqliMissingDependence
 from plugins.generic.connector import Connector as GenericConnector
 from thirdparty import six
 from thirdparty.six.moves import urllib as _urllib
@@ -69,7 +69,7 @@ class SQLAlchemy(GenericConnector):
             try:
                 if not self.port and self.db:
                     if not os.path.exists(self.db):
-                        raise SqlmapFilePathException("the provided database file '%s' does not exist" % self.db)
+                        raise FsqliFilePathException("the provided database file '%s' does not exist" % self.db)
 
                     _ = self.address.split("//", 1)
                     self.address = "%s////%s" % (_[0], os.path.abspath(self.db))
@@ -87,21 +87,21 @@ class SQLAlchemy(GenericConnector):
                     try:
                         import pymssql
                         if int(pymssql.__version__[0]) < 2:
-                            raise SqlmapConnectionException("SQLAlchemy connection issue (obsolete version of pymssql ('%s') is causing problems)" % pymssql.__version__)
+                            raise FsqliConnectionException("SQLAlchemy connection issue (obsolete version of pymssql ('%s') is causing problems)" % pymssql.__version__)
                     except ImportError:
                         pass
                 elif "invalid literal for int() with base 10: '0b" in traceback.format_exc():
-                    raise SqlmapConnectionException("SQLAlchemy connection issue ('https://bitbucket.org/zzzeek/sqlalchemy/issues/3975')")
+                    raise FsqliConnectionException("SQLAlchemy connection issue ('https://bitbucket.org/zzzeek/sqlalchemy/issues/3975')")
                 else:
                     pass
-            except SqlmapFilePathException:
+            except FsqliFilePathException:
                 raise
             except Exception as ex:
-                raise SqlmapConnectionException("SQLAlchemy connection issue ('%s')" % getSafeExString(ex))
+                raise FsqliConnectionException("SQLAlchemy connection issue ('%s')" % getSafeExString(ex))
 
             self.printConnected()
         else:
-            raise SqlmapMissingDependence("SQLAlchemy not available (e.g. 'pip%s install SQLAlchemy')" % ('3' if six.PY3 else ""))
+            raise FsqliMissingDependence("SQLAlchemy not available (e.g. 'pip%s install SQLAlchemy')" % ('3' if six.PY3 else ""))
 
     def fetchall(self):
         try:
@@ -126,7 +126,7 @@ class SQLAlchemy(GenericConnector):
         except (_sqlalchemy.exc.OperationalError, _sqlalchemy.exc.ProgrammingError) as ex:
             logger.log(logging.WARN if conf.dbmsHandler else logging.DEBUG, "(remote) %s" % getSafeExString(ex))
         except _sqlalchemy.exc.InternalError as ex:
-            raise SqlmapConnectionException(getSafeExString(ex))
+            raise FsqliConnectionException(getSafeExString(ex))
 
         return retVal
 

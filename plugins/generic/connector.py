@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -9,8 +9,8 @@ import os
 
 from lib.core.data import conf
 from lib.core.data import logger
-from lib.core.exception import SqlmapFilePathException
-from lib.core.exception import SqlmapUndefinedMethod
+from lib.core.exception import FsqliFilePathException
+from lib.core.exception import FsqliUndefinedMethod
 
 class Connector(object):
     """
@@ -59,24 +59,24 @@ class Connector(object):
     def checkFileDb(self):
         if not os.path.exists(self.db):
             errMsg = "the provided database file '%s' does not exist" % self.db
-            raise SqlmapFilePathException(errMsg)
+            raise FsqliFilePathException(errMsg)
 
     def connect(self):
         errMsg = "'connect' method must be defined "
         errMsg += "inside the specific DBMS plugin"
-        raise SqlmapUndefinedMethod(errMsg)
+        raise FsqliUndefinedMethod(errMsg)
 
     def fetchall(self):
         errMsg = "'fetchall' method must be defined "
         errMsg += "inside the specific DBMS plugin"
-        raise SqlmapUndefinedMethod(errMsg)
+        raise FsqliUndefinedMethod(errMsg)
 
     def execute(self, query):
         errMsg = "'execute' method must be defined "
         errMsg += "inside the specific DBMS plugin"
-        raise SqlmapUndefinedMethod(errMsg)
+        raise FsqliUndefinedMethod(errMsg)
 
     def select(self, query):
         errMsg = "'select' method must be defined "
         errMsg += "inside the specific DBMS plugin"
-        raise SqlmapUndefinedMethod(errMsg)
+        raise FsqliUndefinedMethod(errMsg)

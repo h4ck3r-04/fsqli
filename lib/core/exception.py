@@ -1,78 +1,78 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
-class SqlmapBaseException(Exception):
+class FsqliBaseException(Exception):
     pass
 
-class SqlmapCompressionException(SqlmapBaseException):
+class FsqliCompressionException(FsqliBaseException):
     pass
 
-class SqlmapConnectionException(SqlmapBaseException):
+class FsqliConnectionException(FsqliBaseException):
     pass
 
-class SqlmapDataException(SqlmapBaseException):
+class FsqliDataException(FsqliBaseException):
     pass
 
-class SqlmapFilePathException(SqlmapBaseException):
+class FsqliFilePathException(FsqliBaseException):
     pass
 
-class SqlmapGenericException(SqlmapBaseException):
+class FsqliGenericException(FsqliBaseException):
     pass
 
-class SqlmapInstallationException(SqlmapBaseException):
+class FsqliInstallationException(FsqliBaseException):
     pass
 
-class SqlmapMissingDependence(SqlmapBaseException):
+class FsqliMissingDependence(FsqliBaseException):
     pass
 
-class SqlmapMissingMandatoryOptionException(SqlmapBaseException):
+class FsqliMissingMandatoryOptionException(FsqliBaseException):
     pass
 
-class SqlmapMissingPrivileges(SqlmapBaseException):
+class FsqliMissingPrivileges(FsqliBaseException):
     pass
 
-class SqlmapNoneDataException(SqlmapBaseException):
+class FsqliNoneDataException(FsqliBaseException):
     pass
 
-class SqlmapNotVulnerableException(SqlmapBaseException):
+class FsqliNotVulnerableException(FsqliBaseException):
     pass
 
-class SqlmapSilentQuitException(SqlmapBaseException):
+class FsqliSilentQuitException(FsqliBaseException):
     pass
 
-class SqlmapUserQuitException(SqlmapBaseException):
+class FsqliUserQuitException(FsqliBaseException):
     pass
 
-class SqlmapShellQuitException(SqlmapBaseException):
+class FsqliShellQuitException(FsqliBaseException):
     pass
 
-class SqlmapSkipTargetException(SqlmapBaseException):
+class FsqliSkipTargetException(FsqliBaseException):
     pass
 
-class SqlmapSyntaxException(SqlmapBaseException):
+class FsqliSyntaxException(FsqliBaseException):
     pass
 
-class SqlmapSystemException(SqlmapBaseException):
+class FsqliSystemException(FsqliBaseException):
     pass
 
-class SqlmapThreadException(SqlmapBaseException):
+class FsqliThreadException(FsqliBaseException):
     pass
 
-class SqlmapTokenException(SqlmapBaseException):
+class FsqliTokenException(FsqliBaseException):
     pass
 
-class SqlmapUndefinedMethod(SqlmapBaseException):
+class FsqliUndefinedMethod(FsqliBaseException):
     pass
 
-class SqlmapUnsupportedDBMSException(SqlmapBaseException):
+class FsqliUnsupportedDBMSException(FsqliBaseException):
     pass
 
-class SqlmapUnsupportedFeatureException(SqlmapBaseException):
+class FsqliUnsupportedFeatureException(FsqliBaseException):
     pass
 
-class SqlmapValueException(SqlmapBaseException):
+class FsqliValueException(FsqliBaseException):
     pass

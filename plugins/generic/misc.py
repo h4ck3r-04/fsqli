@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -24,7 +24,7 @@ from lib.core.data import queries
 from lib.core.enums import DBMS
 from lib.core.enums import HASHDB_KEYS
 from lib.core.enums import OS
-from lib.core.exception import SqlmapNoneDataException
+from lib.core.exception import FsqliNoneDataException
 from lib.request import inject
 
 class Miscellaneous(object):
@@ -38,7 +38,7 @@ class Miscellaneous(object):
     def getRemoteTempPath(self):
         if not conf.tmpPath and Backend.isDbms(DBMS.MSSQL):
             debugMsg = "identifying Microsoft SQL Server error log directory "
-            debugMsg += "that sqlmap will use to store temporary files with "
+            debugMsg += "that fsqli will use to store temporary files with "
             debugMsg += "commands' output"
             logger.debug(debugMsg)
 
@@ -117,7 +117,7 @@ class Miscellaneous(object):
 
     def cleanup(self, onlyFileTbl=False, udfDict=None, web=False):
         """
-        Cleanup file system and database from sqlmap create files, tables
+        Cleanup file system and database from fsqli create files, tables
         and functions
         """
 
@@ -186,7 +186,7 @@ class Miscellaneous(object):
             logger.warning(warnMsg)
 
     def likeOrExact(self, what):
-        message = "do you want sqlmap to consider provided %s(s):\n" % what
+        message = "do you want fsqli to consider provided %s(s):\n" % what
         message += "[1] as LIKE %s names (default)\n" % what
         message += "[2] as exact %s names" % what
 
@@ -199,6 +199,6 @@ class Miscellaneous(object):
             condParam = "='%s'"
         else:
             errMsg = "invalid value"
-            raise SqlmapNoneDataException(errMsg)
+            raise FsqliNoneDataException(errMsg)
 
         return choice, condParam

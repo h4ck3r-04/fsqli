@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -32,7 +32,7 @@ from lib.core.enums import CHARSET_TYPE
 from lib.core.enums import DBMS
 from lib.core.enums import EXPECTED
 from lib.core.enums import PAYLOAD
-from lib.core.exception import SqlmapUndefinedMethod
+from lib.core.exception import FsqliUndefinedMethod
 from lib.core.settings import UNICODE_ENCODING
 from lib.request import inject
 
@@ -194,22 +194,22 @@ class Filesystem(object):
     def nonStackedReadFile(self, remoteFile):
         errMsg = "'nonStackedReadFile' method must be defined "
         errMsg += "into the specific DBMS plugin"
-        raise SqlmapUndefinedMethod(errMsg)
+        raise FsqliUndefinedMethod(errMsg)
 
     def stackedReadFile(self, remoteFile):
         errMsg = "'stackedReadFile' method must be defined "
         errMsg += "into the specific DBMS plugin"
-        raise SqlmapUndefinedMethod(errMsg)
+        raise FsqliUndefinedMethod(errMsg)
 
     def unionWriteFile(self, localFile, remoteFile, fileType, forceCheck=False):
         errMsg = "'unionWriteFile' method must be defined "
         errMsg += "into the specific DBMS plugin"
-        raise SqlmapUndefinedMethod(errMsg)
+        raise FsqliUndefinedMethod(errMsg)
 
     def stackedWriteFile(self, localFile, remoteFile, fileType, forceCheck=False):
         errMsg = "'stackedWriteFile' method must be defined "
         errMsg += "into the specific DBMS plugin"
-        raise SqlmapUndefinedMethod(errMsg)
+        raise FsqliUndefinedMethod(errMsg)
 
     def readFile(self, remoteFile):
         localFilePaths = []

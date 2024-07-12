@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -15,7 +15,7 @@ from plugins.dbms.postgresql.syntax import Syntax
 from plugins.dbms.postgresql.takeover import Takeover
 from plugins.generic.misc import Miscellaneous
 
-class PostgreSQLMap(Syntax, Fingerprint, Enumeration, Filesystem, Miscellaneous, Takeover):
+class PostgreFSQLI(Syntax, Fingerprint, Enumeration, Filesystem, Miscellaneous, Takeover):
     """
     This class defines PostgreSQL methods
     """

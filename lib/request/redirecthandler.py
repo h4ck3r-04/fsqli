@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -23,7 +23,7 @@ from lib.core.enums import CUSTOM_LOGGING
 from lib.core.enums import HTTP_HEADER
 from lib.core.enums import HTTPMETHOD
 from lib.core.enums import REDIRECTION
-from lib.core.exception import SqlmapConnectionException
+from lib.core.exception import FsqliConnectionException
 from lib.core.settings import DEFAULT_COOKIE_DELIMITER
 from lib.core.settings import MAX_CONNECTION_READ_SIZE
 from lib.core.settings import MAX_CONNECTION_TOTAL_SIZE
@@ -149,7 +149,7 @@ class SmartRedirectHandler(_urllib.request.HTTPRedirectHandler):
             except _urllib.error.HTTPError as ex:
                 result = ex
 
-                # Dirty hack for https://github.com/sqlmapproject/sqlmap/issues/4046
+                # Dirty hack for https://github.com/fsqliproject/fsqli/issues/4046
                 try:
                     hasattr(result, "read")
                 except KeyError:
@@ -200,4 +200,4 @@ class SmartRedirectHandler(_urllib.request.HTTPRedirectHandler):
         if hasattr(req, 'redirect_dict') and (req.redirect_dict.get(req.get_full_url(), 0) >= MAX_SINGLE_URL_REDIRECTIONS or len(req.redirect_dict) >= MAX_TOTAL_REDIRECTIONS):
             errMsg = "infinite redirect loop detected (%s). " % ", ".join(item for item in req.redirect_dict.keys())
             errMsg += "Please check all provided parameters and/or provide missing ones"
-            raise SqlmapConnectionException(errMsg)
+            raise FsqliConnectionException(errMsg)

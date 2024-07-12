@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -36,10 +36,10 @@ from lib.core.enums import CHARSET_TYPE
 from lib.core.enums import DBMS
 from lib.core.enums import EXPECTED
 from lib.core.enums import PAYLOAD
-from lib.core.exception import SqlmapConnectionException
-from lib.core.exception import SqlmapMissingMandatoryOptionException
-from lib.core.exception import SqlmapNoneDataException
-from lib.core.exception import SqlmapUnsupportedFeatureException
+from lib.core.exception import FsqliConnectionException
+from lib.core.exception import FsqliMissingMandatoryOptionException
+from lib.core.exception import FsqliNoneDataException
+from lib.core.exception import FsqliUnsupportedFeatureException
 from lib.core.settings import CHECK_ZERO_COLUMNS_THRESHOLD
 from lib.core.settings import CURRENT_DB
 from lib.core.settings import METADB_SUFFIX
@@ -65,7 +65,7 @@ class Entries(object):
 
         if conf.db is None or conf.db == CURRENT_DB:
             if conf.db is None:
-                warnMsg = "missing database parameter. sqlmap is going "
+                warnMsg = "missing database parameter. fsqli is going "
                 warnMsg += "to use the current database to enumerate "
                 warnMsg += "table(s) entries"
                 logger.warning(warnMsg)
@@ -79,7 +79,7 @@ class Entries(object):
             if ',' in conf.db:
                 errMsg = "only one database name is allowed when enumerating "
                 errMsg += "the tables' columns"
-                raise SqlmapMissingMandatoryOptionException(errMsg)
+                raise FsqliMissingMandatoryOptionException(errMsg)
 
             if conf.exclude and re.search(conf.exclude, conf.db, re.I) is not None:
                 infoMsg = "skipping database '%s'" % unsafeSQLIdentificatorNaming(conf.db)
@@ -104,7 +104,7 @@ class Entries(object):
             elif conf.db and not conf.search:
                 errMsg = "unable to retrieve the tables "
                 errMsg += "in database '%s'" % unsafeSQLIdentificatorNaming(conf.db)
-                raise SqlmapNoneDataException(errMsg)
+                raise FsqliNoneDataException(errMsg)
             else:
                 return
 
@@ -467,7 +467,7 @@ class Entries(object):
                         logger.critical(errMsg)
                     conf.dumper.dbTableValues(kb.data.dumpedTable)
 
-            except SqlmapConnectionException as ex:
+            except FsqliConnectionException as ex:
                 errMsg = "connection exception detected in dumping phase "
                 errMsg += "('%s')" % getSafeExString(ex)
                 logger.critical(errMsg)
@@ -484,9 +484,9 @@ class Entries(object):
         if Backend.isDbms(DBMS.MYSQL) and not kb.data.has_information_schema:
             errMsg = "information_schema not available, "
             errMsg += "back-end DBMS is MySQL < 5.0"
-            raise SqlmapUnsupportedFeatureException(errMsg)
+            raise FsqliUnsupportedFeatureException(errMsg)
 
-        infoMsg = "sqlmap will dump entries of all tables from all databases now"
+        infoMsg = "fsqli will dump entries of all tables from all databases now"
         logger.info(infoMsg)
 
         conf.tbl = None
@@ -513,7 +513,7 @@ class Entries(object):
                         kb.data.dumpedTable = {}
 
                         self.dumpTable()
-                    except SqlmapNoneDataException:
+                    except FsqliNoneDataException:
                         infoMsg = "skipping table '%s'" % unsafeSQLIdentificatorNaming(table)
                         logger.info(infoMsg)
 

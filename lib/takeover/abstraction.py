@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -21,8 +21,8 @@ from lib.core.data import logger
 from lib.core.enums import AUTOCOMPLETE_TYPE
 from lib.core.enums import DBMS
 from lib.core.enums import OS
-from lib.core.exception import SqlmapFilePathException
-from lib.core.exception import SqlmapUnsupportedFeatureException
+from lib.core.exception import FsqliFilePathException
+from lib.core.exception import FsqliUnsupportedFeatureException
 from lib.core.shell import autoCompletion
 from lib.request import inject
 from lib.takeover.udf import UDF
@@ -60,7 +60,7 @@ class Abstraction(Web, UDF, XP_cmdshell):
 
         else:
             errMsg = "Feature not yet implemented for the back-end DBMS"
-            raise SqlmapUnsupportedFeatureException(errMsg)
+            raise FsqliUnsupportedFeatureException(errMsg)
 
     def evalCmd(self, cmd, first=None, last=None):
         retVal = None
@@ -79,7 +79,7 @@ class Abstraction(Web, UDF, XP_cmdshell):
 
         else:
             errMsg = "Feature not yet implemented for the back-end DBMS"
-            raise SqlmapUnsupportedFeatureException(errMsg)
+            raise FsqliUnsupportedFeatureException(errMsg)
 
         return safechardecode(retVal)
 
@@ -129,7 +129,7 @@ class Abstraction(Web, UDF, XP_cmdshell):
 
             else:
                 errMsg = "feature not yet implemented for the back-end DBMS"
-                raise SqlmapUnsupportedFeatureException(errMsg)
+                raise FsqliUnsupportedFeatureException(errMsg)
 
             infoMsg = "calling %s OS shell. To quit type " % (Backend.getOs() or "Windows")
             infoMsg += "'x' or 'q' and press ENTER"
@@ -166,7 +166,7 @@ class Abstraction(Web, UDF, XP_cmdshell):
             return
 
         if not conf.direct and not isStackingAvailable():
-            errMsg = "stacked queries are not supported hence sqlmap cannot "
+            errMsg = "stacked queries are not supported hence fsqli cannot "
             errMsg += "execute statements as another user. The execution "
             errMsg += "will continue and the DBMS credentials provided "
             errMsg += "will simply be ignored"
@@ -220,12 +220,12 @@ class Abstraction(Web, UDF, XP_cmdshell):
 
                 if success is not True:
                     msg = "unable to mount the operating system takeover"
-                    raise SqlmapFilePathException(msg)
+                    raise FsqliFilePathException(msg)
             elif Backend.isDbms(DBMS.MSSQL):
                 if mandatory:
                     self.xpCmdshellInit()
             else:
                 errMsg = "feature not yet implemented for the back-end DBMS"
-                raise SqlmapUnsupportedFeatureException(errMsg)
+                raise FsqliUnsupportedFeatureException(errMsg)
 
         self.envInitialized = True

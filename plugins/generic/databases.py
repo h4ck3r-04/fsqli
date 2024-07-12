@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -43,9 +43,9 @@ from lib.core.enums import DBMS
 from lib.core.enums import EXPECTED
 from lib.core.enums import FORK
 from lib.core.enums import PAYLOAD
-from lib.core.exception import SqlmapMissingMandatoryOptionException
-from lib.core.exception import SqlmapNoneDataException
-from lib.core.exception import SqlmapUserQuitException
+from lib.core.exception import FsqliMissingMandatoryOptionException
+from lib.core.exception import FsqliNoneDataException
+from lib.core.exception import FsqliUserQuitException
 from lib.core.settings import CURRENT_DB
 from lib.core.settings import METADB_SUFFIX
 from lib.core.settings import PLUS_ONE_DBMSES
@@ -201,7 +201,7 @@ class Databases(object):
                 kb.data.cachedDbs = [kb.data.currentDb]
             else:
                 errMsg = "unable to retrieve the database names"
-                raise SqlmapNoneDataException(errMsg)
+                raise FsqliNoneDataException(errMsg)
         else:
             kb.data.cachedDbs.sort()
 
@@ -229,7 +229,7 @@ class Databases(object):
             elif Backend.getIdentifiedDbms() in (DBMS.ACCESS,):
                 try:
                     tables = self.getTables(False)
-                except SqlmapNoneDataException:
+                except FsqliNoneDataException:
                     tables = None
 
                 if not tables:
@@ -280,7 +280,7 @@ class Databases(object):
             if choice == 'N':
                 return
             elif choice == 'Q':
-                raise SqlmapUserQuitException
+                raise FsqliUserQuitException
             else:
                 return tableExists(paths.COMMON_TABLES)
 
@@ -452,7 +452,7 @@ class Databases(object):
                 logger.error(errMsg)
                 return self.getTables(bruteForce=True)
             elif not conf.search:
-                raise SqlmapNoneDataException(errMsg)
+                raise FsqliNoneDataException(errMsg)
         else:
             for db, tables in kb.data.cachedTables.items():
                 kb.data.cachedTables[db] = sorted(tables) if tables else tables
@@ -468,7 +468,7 @@ class Databases(object):
 
         if conf.db is None or conf.db == CURRENT_DB:
             if conf.db is None:
-                warnMsg = "missing database parameter. sqlmap is going "
+                warnMsg = "missing database parameter. fsqli is going "
                 warnMsg += "to use the current database to enumerate "
                 warnMsg += "table(s) columns"
                 logger.warning(warnMsg)
@@ -478,7 +478,7 @@ class Databases(object):
             if not conf.db:
                 errMsg = "unable to retrieve the current "
                 errMsg += "database name"
-                raise SqlmapNoneDataException(errMsg)
+                raise FsqliNoneDataException(errMsg)
 
         elif conf.db is not None:
             if Backend.getIdentifiedDbms() in UPPER_CASE_DBMSES:
@@ -487,7 +487,7 @@ class Databases(object):
             if ',' in conf.db:
                 errMsg = "only one database name is allowed when enumerating "
                 errMsg += "the tables' columns"
-                raise SqlmapMissingMandatoryOptionException(errMsg)
+                raise FsqliMissingMandatoryOptionException(errMsg)
 
         conf.db = safeSQLIdentificatorNaming(conf.db)
 
@@ -529,7 +529,7 @@ class Databases(object):
                 errMsg = "unable to retrieve the tables"
                 if METADB_SUFFIX not in conf.db:
                     errMsg += " in database '%s'" % unsafeSQLIdentificatorNaming(conf.db)
-                raise SqlmapNoneDataException(errMsg)
+                raise FsqliNoneDataException(errMsg)
             else:
                 return kb.data.cachedColumns
 
@@ -589,7 +589,7 @@ class Databases(object):
                 else:
                     return None
             elif kb.choices.columnExists == 'Q':
-                raise SqlmapUserQuitException
+                raise FsqliUserQuitException
             else:
                 return columnExists(paths.COMMON_COLUMNS)
 
@@ -991,7 +991,7 @@ class Databases(object):
 
     def getCount(self):
         if not conf.tbl:
-            warnMsg = "missing table parameter, sqlmap will retrieve "
+            warnMsg = "missing table parameter, fsqli will retrieve "
             warnMsg += "the number of entries for all database "
             warnMsg += "management system databases' tables"
             logger.warning(warnMsg)
@@ -1001,7 +1001,7 @@ class Databases(object):
                 conf.db, conf.tbl = conf.tbl.split('.', 1)
 
         if conf.tbl is not None and conf.db is None and Backend.getIdentifiedDbms() not in (DBMS.SQLITE, DBMS.ACCESS, DBMS.FIREBIRD, DBMS.MCKOI, DBMS.EXTREMEDB):
-            warnMsg = "missing database parameter. sqlmap is going to "
+            warnMsg = "missing database parameter. fsqli is going to "
             warnMsg += "use the current database to retrieve the "
             warnMsg += "number of entries for table '%s'" % unsafeSQLIdentificatorNaming(conf.tbl)
             logger.warning(warnMsg)
@@ -1065,7 +1065,7 @@ class Databases(object):
                 return kb.data.cachedStatements
             elif not isNumPosStrValue(count):
                 errMsg = "unable to retrieve the number of statements"
-                raise SqlmapNoneDataException(errMsg)
+                raise FsqliNoneDataException(errMsg)
 
             plusOne = Backend.getIdentifiedDbms() in PLUS_ONE_DBMSES
             indexRange = getLimitRange(count, plusOne=plusOne)

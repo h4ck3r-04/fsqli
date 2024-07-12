@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -38,8 +38,8 @@ from lib.core.enums import DBMS
 from lib.core.enums import EXPECTED
 from lib.core.enums import FORK
 from lib.core.enums import PAYLOAD
-from lib.core.exception import SqlmapNoneDataException
-from lib.core.exception import SqlmapUserQuitException
+from lib.core.exception import FsqliNoneDataException
+from lib.core.exception import FsqliUserQuitException
 from lib.core.settings import CURRENT_USER
 from lib.core.settings import PLUS_ONE_DBMSES
 from lib.core.threads import getCurrentThreadData
@@ -139,7 +139,7 @@ class Users(object):
                 return kb.data.cachedUsers
             elif not isNumPosStrValue(count):
                 errMsg = "unable to retrieve the number of database users"
-                raise SqlmapNoneDataException(errMsg)
+                raise FsqliNoneDataException(errMsg)
 
             plusOne = Backend.getIdentifiedDbms() in PLUS_ONE_DBMSES
             indexRange = getLimitRange(count, plusOne=plusOne)
@@ -366,7 +366,7 @@ class Users(object):
             if choice == 'N':
                 pass
             elif choice == 'Q':
-                raise SqlmapUserQuitException
+                raise FsqliUserQuitException
             else:
                 attackCachedUsersPasswords()
 
@@ -657,7 +657,7 @@ class Users(object):
         if not kb.data.cachedUsersPrivileges:
             errMsg = "unable to retrieve the privileges "
             errMsg += "for the database users"
-            raise SqlmapNoneDataException(errMsg)
+            raise FsqliNoneDataException(errMsg)
 
         for user, privileges in kb.data.cachedUsersPrivileges.items():
             if isAdminFromPrivileges(privileges):
@@ -667,7 +667,7 @@ class Users(object):
 
     def getRoles(self, query2=False):
         warnMsg = "on %s the concept of roles does not " % Backend.getIdentifiedDbms()
-        warnMsg += "exist. sqlmap will enumerate privileges instead"
+        warnMsg += "exist. fsqli will enumerate privileges instead"
         logger.warning(warnMsg)
 
         return self.getPrivileges(query2)

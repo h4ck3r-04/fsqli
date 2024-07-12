@@ -29,7 +29,7 @@ import sys
 
 from lib.core.compat import choose_boundary
 from lib.core.convert import getBytes
-from lib.core.exception import SqlmapDataException
+from lib.core.exception import FsqliDataException
 from thirdparty.six.moves import urllib as _urllib
 
 # Controls how sequences are uncoded. If true, elements may be given
@@ -55,7 +55,7 @@ class MultipartPostHandler(_urllib.request.BaseHandler):
                         v_vars.append((key, value))
             except TypeError:
                 systype, value, traceback = sys.exc_info()
-                raise SqlmapDataException("not a valid non-string sequence or mapping object '%s'" % traceback)
+                raise FsqliDataException("not a valid non-string sequence or mapping object '%s'" % traceback)
 
             if len(v_files) == 0:
                 data = _urllib.parse.urlencode(v_vars, doseq)
@@ -68,7 +68,7 @@ class MultipartPostHandler(_urllib.request.BaseHandler):
 
             request.data = data
 
-        # NOTE: https://github.com/sqlmapproject/sqlmap/issues/4235
+        # NOTE: https://github.com/fsqliproject/fsqli/issues/4235
         if request.data:
             for match in re.finditer(b"(?i)\\s*-{20,}\\w+(\\s+Content-Disposition[^\\n]+\\s+|\\-\\-\\s*)", request.data):
                 part = match.group(0)

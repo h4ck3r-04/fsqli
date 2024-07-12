@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -18,20 +18,20 @@ from lib.core.enums import DBMS_DIRECTORY_NAME
 from lib.core.enums import OS
 from thirdparty import six
 
-# sqlmap version (<major>.<minor>.<month>.<monthly commit>)
+# fsqli version (<major>.<minor>.<month>.<monthly commit>)
 VERSION = "1.8.6.17"
 TYPE = "dev" if VERSION.count('.') > 2 and VERSION.split('.')[-1] != '0' else "stable"
 TYPE_COLORS = {"dev": 33, "stable": 90, "pip": 34}
-VERSION_STRING = "sqlmap/%s#%s" % ('.'.join(VERSION.split('.')[:-1]) if VERSION.count('.') > 2 and VERSION.split('.')[-1] == '0' else VERSION, TYPE)
+VERSION_STRING = "fsqli/%s#%s" % ('.'.join(VERSION.split('.')[:-1]) if VERSION.count('.') > 2 and VERSION.split('.')[-1] == '0' else VERSION, TYPE)
 DESCRIPTION = "automatic SQL injection and database takeover tool"
-SITE = "https://sqlmap.org"
+SITE = "https://fsqli.org"
 DEFAULT_USER_AGENT = "%s (%s)" % (VERSION_STRING, SITE)
-DEV_EMAIL_ADDRESS = "dev@sqlmap.org"
-ISSUES_PAGE = "https://github.com/sqlmapproject/sqlmap/issues/new"
-GIT_REPOSITORY = "https://github.com/sqlmapproject/sqlmap.git"
-GIT_PAGE = "https://github.com/sqlmapproject/sqlmap"
-WIKI_PAGE = "https://github.com/sqlmapproject/sqlmap/wiki/"
-ZIPBALL_PAGE = "https://github.com/sqlmapproject/sqlmap/zipball/master"
+DEV_EMAIL_ADDRESS = "dev@fsqli.org"
+ISSUES_PAGE = "https://github.com/fsqliproject/fsqli/issues/new"
+GIT_REPOSITORY = "https://github.com/fsqliproject/fsqli.git"
+GIT_PAGE = "https://github.com/fsqliproject/fsqli"
+WIKI_PAGE = "https://github.com/fsqliproject/fsqli/wiki/"
+ZIPBALL_PAGE = "https://github.com/fsqliproject/fsqli/zipball/master"
 
 # colorful banner
 BANNER = """\033[01;33m\
@@ -379,7 +379,7 @@ BASIC_HELP_ITEMS = (
     "checkTor",
     "flushSession",
     "tor",
-    "sqlmapShell",
+    "fsqliShell",
     "wizard",
 )
 
@@ -547,7 +547,7 @@ ASP_NET_CONTROL_REGEX = r"(?i)\Actl\d+\$"
 GOOGLE_ANALYTICS_COOKIE_PREFIX = "__UTM"
 
 # Prefix for configuration overriding environment variables
-SQLMAP_ENVIRONMENT_PREFIX = "SQLMAP_"
+FSQLI_ENVIRONMENT_PREFIX = "FSQLI_"
 
 # General OS environment variables that can be used for setting proxy address
 PROXY_ENVIRONMENT_VARIABLES = ("all_proxy", "ALL_PROXY", "http_proxy", "HTTP_PROXY", "https_proxy", "HTTPS_PROXY")
@@ -589,7 +589,7 @@ IGNORE_SPACE_AFFECTED_KEYWORDS = ("CAST", "COUNT", "EXTRACT", "GROUP_CONCAT", "M
 # Keywords expected to be in UPPERCASE in getValue()
 GET_VALUE_UPPERCASE_KEYWORDS = ("SELECT", "FROM", "WHERE", "DISTINCT", "COUNT")
 
-LEGAL_DISCLAIMER = "Usage of sqlmap for attacking targets without prior mutual consent is illegal. It is the end user's responsibility to obey all applicable local, state and federal laws. Developers assume no liability and are not responsible for any misuse or damage caused by this program"
+LEGAL_DISCLAIMER = "Usage of fsqli for attacking targets without prior mutual consent is illegal. It is the end user's responsibility to obey all applicable local, state and federal laws. Developers assume no liability and are not responsible for any misuse or damage caused by this program"
 
 # After this number of misses reflective removal mechanism is turned off (for speed up reasons)
 REFLECTIVE_MISS_THRESHOLD = 20
@@ -938,10 +938,10 @@ th{
 }
 </style>"""
 
-# Leaving (dirty) possibility to change values from here (e.g. `export SQLMAP__MAX_NUMBER_OF_THREADS=20`)
+# Leaving (dirty) possibility to change values from here (e.g. `export FSQLI__MAX_NUMBER_OF_THREADS=20`)
 for key, value in os.environ.items():
-    if key.upper().startswith("%s_" % SQLMAP_ENVIRONMENT_PREFIX):
-        _ = key[len(SQLMAP_ENVIRONMENT_PREFIX) + 1:].upper()
+    if key.upper().startswith("%s_" % FSQLI_ENVIRONMENT_PREFIX):
+        _ = key[len(FSQLI_ENVIRONMENT_PREFIX) + 1:].upper()
         if _ in globals():
             original = globals()[_]
             if isinstance(original, int):

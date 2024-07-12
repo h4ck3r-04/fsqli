@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -10,7 +10,7 @@ from lib.core.data import conf
 from lib.core.data import kb
 from lib.core.dicts import DBMS_DICT
 from lib.core.enums import DBMS
-from lib.core.exception import SqlmapConnectionException
+from lib.core.exception import FsqliConnectionException
 from lib.core.settings import ACCESS_ALIASES
 from lib.core.settings import ALTIBASE_ALIASES
 from lib.core.settings import CACHE_ALIASES
@@ -74,17 +74,17 @@ from plugins.dbms.maxdb import MaxDBMap
 from plugins.dbms.mckoi.connector import Connector as MckoiConn
 from plugins.dbms.mckoi import MckoiMap
 from plugins.dbms.mimersql.connector import Connector as MimerSQLConn
-from plugins.dbms.mimersql import MimerSQLMap
+from plugins.dbms.mimersql import MimerFSQLI
 from plugins.dbms.monetdb.connector import Connector as MonetDBConn
 from plugins.dbms.monetdb import MonetDBMap
 from plugins.dbms.mssqlserver.connector import Connector as MSSQLServerConn
 from plugins.dbms.mssqlserver import MSSQLServerMap
 from plugins.dbms.mysql.connector import Connector as MySQLConn
-from plugins.dbms.mysql import MySQLMap
+from plugins.dbms.mysql import MyFSQLI
 from plugins.dbms.oracle.connector import Connector as OracleConn
 from plugins.dbms.oracle import OracleMap
 from plugins.dbms.postgresql.connector import Connector as PostgreSQLConn
-from plugins.dbms.postgresql import PostgreSQLMap
+from plugins.dbms.postgresql import PostgreFSQLI
 from plugins.dbms.presto.connector import Connector as PrestoConn
 from plugins.dbms.presto import PrestoMap
 from plugins.dbms.raima.connector import Connector as RaimaConn
@@ -105,9 +105,9 @@ def setHandler():
     """
 
     items = [
-        (DBMS.MYSQL, MYSQL_ALIASES, MySQLMap, MySQLConn),
+        (DBMS.MYSQL, MYSQL_ALIASES, MyFSQLI, MySQLConn),
         (DBMS.ORACLE, ORACLE_ALIASES, OracleMap, OracleConn),
-        (DBMS.PGSQL, PGSQL_ALIASES, PostgreSQLMap, PostgreSQLConn),
+        (DBMS.PGSQL, PGSQL_ALIASES, PostgreFSQLI, PostgreSQLConn),
         (DBMS.MSSQL, MSSQL_ALIASES, MSSQLServerMap, MSSQLServerConn),
         (DBMS.SQLITE, SQLITE_ALIASES, SQLiteMap, SQLiteConn),
         (DBMS.ACCESS, ACCESS_ALIASES, AccessMap, AccessConn),
@@ -124,7 +124,7 @@ def setHandler():
         (DBMS.MCKOI, MCKOI_ALIASES, MckoiMap, MckoiConn),
         (DBMS.PRESTO, PRESTO_ALIASES, PrestoMap, PrestoConn),
         (DBMS.ALTIBASE, ALTIBASE_ALIASES, AltibaseMap, AltibaseConn),
-        (DBMS.MIMERSQL, MIMERSQL_ALIASES, MimerSQLMap, MimerSQLConn),
+        (DBMS.MIMERSQL, MIMERSQL_ALIASES, MimerFSQLI, MimerSQLConn),
         (DBMS.CLICKHOUSE, CLICKHOUSE_ALIASES, ClickHouseMap, ClickHouseConn),
         (DBMS.CRATEDB, CRATEDB_ALIASES, CrateDBMap, CrateDBConn),
         (DBMS.CUBRID, CUBRID_ALIASES, CubridMap, CubridConn),
@@ -180,7 +180,7 @@ def setHandler():
                         else:
                             msg = "support for direct connection to '%s' is not available. " % dbms
                             msg += "Please rerun with '--dependencies'"
-                            raise SqlmapConnectionException(msg)
+                            raise FsqliConnectionException(msg)
 
         if conf.forceDbms == dbms or handler.checkDbms():
             if kb.resolutionDbms:

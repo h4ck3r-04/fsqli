@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -89,17 +89,17 @@ from lib.core.enums import PLACE
 from lib.core.enums import POST_HINT
 from lib.core.enums import REFLECTIVE_COUNTER
 from lib.core.enums import SORT_ORDER
-from lib.core.exception import SqlmapBaseException
-from lib.core.exception import SqlmapDataException
-from lib.core.exception import SqlmapGenericException
-from lib.core.exception import SqlmapInstallationException
-from lib.core.exception import SqlmapMissingDependence
-from lib.core.exception import SqlmapNoneDataException
-from lib.core.exception import SqlmapSilentQuitException
-from lib.core.exception import SqlmapSyntaxException
-from lib.core.exception import SqlmapSystemException
-from lib.core.exception import SqlmapUserQuitException
-from lib.core.exception import SqlmapValueException
+from lib.core.exception import FsqliBaseException
+from lib.core.exception import FsqliDataException
+from lib.core.exception import FsqliGenericException
+from lib.core.exception import FsqliInstallationException
+from lib.core.exception import FsqliMissingDependence
+from lib.core.exception import FsqliNoneDataException
+from lib.core.exception import FsqliSilentQuitException
+from lib.core.exception import FsqliSyntaxException
+from lib.core.exception import FsqliSystemException
+from lib.core.exception import FsqliUserQuitException
+from lib.core.exception import FsqliValueException
 from lib.core.log import LOGGER_HANDLER
 from lib.core.optiondict import optDict
 from lib.core.settings import BANNER
@@ -358,7 +358,7 @@ class Backend(object):
             warnMsg += "this could be a false positive case"
             logger.warning(warnMsg)
 
-            msg = "sqlmap previously fingerprinted back-end DBMS as "
+            msg = "fsqli previously fingerprinted back-end DBMS as "
             msg += "%s. However now it has been fingerprinted " % kb.dbms
             msg += "as %s. " % dbms
             msg += "Please, specify which DBMS should be "
@@ -418,7 +418,7 @@ class Backend(object):
 
         # Little precaution, in theory this condition should always be false
         elif kb.os is not None and isinstance(os, six.string_types) and kb.os.lower() != os.lower():
-            msg = "sqlmap previously fingerprinted back-end DBMS "
+            msg = "fsqli previously fingerprinted back-end DBMS "
             msg += "operating system %s. However now it has " % kb.os
             msg += "been fingerprinted to be %s. " % os
             msg += "Please, specify which OS is "
@@ -656,7 +656,7 @@ def paramToDict(place, parameters=None):
                     except:
                         errMsg = "parameter '%s' does not contain " % parameter
                         errMsg += "valid Base64 encoded value ('%s')" % value
-                        raise SqlmapValueException(errMsg)
+                        raise FsqliValueException(errMsg)
 
                 testableParameters[parameter] = value
 
@@ -667,17 +667,17 @@ def paramToDict(place, parameters=None):
                         warnMsg += "('%s') with most likely leftover " % element
                         warnMsg += "chars/statements from manual SQL injection test(s). "
                         warnMsg += "Please, always use only valid parameter values "
-                        warnMsg += "so sqlmap could be able to run properly"
+                        warnMsg += "so fsqli could be able to run properly"
                         logger.warning(warnMsg)
 
-                        message = "are you really sure that you want to continue (sqlmap could have problems)? [y/N] "
+                        message = "are you really sure that you want to continue (fsqli could have problems)? [y/N] "
 
                         if not readInput(message, default='N', boolean=True):
-                            raise SqlmapSilentQuitException
+                            raise FsqliSilentQuitException
                     elif not _:
                         warnMsg = "provided value for parameter '%s' is empty. " % parameter
                         warnMsg += "Please, always use only valid parameter values "
-                        warnMsg += "so sqlmap could be able to run properly"
+                        warnMsg += "so fsqli could be able to run properly"
                         logger.warning(warnMsg)
 
                 if place in (PLACE.POST, PLACE.GET):
@@ -712,7 +712,7 @@ def paramToDict(place, parameters=None):
                                                 if value:
                                                     walk(head, value)
 
-                                # NOTE: for cases with custom injection marker(s) inside (e.g. https://github.com/sqlmapproject/sqlmap/issues/4137#issuecomment-2013783111) - p.s. doesn't care too much about the structure (e.g. injection into the flat array values)
+                                # NOTE: for cases with custom injection marker(s) inside (e.g. https://github.com/fsqliproject/fsqli/issues/4137#issuecomment-2013783111) - p.s. doesn't care too much about the structure (e.g. injection into the flat array values)
                                 if CUSTOM_INJECTION_MARK_CHAR in testableParameters[parameter]:
                                     for match in re.finditer(r'(\w+)[^\w]*"\s*:[^\w]*\w*%s' % re.escape(CUSTOM_INJECTION_MARK_CHAR), testableParameters[parameter]):
                                         key = match.group(1)
@@ -731,7 +731,7 @@ def paramToDict(place, parameters=None):
                                         del testableParameters[parameter]
                                         testableParameters.update(candidates)
                                     break
-                            except (KeyboardInterrupt, SqlmapUserQuitException):
+                            except (KeyboardInterrupt, FsqliUserQuitException):
                                 raise
                             except Exception:
                                 pass
@@ -1067,7 +1067,7 @@ def dataToTrafficFile(data):
     except IOError as ex:
         errMsg = "something went wrong while trying "
         errMsg += "to write to the traffic file '%s' ('%s')" % (conf.trafficFile, getSafeExString(ex))
-        raise SqlmapSystemException(errMsg)
+        raise FsqliSystemException(errMsg)
 
 def dataToDumpFile(dumpFile, data):
     try:
@@ -1111,11 +1111,11 @@ def dataToOutFile(filename, data):
                 else:
                     errMsg = "couldn't write to the "
                     errMsg += "output file ('%s')" % getSafeExString(ex)
-                    raise SqlmapGenericException(errMsg)
+                    raise FsqliGenericException(errMsg)
             except IOError as ex:
                 errMsg = "something went wrong while trying to write "
                 errMsg += "to the output file ('%s')" % getSafeExString(ex)
-                raise SqlmapGenericException(errMsg)
+                raise FsqliGenericException(errMsg)
             else:
                 break
 
@@ -1197,7 +1197,7 @@ def readInput(message, default=None, checkBatch=True, boolean=False):
                     pass
                 finally:
                     kb.prependFlag = True
-                    raise SqlmapUserQuitException
+                    raise FsqliUserQuitException
 
             finally:
                 logging._releaseLock()
@@ -1318,7 +1318,7 @@ def getHeader(headers, key):
 
 def checkPipedInput():
     """
-    Checks whether input to program has been provided via standard input (e.g. cat /tmp/req.txt | python sqlmap.py -r -)
+    Checks whether input to program has been provided via standard input (e.g. cat /tmp/req.txt | python fsqli.py -r -)
     # Reference: https://stackoverflow.com/a/33873570
     """
 
@@ -1385,13 +1385,13 @@ def checkFile(filename, raiseOnError=True):
                 valid = False
 
     if not valid and raiseOnError:
-        raise SqlmapSystemException("unable to read file '%s'" % filename)
+        raise FsqliSystemException("unable to read file '%s'" % filename)
 
     return valid
 
 def banner():
     """
-    This function prints sqlmap banner with its version
+    This function prints fsqli banner with its version
     """
 
     if not any(_ in sys.argv for _ in ("--version", "--api")) and not conf.get("disableBanner"):
@@ -1503,40 +1503,40 @@ def setPaths(rootPath):
     Sets absolute paths for project directories and files
     """
 
-    paths.SQLMAP_ROOT_PATH = rootPath
+    paths.FSQLI_ROOT_PATH = rootPath
 
-    # sqlmap paths
-    paths.SQLMAP_DATA_PATH = os.path.join(paths.SQLMAP_ROOT_PATH, "data")
-    paths.SQLMAP_EXTRAS_PATH = os.path.join(paths.SQLMAP_ROOT_PATH, "extra")
-    paths.SQLMAP_SETTINGS_PATH = os.path.join(paths.SQLMAP_ROOT_PATH, "lib", "core", "settings.py")
-    paths.SQLMAP_TAMPER_PATH = os.path.join(paths.SQLMAP_ROOT_PATH, "tamper")
+    # fsqli paths
+    paths.FSQLI_DATA_PATH = os.path.join(paths.FSQLI_ROOT_PATH, "data")
+    paths.FSQLI_EXTRAS_PATH = os.path.join(paths.FSQLI_ROOT_PATH, "extra")
+    paths.FSQLI_SETTINGS_PATH = os.path.join(paths.FSQLI_ROOT_PATH, "lib", "core", "settings.py")
+    paths.FSQLI_TAMPER_PATH = os.path.join(paths.FSQLI_ROOT_PATH, "tamper")
 
-    paths.SQLMAP_PROCS_PATH = os.path.join(paths.SQLMAP_DATA_PATH, "procs")
-    paths.SQLMAP_SHELL_PATH = os.path.join(paths.SQLMAP_DATA_PATH, "shell")
-    paths.SQLMAP_TXT_PATH = os.path.join(paths.SQLMAP_DATA_PATH, "txt")
-    paths.SQLMAP_UDF_PATH = os.path.join(paths.SQLMAP_DATA_PATH, "udf")
-    paths.SQLMAP_XML_PATH = os.path.join(paths.SQLMAP_DATA_PATH, "xml")
-    paths.SQLMAP_XML_BANNER_PATH = os.path.join(paths.SQLMAP_XML_PATH, "banner")
-    paths.SQLMAP_XML_PAYLOADS_PATH = os.path.join(paths.SQLMAP_XML_PATH, "payloads")
+    paths.FSQLI_PROCS_PATH = os.path.join(paths.FSQLI_DATA_PATH, "procs")
+    paths.FSQLI_SHELL_PATH = os.path.join(paths.FSQLI_DATA_PATH, "shell")
+    paths.FSQLI_TXT_PATH = os.path.join(paths.FSQLI_DATA_PATH, "txt")
+    paths.FSQLI_UDF_PATH = os.path.join(paths.FSQLI_DATA_PATH, "udf")
+    paths.FSQLI_XML_PATH = os.path.join(paths.FSQLI_DATA_PATH, "xml")
+    paths.FSQLI_XML_BANNER_PATH = os.path.join(paths.FSQLI_XML_PATH, "banner")
+    paths.FSQLI_XML_PAYLOADS_PATH = os.path.join(paths.FSQLI_XML_PATH, "payloads")
 
-    # sqlmap files
-    paths.COMMON_COLUMNS = os.path.join(paths.SQLMAP_TXT_PATH, "common-columns.txt")
-    paths.COMMON_FILES = os.path.join(paths.SQLMAP_TXT_PATH, "common-files.txt")
-    paths.COMMON_TABLES = os.path.join(paths.SQLMAP_TXT_PATH, "common-tables.txt")
-    paths.COMMON_OUTPUTS = os.path.join(paths.SQLMAP_TXT_PATH, 'common-outputs.txt')
-    paths.DIGEST_FILE = os.path.join(paths.SQLMAP_TXT_PATH, "sha256sums.txt")
-    paths.SQL_KEYWORDS = os.path.join(paths.SQLMAP_TXT_PATH, "keywords.txt")
-    paths.SMALL_DICT = os.path.join(paths.SQLMAP_TXT_PATH, "smalldict.txt")
-    paths.USER_AGENTS = os.path.join(paths.SQLMAP_TXT_PATH, "user-agents.txt")
-    paths.WORDLIST = os.path.join(paths.SQLMAP_TXT_PATH, "wordlist.tx_")
-    paths.ERRORS_XML = os.path.join(paths.SQLMAP_XML_PATH, "errors.xml")
-    paths.BOUNDARIES_XML = os.path.join(paths.SQLMAP_XML_PATH, "boundaries.xml")
-    paths.QUERIES_XML = os.path.join(paths.SQLMAP_XML_PATH, "queries.xml")
-    paths.GENERIC_XML = os.path.join(paths.SQLMAP_XML_BANNER_PATH, "generic.xml")
-    paths.MSSQL_XML = os.path.join(paths.SQLMAP_XML_BANNER_PATH, "mssql.xml")
-    paths.MYSQL_XML = os.path.join(paths.SQLMAP_XML_BANNER_PATH, "mysql.xml")
-    paths.ORACLE_XML = os.path.join(paths.SQLMAP_XML_BANNER_PATH, "oracle.xml")
-    paths.PGSQL_XML = os.path.join(paths.SQLMAP_XML_BANNER_PATH, "postgresql.xml")
+    # fsqli files
+    paths.COMMON_COLUMNS = os.path.join(paths.FSQLI_TXT_PATH, "common-columns.txt")
+    paths.COMMON_FILES = os.path.join(paths.FSQLI_TXT_PATH, "common-files.txt")
+    paths.COMMON_TABLES = os.path.join(paths.FSQLI_TXT_PATH, "common-tables.txt")
+    paths.COMMON_OUTPUTS = os.path.join(paths.FSQLI_TXT_PATH, 'common-outputs.txt')
+    paths.DIGEST_FILE = os.path.join(paths.FSQLI_TXT_PATH, "sha256sums.txt")
+    paths.SQL_KEYWORDS = os.path.join(paths.FSQLI_TXT_PATH, "keywords.txt")
+    paths.SMALL_DICT = os.path.join(paths.FSQLI_TXT_PATH, "smalldict.txt")
+    paths.USER_AGENTS = os.path.join(paths.FSQLI_TXT_PATH, "user-agents.txt")
+    paths.WORDLIST = os.path.join(paths.FSQLI_TXT_PATH, "wordlist.tx_")
+    paths.ERRORS_XML = os.path.join(paths.FSQLI_XML_PATH, "errors.xml")
+    paths.BOUNDARIES_XML = os.path.join(paths.FSQLI_XML_PATH, "boundaries.xml")
+    paths.QUERIES_XML = os.path.join(paths.FSQLI_XML_PATH, "queries.xml")
+    paths.GENERIC_XML = os.path.join(paths.FSQLI_XML_BANNER_PATH, "generic.xml")
+    paths.MSSQL_XML = os.path.join(paths.FSQLI_XML_BANNER_PATH, "mssql.xml")
+    paths.MYSQL_XML = os.path.join(paths.FSQLI_XML_BANNER_PATH, "mysql.xml")
+    paths.ORACLE_XML = os.path.join(paths.FSQLI_XML_BANNER_PATH, "oracle.xml")
+    paths.PGSQL_XML = os.path.join(paths.FSQLI_XML_BANNER_PATH, "postgresql.xml")
 
     for path in paths.values():
         if any(path.endswith(_) for _ in (".txt", ".xml", ".tx_")):
@@ -1545,31 +1545,31 @@ def setPaths(rootPath):
     if IS_WIN:
         # Reference: https://pureinfotech.com/list-environment-variables-windows-10/
         if os.getenv("LOCALAPPDATA"):
-            paths.SQLMAP_HOME_PATH = os.path.expandvars("%LOCALAPPDATA%\\sqlmap")
+            paths.FSQLI_HOME_PATH = os.path.expandvars("%LOCALAPPDATA%\\fsqli")
         elif os.getenv("USERPROFILE"):
-            paths.SQLMAP_HOME_PATH = os.path.expandvars("%USERPROFILE%\\Local Settings\\sqlmap")
+            paths.FSQLI_HOME_PATH = os.path.expandvars("%USERPROFILE%\\Local Settings\\fsqli")
         else:
-            paths.SQLMAP_HOME_PATH = os.path.join(os.path.expandvars(os.path.expanduser("~")), "sqlmap")
+            paths.FSQLI_HOME_PATH = os.path.join(os.path.expandvars(os.path.expanduser("~")), "fsqli")
     else:
-        paths.SQLMAP_HOME_PATH = os.path.join(os.path.expandvars(os.path.expanduser("~")), ".sqlmap")
+        paths.FSQLI_HOME_PATH = os.path.join(os.path.expandvars(os.path.expanduser("~")), ".fsqli")
 
-        if not os.path.isdir(paths.SQLMAP_HOME_PATH):
+        if not os.path.isdir(paths.FSQLI_HOME_PATH):
             if "XDG_DATA_HOME" in os.environ:
-                paths.SQLMAP_HOME_PATH = os.path.join(os.environ["XDG_DATA_HOME"], "sqlmap")
+                paths.FSQLI_HOME_PATH = os.path.join(os.environ["XDG_DATA_HOME"], "fsqli")
             else:
-                paths.SQLMAP_HOME_PATH = os.path.join(os.path.expandvars(os.path.expanduser("~")), ".local", "share", "sqlmap")
+                paths.FSQLI_HOME_PATH = os.path.join(os.path.expandvars(os.path.expanduser("~")), ".local", "share", "fsqli")
 
-    paths.SQLMAP_OUTPUT_PATH = getUnicode(paths.get("SQLMAP_OUTPUT_PATH", os.path.join(paths.SQLMAP_HOME_PATH, "output")), encoding=sys.getfilesystemencoding() or UNICODE_ENCODING)
-    paths.SQLMAP_DUMP_PATH = os.path.join(paths.SQLMAP_OUTPUT_PATH, "%s", "dump")
-    paths.SQLMAP_FILES_PATH = os.path.join(paths.SQLMAP_OUTPUT_PATH, "%s", "files")
+    paths.FSQLI_OUTPUT_PATH = getUnicode(paths.get("FSQLI_OUTPUT_PATH", os.path.join(paths.FSQLI_HOME_PATH, "output")), encoding=sys.getfilesystemencoding() or UNICODE_ENCODING)
+    paths.FSQLI_DUMP_PATH = os.path.join(paths.FSQLI_OUTPUT_PATH, "%s", "dump")
+    paths.FSQLI_FILES_PATH = os.path.join(paths.FSQLI_OUTPUT_PATH, "%s", "files")
 
     # History files
-    paths.SQLMAP_HISTORY_PATH = getUnicode(os.path.join(paths.SQLMAP_HOME_PATH, "history"), encoding=sys.getfilesystemencoding() or UNICODE_ENCODING)
-    paths.API_SHELL_HISTORY = os.path.join(paths.SQLMAP_HISTORY_PATH, "api.hst")
-    paths.OS_SHELL_HISTORY = os.path.join(paths.SQLMAP_HISTORY_PATH, "os.hst")
-    paths.SQL_SHELL_HISTORY = os.path.join(paths.SQLMAP_HISTORY_PATH, "sql.hst")
-    paths.SQLMAP_SHELL_HISTORY = os.path.join(paths.SQLMAP_HISTORY_PATH, "sqlmap.hst")
-    paths.GITHUB_HISTORY = os.path.join(paths.SQLMAP_HISTORY_PATH, "github.hst")
+    paths.FSQLI_HISTORY_PATH = getUnicode(os.path.join(paths.FSQLI_HOME_PATH, "history"), encoding=sys.getfilesystemencoding() or UNICODE_ENCODING)
+    paths.API_SHELL_HISTORY = os.path.join(paths.FSQLI_HISTORY_PATH, "api.hst")
+    paths.OS_SHELL_HISTORY = os.path.join(paths.FSQLI_HISTORY_PATH, "os.hst")
+    paths.SQL_SHELL_HISTORY = os.path.join(paths.FSQLI_HISTORY_PATH, "sql.hst")
+    paths.FSQLI_SHELL_HISTORY = os.path.join(paths.FSQLI_HISTORY_PATH, "fsqli.hst")
+    paths.GITHUB_HISTORY = os.path.join(paths.FSQLI_HISTORY_PATH, "github.hst")
 
 def weAreFrozen():
     """
@@ -1646,7 +1646,7 @@ def parseTargetDirect():
         errMsg = "invalid target details, valid syntax is for instance "
         errMsg += "'mysql://USER:PASSWORD@DBMS_IP:DBMS_PORT/DATABASE_NAME' "
         errMsg += "or 'access://DATABASE_FILEPATH'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     for dbmsName, data in DBMS_DICT.items():
         if dbmsName == conf.dbms or conf.dbms.lower() in data[0]:
@@ -1665,7 +1665,7 @@ def parseTargetDirect():
                     errMsg = "missing remote connection details (e.g. "
                     errMsg += "'mysql://USER:PASSWORD@DBMS_IP:DBMS_PORT/DATABASE_NAME' "
                     errMsg += "or 'access://DATABASE_FILEPATH')"
-                    raise SqlmapSyntaxException(errMsg)
+                    raise FsqliSyntaxException(errMsg)
 
                 if dbmsName in (DBMS.MSSQL, DBMS.SYBASE):
                     __import__("_mssql")
@@ -1675,7 +1675,7 @@ def parseTargetDirect():
                         errMsg = "'%s' third-party library must be " % data[1]
                         errMsg += "version >= 1.0.2 to work properly. "
                         errMsg += "Download from '%s'" % data[2]
-                        raise SqlmapMissingDependence(errMsg)
+                        raise FsqliMissingDependence(errMsg)
 
                 elif dbmsName == DBMS.MYSQL:
                     __import__("pymysql")
@@ -1693,18 +1693,18 @@ def parseTargetDirect():
                     __import__("pyodbc")
                 elif dbmsName == DBMS.FIREBIRD:
                     __import__("kinterbasdb")
-            except (SqlmapSyntaxException, SqlmapMissingDependence):
+            except (FsqliSyntaxException, FsqliMissingDependence):
                 raise
             except:
                 if _sqlalchemy and data[3] and any(_ in _sqlalchemy.dialects.__all__ for _ in (data[3], data[3].split('+')[0])):
                     pass
                 else:
-                    errMsg = "sqlmap requires '%s' third-party library " % data[1]
+                    errMsg = "fsqli requires '%s' third-party library " % data[1]
                     errMsg += "in order to directly connect to the DBMS "
                     errMsg += "'%s'. You can download it from '%s'" % (dbmsName, data[2])
                     errMsg += ". Alternative is to use a package 'python-sqlalchemy' "
                     errMsg += "with support for dialect '%s' installed" % data[3]
-                    raise SqlmapMissingDependence(errMsg)
+                    raise FsqliMissingDependence(errMsg)
 
 def parseTargetUrl():
     """
@@ -1728,7 +1728,7 @@ def parseTargetUrl():
     if re.search(r"://\[.+\]", conf.url) and not socket.has_ipv6:
         errMsg = "IPv6 communication is not supported "
         errMsg += "on this platform"
-        raise SqlmapGenericException(errMsg)
+        raise FsqliGenericException(errMsg)
 
     if not re.search(r"^(http|ws)s?://", conf.url, re.I):
         if re.search(r":443\b", conf.url):
@@ -1745,7 +1745,7 @@ def parseTargetUrl():
         errMsg = "invalid URL '%s' has been given ('%s'). " % (conf.url, getSafeExString(ex))
         errMsg += "Please be sure that you don't have any leftover characters (e.g. '[' or ']') "
         errMsg += "in the hostname part"
-        raise SqlmapGenericException(errMsg)
+        raise FsqliGenericException(errMsg)
 
     hostnamePort = urlSplit.netloc.split(":") if not re.search(r"\[.+\]", urlSplit.netloc) else filterNone((re.search(r"\[.+\]", urlSplit.netloc).group(0), re.search(r"\](:(?P<port>\d+))?", urlSplit.netloc).group("port")))
 
@@ -1769,14 +1769,14 @@ def parseTargetUrl():
 
     if any((invalid, re.search(r"\s", conf.hostname), '..' in conf.hostname, conf.hostname.startswith('.'), '\n' in originalUrl)):
         errMsg = "invalid target URL ('%s')" % originalUrl
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if len(hostnamePort) == 2:
         try:
             conf.port = int(hostnamePort[1])
         except:
             errMsg = "invalid target URL"
-            raise SqlmapSyntaxException(errMsg)
+            raise FsqliSyntaxException(errMsg)
     elif conf.scheme in ("https", "wss"):
         conf.port = 443
     else:
@@ -1784,7 +1784,7 @@ def parseTargetUrl():
 
     if conf.port < 1 or conf.port > 65535:
         errMsg = "invalid target URL port (%d)" % conf.port
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     conf.url = getUnicode("%s://%s%s%s" % (conf.scheme, ("[%s]" % conf.hostname) if conf.ipv6 else conf.hostname, (":%d" % conf.port) if not (conf.port == 80 and conf.scheme == "http" or conf.port == 443 and conf.scheme == "https") else "", conf.path))
     conf.url = conf.url.replace(URI_QUESTION_MARKER, '?')
@@ -1835,7 +1835,7 @@ def escapeJsonValue(value):
 def expandAsteriskForColumns(expression):
     """
     If the user provided an asterisk rather than the column(s)
-    name, sqlmap will retrieve the columns itself and reprocess
+    name, fsqli will retrieve the columns itself and reprocess
     the SQL query string (expression)
     """
 
@@ -1843,7 +1843,7 @@ def expandAsteriskForColumns(expression):
 
     if match:
         infoMsg = "you did not provide the fields in your query. "
-        infoMsg += "sqlmap will retrieve the column names itself"
+        infoMsg += "fsqli will retrieve the column names itself"
         logger.info(infoMsg)
 
         _ = match.group(2).replace("..", '.').replace(".dbo.", '.')
@@ -2130,7 +2130,7 @@ def safeFilepathEncode(filepath):
     """
     Returns filepath in (ASCII) format acceptable for OS handling (e.g. reading)
 
-    >>> 'sqlmap' in safeFilepathEncode(paths.SQLMAP_HOME_PATH)
+    >>> 'fsqli' in safeFilepathEncode(paths.FSQLI_HOME_PATH)
     True
     """
 
@@ -2210,7 +2210,7 @@ def safeStringFormat(format_, params):
                     if count >= len(params):
                         warnMsg = "wrong number of parameters during string formatting. "
                         warnMsg += "Please report by e-mail content \"%r | %r | %r\" to '%s'" % (format_, params, retVal, DEV_EMAIL_ADDRESS)
-                        raise SqlmapValueException(warnMsg)
+                        raise FsqliValueException(warnMsg)
                     else:
                         try:
                             retVal = re.sub(r"(\A|[^A-Za-z0-9])(%s)([^A-Za-z0-9]|\Z)", r"\g<1>%s\g<3>" % params[count], retVal, 1)
@@ -2419,7 +2419,7 @@ def parseXmlFile(xmlFile, handler):
         errMsg = "something appears to be wrong with "
         errMsg += "the file '%s' ('%s'). Please make " % (xmlFile, getSafeExString(ex))
         errMsg += "sure that you haven't made any changes to it"
-        raise SqlmapInstallationException(errMsg)
+        raise FsqliInstallationException(errMsg)
 
 def getSQLSnippet(dbms, sfile, **variables):
     """
@@ -2434,7 +2434,7 @@ def getSQLSnippet(dbms, sfile, **variables):
     elif not sfile.endswith('.sql') and os.path.exists("%s.sql" % sfile):
         filename = "%s.sql" % sfile
     else:
-        filename = os.path.join(paths.SQLMAP_PROCS_PATH, DBMS_DIRECTORY_DICT[dbms], sfile if sfile.endswith('.sql') else "%s.sql" % sfile)
+        filename = os.path.join(paths.FSQLI_PROCS_PATH, DBMS_DIRECTORY_DICT[dbms], sfile if sfile.endswith('.sql') else "%s.sql" % sfile)
         checkFile(filename)
 
     retVal = readCachedFileContent(filename)
@@ -2484,7 +2484,7 @@ def readCachedFileContent(filename, mode="rb"):
                 except (IOError, OSError, MemoryError) as ex:
                     errMsg = "something went wrong while trying "
                     errMsg += "to read the content of file '%s' ('%s')" % (filename, getSafeExString(ex))
-                    raise SqlmapSystemException(errMsg)
+                    raise FsqliSystemException(errMsg)
 
     return kb.cache.content[filename]
 
@@ -2592,7 +2592,7 @@ def getFileItems(filename, commentPrefix='#', unicoded=True, lowercase=False, un
     except (IOError, OSError, MemoryError) as ex:
         errMsg = "something went wrong while trying "
         errMsg += "to read the content of file '%s' ('%s')" % (filename, getSafeExString(ex))
-        raise SqlmapSystemException(errMsg)
+        raise FsqliSystemException(errMsg)
 
     return retVal if not unique else list(retVal.keys())
 
@@ -2817,7 +2817,7 @@ def wasLastResponseDelayed():
 
         if not kb.testMode and retVal:
             if kb.adjustTimeDelay is None:
-                msg = "do you want sqlmap to try to optimize value(s) "
+                msg = "do you want fsqli to try to optimize value(s) "
                 msg += "for DBMS delay responses (option '--time-sec')? [Y/n] "
 
                 kb.adjustTimeDelay = ADJUST_TIME_DELAY.DISABLE if not readInput(msg, default='Y', boolean=True) else ADJUST_TIME_DELAY.YES
@@ -3058,9 +3058,9 @@ def runningAsAdmin():
 
         isAdmin = isinstance(_, (float, six.integer_types)) and _ == 1
     else:
-        errMsg = "sqlmap is not able to check if you are running it "
+        errMsg = "fsqli is not able to check if you are running it "
         errMsg += "as an administrator account on this platform. "
-        errMsg += "sqlmap will assume that you are an administrator "
+        errMsg += "fsqli will assume that you are an administrator "
         errMsg += "which is mandatory for the requested takeover attack "
         errMsg += "to work properly"
         logger.error(errMsg)
@@ -3475,7 +3475,7 @@ def getTechniqueData(technique=None):
 
 def isTechniqueAvailable(technique):
     """
-    Returns True if there is injection data which sqlmap could use for technique specified
+    Returns True if there is injection data which fsqli could use for technique specified
 
     >>> pushValue(kb.injection.data)
     >>> kb.injection.data[PAYLOAD.TECHNIQUE.ERROR] = [test for test in getSortedInjectionTests() if "error" in test["title"].lower()][0]
@@ -3613,7 +3613,7 @@ def saveConfig(conf, filename):
         except IOError as ex:
             errMsg = "something went wrong while trying "
             errMsg += "to write to the configuration file '%s' ('%s')" % (filename, getSafeExString(ex))
-            raise SqlmapSystemException(errMsg)
+            raise FsqliSystemException(errMsg)
 
 def initTechnique(technique=None):
     """
@@ -3643,11 +3643,11 @@ def initTechnique(technique=None):
             warnMsg += "'%s'" % enumValueToNameLookup(PAYLOAD.TECHNIQUE, technique)
             logger.warning(warnMsg)
 
-    except SqlmapDataException:
+    except FsqliDataException:
         errMsg = "missing data in old session file(s). "
         errMsg += "Please use '--flush-session' to deal "
         errMsg += "with this error"
-        raise SqlmapNoneDataException(errMsg)
+        raise FsqliNoneDataException(errMsg)
 
 def arrayizeValue(value):
     """
@@ -3824,7 +3824,7 @@ def openFile(filename, mode='r', encoding=UNICODE_ENCODING, errors="reversible",
             errMsg = "there has been a file opening error for filename '%s'. " % filename
             errMsg += "Please check %s permissions on a file " % ("write" if mode and ('w' in mode or 'a' in mode or '+' in mode) else "read")
             errMsg += "and that it's not locked by another process"
-            raise SqlmapSystemException(errMsg)
+            raise FsqliSystemException(errMsg)
 
 def decodeIntToUnicode(value):
     """
@@ -3849,7 +3849,7 @@ def decodeIntToUnicode(value):
 
                 if Backend.isDbms(DBMS.MYSQL):
                     # Reference: https://dev.mysql.com/doc/refman/8.0/en/string-functions.html#function_ord
-                    # Note: https://github.com/sqlmapproject/sqlmap/issues/1531
+                    # Note: https://github.com/fsqliproject/fsqli/issues/1531
                     retVal = getUnicode(raw, conf.encoding or UNICODE_ENCODING)
                 elif Backend.isDbms(DBMS.MSSQL):
                     # Reference: https://docs.microsoft.com/en-us/sql/relational-databases/collations/collation-and-unicode-support?view=sql-server-2017 and https://stackoverflow.com/a/14488478
@@ -3876,7 +3876,7 @@ def getDaysFromLastUpdate():
     if not paths:
         return
 
-    return int(time.time() - os.path.getmtime(paths.SQLMAP_SETTINGS_PATH)) // (3600 * 24)
+    return int(time.time() - os.path.getmtime(paths.FSQLI_SETTINGS_PATH)) // (3600 * 24)
 
 def unhandledExceptionMessage():
     """
@@ -3896,7 +3896,7 @@ def unhandledExceptionMessage():
     errMsg += "Running version: %s\n" % VERSION_STRING[VERSION_STRING.find('/') + 1:]
     errMsg += "Python version: %s\n" % PYVERSION
     errMsg += "Operating system: %s\n" % platform.platform()
-    errMsg += "Command line: %s\n" % re.sub(r".+?\bsqlmap\.py\b", "sqlmap.py", getUnicode(" ".join(sys.argv), encoding=getattr(sys.stdin, "encoding", None)))
+    errMsg += "Command line: %s\n" % re.sub(r".+?\bfsqli\.py\b", "fsqli.py", getUnicode(" ".join(sys.argv), encoding=getattr(sys.stdin, "encoding", None)))
     errMsg += "Technique: %s\n" % (enumValueToNameLookup(PAYLOAD.TECHNIQUE, getTechnique()) if getTechnique() is not None else ("DIRECT" if conf.get("direct") else None))
     errMsg += "Back-end DBMS:"
 
@@ -3917,7 +3917,7 @@ def getLatestRevision():
     """
 
     retVal = None
-    req = _urllib.request.Request(url="https://raw.githubusercontent.com/sqlmapproject/sqlmap/master/lib/core/settings.py", headers={HTTP_HEADER.USER_AGENT: fetchRandomAgent()})
+    req = _urllib.request.Request(url="https://raw.githubusercontent.com/fsqliproject/fsqli/master/lib/core/settings.py", headers={HTTP_HEADER.USER_AGENT: fetchRandomAgent()})
 
     try:
         content = getUnicode(_urllib.request.urlopen(req).read())
@@ -3945,7 +3945,7 @@ def fetchRandomAgent():
         except IOError:
             errMsg = "unable to read HTTP User-Agent header "
             errMsg += "file '%s'" % paths.USER_AGENTS
-            raise SqlmapSystemException(errMsg)
+            raise FsqliSystemException(errMsg)
 
     return random.sample(kb.userAgents, 1)[0]
 
@@ -3985,7 +3985,7 @@ def createGithubIssue(errMsg, excMsg):
         _excMsg = None
         errMsg = errMsg[errMsg.find("\n"):]
 
-        req = _urllib.request.Request(url="https://api.github.com/search/issues?q=%s" % _urllib.parse.quote("repo:sqlmapproject/sqlmap Unhandled exception (#%s)" % key), headers={HTTP_HEADER.USER_AGENT: fetchRandomAgent()})
+        req = _urllib.request.Request(url="https://api.github.com/search/issues?q=%s" % _urllib.parse.quote("repo:fsqliproject/fsqli Unhandled exception (#%s)" % key), headers={HTTP_HEADER.USER_AGENT: fetchRandomAgent()})
 
         try:
             content = _urllib.request.urlopen(req).read()
@@ -4003,7 +4003,7 @@ def createGithubIssue(errMsg, excMsg):
             pass
 
         data = {"title": "Unhandled exception (#%s)" % key, "body": "```%s\n```\n```\n%s```" % (errMsg, excMsg)}
-        req = _urllib.request.Request(url="https://api.github.com/repos/sqlmapproject/sqlmap/issues", data=getBytes(json.dumps(data)), headers={HTTP_HEADER.AUTHORIZATION: "token %s" % decodeBase64(GITHUB_REPORT_OAUTH_TOKEN, binary=False), HTTP_HEADER.USER_AGENT: fetchRandomAgent()})
+        req = _urllib.request.Request(url="https://api.github.com/repos/fsqliproject/fsqli/issues", data=getBytes(json.dumps(data)), headers={HTTP_HEADER.AUTHORIZATION: "token %s" % decodeBase64(GITHUB_REPORT_OAUTH_TOKEN, binary=False), HTTP_HEADER.USER_AGENT: fetchRandomAgent()})
 
         try:
             content = getText(_urllib.request.urlopen(req).read())
@@ -4011,7 +4011,7 @@ def createGithubIssue(errMsg, excMsg):
             content = None
             _excMsg = getSafeExString(ex)
 
-        issueUrl = re.search(r"https://github.com/sqlmapproject/sqlmap/issues/\d+", content or "")
+        issueUrl = re.search(r"https://github.com/fsqliproject/fsqli/issues/\d+", content or "")
         if issueUrl:
             infoMsg = "created Github issue can been found at the address '%s'" % issueUrl.group(0)
             logger.info(infoMsg)
@@ -4033,9 +4033,9 @@ def maskSensitiveData(msg):
     """
     Masks sensitive data in the supplied message
 
-    >>> maskSensitiveData('python sqlmap.py -u "http://www.test.com/vuln.php?id=1" --banner') == 'python sqlmap.py -u *********************************** --banner'
+    >>> maskSensitiveData('python fsqli.py -u "http://www.test.com/vuln.php?id=1" --banner') == 'python fsqli.py -u *********************************** --banner'
     True
-    >>> maskSensitiveData('sqlmap.py -u test.com/index.go?id=index --auth-type=basic --auth-creds=foo:bar\\ndummy line') == 'sqlmap.py -u ************************** --auth-type=***** --auth-creds=*******\\ndummy line'
+    >>> maskSensitiveData('fsqli.py -u test.com/index.go?id=index --auth-type=basic --auth-creds=foo:bar\\ndummy line') == 'fsqli.py -u ************************** --auth-type=***** --auth-creds=*******\\ndummy line'
     True
     """
 
@@ -4297,7 +4297,7 @@ def safeSQLIdentificatorNaming(name, isTable=False):
                             retVal = "[%s]" % retVal
 
         if _ and DEFAULT_MSSQL_SCHEMA not in retVal and '.' not in re.sub(r"\[[^]]+\]", "", retVal):
-            if (conf.db or "").lower() != "information_schema":     # NOTE: https://github.com/sqlmapproject/sqlmap/issues/5192
+            if (conf.db or "").lower() != "information_schema":     # NOTE: https://github.com/fsqliproject/fsqli/issues/5192
                 retVal = "%s.%s" % (DEFAULT_MSSQL_SCHEMA, retVal)
 
     return retVal
@@ -4411,7 +4411,7 @@ def expandMnemonics(mnemonics, parser, args):
 
         if pointer in (None, head):
             errMsg = "mnemonic '%s' can't be resolved to any parameter name" % name
-            raise SqlmapSyntaxException(errMsg)
+            raise FsqliSyntaxException(errMsg)
 
         elif len(pointer.current) > 1:
             options = {}
@@ -4454,7 +4454,7 @@ def expandMnemonics(mnemonics, parser, args):
                 setattr(args, found.dest, True)
             else:
                 errMsg = "mnemonic '%s' requires value of type '%s'" % (name, found.type)
-                raise SqlmapSyntaxException(errMsg)
+                raise FsqliSyntaxException(errMsg)
 
 def safeCSValue(value):
     """
@@ -4667,7 +4667,7 @@ def findPageForms(content, url, raiseException=False, addToTargets=False):
     if not content:
         errMsg = "can't parse forms as the page content appears to be blank"
         if raiseException:
-            raise SqlmapGenericException(errMsg)
+            raise FsqliGenericException(errMsg)
         else:
             logger.debug(errMsg)
 
@@ -4689,7 +4689,7 @@ def findPageForms(content, url, raiseException=False, addToTargets=False):
                 except:
                     errMsg = "no success"
                     if raiseException:
-                        raise SqlmapGenericException(errMsg)
+                        raise FsqliGenericException(errMsg)
                     else:
                         logger.debug(errMsg)
     except:
@@ -4716,7 +4716,7 @@ def findPageForms(content, url, raiseException=False, addToTargets=False):
             errMsg = "there has been a problem while "
             errMsg += "processing page forms ('%s')" % getSafeExString(ex)
             if raiseException:
-                raise SqlmapGenericException(errMsg)
+                raise FsqliGenericException(errMsg)
             else:
                 logger.debug(errMsg)
         else:
@@ -4768,7 +4768,7 @@ def findPageForms(content, url, raiseException=False, addToTargets=False):
     if not retVal and not conf.crawlDepth:
         errMsg = "there were no forms found at the given target URL"
         if raiseException:
-            raise SqlmapGenericException(errMsg)
+            raise FsqliGenericException(errMsg)
         else:
             logger.debug(errMsg)
 
@@ -4834,7 +4834,7 @@ def checkOldOptions(args):
             errMsg = "switch/option '%s' is obsolete" % _
             if OBSOLETE_OPTIONS[_]:
                 errMsg += " (hint: %s)" % OBSOLETE_OPTIONS[_]
-            raise SqlmapSyntaxException(errMsg)
+            raise FsqliSyntaxException(errMsg)
         elif _ in DEPRECATED_OPTIONS:
             warnMsg = "switch/option '%s' is deprecated" % _
             if DEPRECATED_OPTIONS[_]:
@@ -4876,7 +4876,7 @@ def evaluateCode(code, variables=None):
         raise
     except Exception as ex:
         errMsg = "an error occurred while evaluating provided code ('%s') " % getSafeExString(ex)
-        raise SqlmapGenericException(errMsg)
+        raise FsqliGenericException(errMsg)
 
 def serializeObject(object_):
     """
@@ -5107,12 +5107,12 @@ def resetCookieJar(cookieJar):
 
             if not cookieJar._cookies:
                 errMsg = "no valid cookies found"
-                raise SqlmapGenericException(errMsg)
+                raise FsqliGenericException(errMsg)
 
         except Exception as ex:
             errMsg = "there was a problem loading "
             errMsg += "cookies file ('%s')" % re.sub(r"(cookies) file '[^']+'", r"\g<1>", getSafeExString(ex))
-            raise SqlmapGenericException(errMsg)
+            raise FsqliGenericException(errMsg)
 
 def decloakToTemp(filename):
     """
@@ -5120,11 +5120,11 @@ def decloakToTemp(filename):
 
     NOTE: using in-memory decloak() in docTests because of the "problem" on Windows platform
 
-    >>> decloak(os.path.join(paths.SQLMAP_SHELL_PATH, "stagers", "stager.asp_")).startswith(b'<%')
+    >>> decloak(os.path.join(paths.FSQLI_SHELL_PATH, "stagers", "stager.asp_")).startswith(b'<%')
     True
-    >>> decloak(os.path.join(paths.SQLMAP_SHELL_PATH, "backdoors", "backdoor.asp_")).startswith(b'<%')
+    >>> decloak(os.path.join(paths.FSQLI_SHELL_PATH, "backdoors", "backdoor.asp_")).startswith(b'<%')
     True
-    >>> b'sys_eval' in decloak(os.path.join(paths.SQLMAP_UDF_PATH, "postgresql", "linux", "64", "11", "lib_postgresqludf_sys.so_"))
+    >>> b'sys_eval' in decloak(os.path.join(paths.FSQLI_UDF_PATH, "postgresql", "linux", "64", "11", "lib_postgresqludf_sys.so_"))
     True
     """
 
@@ -5440,7 +5440,7 @@ def parseRequestFile(reqFile, checkParams=True):
 
                 if not host:
                     errMsg = "invalid format of a request file"
-                    raise SqlmapSyntaxException(errMsg)
+                    raise FsqliSyntaxException(errMsg)
 
                 if not url.startswith("http"):
                     url = "%s://%s:%s%s" % (scheme or "http", host, port or "80", url)
@@ -5459,7 +5459,7 @@ def parseRequestFile(reqFile, checkParams=True):
             re.compile(conf.scope)
         except Exception as ex:
             errMsg = "invalid regular expression '%s' ('%s')" % (conf.scope, getSafeExString(ex))
-            raise SqlmapSyntaxException(errMsg)
+            raise FsqliSyntaxException(errMsg)
 
     for target in _parseBurpLog(content):
         yield target
@@ -5471,7 +5471,7 @@ def getSafeExString(ex, encoding=None):
     """
     Safe way how to get the proper exception represtation as a string
 
-    >>> getSafeExString(SqlmapBaseException('foobar')) == 'foobar'
+    >>> getSafeExString(FsqliBaseException('foobar')) == 'foobar'
     True
     >>> getSafeExString(OSError(0, 'foobar')) == 'OSError: foobar'
     True
@@ -5491,7 +5491,7 @@ def getSafeExString(ex, encoding=None):
 
     if retVal is None:
         retVal = str(ex)
-    elif not isinstance(ex, SqlmapBaseException):
+    elif not isinstance(ex, FsqliBaseException):
         retVal = "%s: %s" % (type(ex).__name__, retVal)
 
     return getUnicode(retVal or "", encoding=encoding).strip()
@@ -5602,7 +5602,7 @@ def checkSums():
             match = re.search(r"([0-9a-f]+)\s+([^\s]+)", entry)
             if match:
                 expected, filename = match.groups()
-                filepath = os.path.join(paths.SQLMAP_ROOT_PATH, filename).replace('/', os.path.sep)
+                filepath = os.path.join(paths.FSQLI_ROOT_PATH, filename).replace('/', os.path.sep)
                 checkFile(filepath)
                 with open(filepath, "rb") as f:
                     content = f.read()

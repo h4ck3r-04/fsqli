@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -25,7 +25,7 @@ def tamper(payload, **kwargs):
     """
 
     if payload:
-        payload = re.sub(r"&#(\d+);", lambda match: chr(int(match.group(1))), payload)      # NOTE: https://github.com/sqlmapproject/sqlmap/issues/5203
+        payload = re.sub(r"&#(\d+);", lambda match: chr(int(match.group(1))), payload)      # NOTE: https://github.com/fsqliproject/fsqli/issues/5203
         payload = re.sub(r"[^\w]", lambda match: "&#%d;" % ord(match.group(0)), payload)
 
     return payload

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -87,20 +87,20 @@ from lib.core.enums import PRIORITY
 from lib.core.enums import PROXY_TYPE
 from lib.core.enums import REFLECTIVE_COUNTER
 from lib.core.enums import WIZARD
-from lib.core.exception import SqlmapConnectionException
-from lib.core.exception import SqlmapDataException
-from lib.core.exception import SqlmapFilePathException
-from lib.core.exception import SqlmapGenericException
-from lib.core.exception import SqlmapInstallationException
-from lib.core.exception import SqlmapMissingDependence
-from lib.core.exception import SqlmapMissingMandatoryOptionException
-from lib.core.exception import SqlmapMissingPrivileges
-from lib.core.exception import SqlmapSilentQuitException
-from lib.core.exception import SqlmapSyntaxException
-from lib.core.exception import SqlmapSystemException
-from lib.core.exception import SqlmapUnsupportedDBMSException
-from lib.core.exception import SqlmapUserQuitException
-from lib.core.exception import SqlmapValueException
+from lib.core.exception import FsqliConnectionException
+from lib.core.exception import FsqliDataException
+from lib.core.exception import FsqliFilePathException
+from lib.core.exception import FsqliGenericException
+from lib.core.exception import FsqliInstallationException
+from lib.core.exception import FsqliMissingDependence
+from lib.core.exception import FsqliMissingMandatoryOptionException
+from lib.core.exception import FsqliMissingPrivileges
+from lib.core.exception import FsqliSilentQuitException
+from lib.core.exception import FsqliSyntaxException
+from lib.core.exception import FsqliSystemException
+from lib.core.exception import FsqliUnsupportedDBMSException
+from lib.core.exception import FsqliUserQuitException
+from lib.core.exception import FsqliValueException
 from lib.core.log import FORMATTER
 from lib.core.optiondict import optDict
 from lib.core.settings import CODECS_LIST_PAGE
@@ -124,7 +124,7 @@ from lib.core.settings import PARAMETER_SPLITTING_REGEX
 from lib.core.settings import PRECONNECT_CANDIDATE_TIMEOUT
 from lib.core.settings import PROXY_ENVIRONMENT_VARIABLES
 from lib.core.settings import SOCKET_PRE_CONNECT_QUEUE_SIZE
-from lib.core.settings import SQLMAP_ENVIRONMENT_PREFIX
+from lib.core.settings import FSQLI_ENVIRONMENT_PREFIX
 from lib.core.settings import SUPPORTED_DBMS
 from lib.core.settings import SUPPORTED_OS
 from lib.core.settings import TIME_DELAY_CANDIDATES
@@ -208,7 +208,7 @@ def _loadQueries():
         errMsg = "something appears to be wrong with "
         errMsg += "the file '%s' ('%s'). Please make " % (paths.QUERIES_XML, getSafeExString(ex))
         errMsg += "sure that you haven't made any changes to it"
-        raise SqlmapInstallationException(errMsg)
+        raise FsqliInstallationException(errMsg)
 
     for node in tree.findall("*"):
         queries[node.attrib['value']] = iterate(node)
@@ -230,7 +230,7 @@ def _setMultipleTargets():
 
     if not os.path.exists(conf.logFile):
         errMsg = "the specified list of targets does not exist"
-        raise SqlmapFilePathException(errMsg)
+        raise FsqliFilePathException(errMsg)
 
     if checkFile(conf.logFile, False):
         for target in parseRequestFile(conf.logFile):
@@ -258,12 +258,12 @@ def _setMultipleTargets():
     else:
         errMsg = "the specified list of targets is not a file "
         errMsg += "nor a directory"
-        raise SqlmapFilePathException(errMsg)
+        raise FsqliFilePathException(errMsg)
 
     updatedTargetsCount = len(kb.targets)
 
     if updatedTargetsCount > initialTargetsCount:
-        infoMsg = "sqlmap parsed %d " % (updatedTargetsCount - initialTargetsCount)
+        infoMsg = "fsqli parsed %d " % (updatedTargetsCount - initialTargetsCount)
         infoMsg += "(parameter unique) requests from the "
         infoMsg += "targets list ready to be tested"
         logger.info(infoMsg)
@@ -303,7 +303,7 @@ def _setRequestFromFile():
             if not checkFile(requestFile, False):
                 errMsg = "specified HTTP request file '%s' " % requestFile
                 errMsg += "does not exist"
-                raise SqlmapFilePathException(errMsg)
+                raise FsqliFilePathException(errMsg)
 
             infoMsg = "parsing HTTP request from '%s'" % requestFile
             logger.info(infoMsg)
@@ -319,7 +319,7 @@ def _setRequestFromFile():
             if url is None:
                 errMsg = "specified file '%s' " % requestFile
                 errMsg += "does not contain a usable HTTP request (with parameters)"
-                raise SqlmapDataException(errMsg)
+                raise FsqliDataException(errMsg)
 
     if conf.secondReq:
         conf.secondReq = safeExpandUser(conf.secondReq)
@@ -327,7 +327,7 @@ def _setRequestFromFile():
         if not checkFile(conf.secondReq, False):
             errMsg = "specified second-order HTTP request file '%s' " % conf.secondReq
             errMsg += "does not exist"
-            raise SqlmapFilePathException(errMsg)
+            raise FsqliFilePathException(errMsg)
 
         infoMsg = "parsing second-order HTTP request from '%s'" % conf.secondReq
         logger.info(infoMsg)
@@ -338,7 +338,7 @@ def _setRequestFromFile():
         except StopIteration:
             errMsg = "specified second-order HTTP request file '%s' " % conf.secondReq
             errMsg += "does not contain a valid HTTP request"
-            raise SqlmapDataException(errMsg)
+            raise FsqliDataException(errMsg)
 
 def _setCrawler():
     if not conf.crawlDepth:
@@ -368,7 +368,7 @@ def _doSearch():
         if not links:
             errMsg = "unable to find results for your "
             errMsg += "search dork expression"
-            raise SqlmapGenericException(errMsg)
+            raise FsqliGenericException(errMsg)
 
         for link in links:
             link = urldecode(link)
@@ -410,7 +410,7 @@ def _doSearch():
             message += "Do you want to skip to the next result page? [Y/n]"
 
             if not readInput(message, default='Y', boolean=True):
-                raise SqlmapSilentQuitException
+                raise FsqliSilentQuitException
             else:
                 conf.googlePage += 1
 
@@ -464,7 +464,7 @@ def _setBulkMultipleTargets():
     if not checkFile(conf.bulkFile, False):
         errMsg = "the specified bulk file "
         errMsg += "does not exist"
-        raise SqlmapFilePathException(errMsg)
+        raise FsqliFilePathException(errMsg)
 
     found = False
     for line in getFileItems(conf.bulkFile):
@@ -544,7 +544,7 @@ def _setDBMSAuthentication():
     if not match:
         errMsg = "DBMS authentication credentials value must be in format "
         errMsg += "username:password"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     conf.dbmsUsername = match.group(1)
     conf.dbmsPassword = match.group(2)
@@ -562,11 +562,11 @@ def _setMetasploit():
         try:
             __import__("win32file")
         except ImportError:
-            errMsg = "sqlmap requires third-party module 'pywin32' "
+            errMsg = "fsqli requires third-party module 'pywin32' "
             errMsg += "in order to use Metasploit functionalities on "
             errMsg += "Windows. You can download it from "
             errMsg += "'https://github.com/mhammond/pywin32'"
-            raise SqlmapMissingDependence(errMsg)
+            raise FsqliMissingDependence(errMsg)
 
         if not conf.msfPath:
             for candidate in os.environ.get("PATH", "").split(';'):
@@ -578,11 +578,11 @@ def _setMetasploit():
         isAdmin = runningAsAdmin()
 
         if not isAdmin:
-            errMsg = "you need to run sqlmap as an administrator "
+            errMsg = "you need to run fsqli as an administrator "
             errMsg += "if you want to perform a SMB relay attack because "
             errMsg += "it will need to listen on a user-specified SMB "
             errMsg += "TCP port for incoming connection attempts"
-            raise SqlmapMissingPrivileges(errMsg)
+            raise FsqliMissingPrivileges(errMsg)
 
     if conf.msfPath:
         for path in (conf.msfPath, os.path.join(conf.msfPath, "bin")):
@@ -616,7 +616,7 @@ def _setMetasploit():
         logger.warning(warnMsg)
 
     if not msfEnvPathExists:
-        warnMsg = "sqlmap is going to look for Metasploit Framework "
+        warnMsg = "fsqli is going to look for Metasploit Framework "
         warnMsg += "installation inside the environment path(s)"
         logger.warning(warnMsg)
 
@@ -646,7 +646,7 @@ def _setMetasploit():
     if not msfEnvPathExists:
         errMsg = "unable to locate Metasploit Framework installation. "
         errMsg += "You can get it at 'https://www.metasploit.com/download/'"
-        raise SqlmapFilePathException(errMsg)
+        raise FsqliFilePathException(errMsg)
 
 def _setWriteFile():
     if not conf.fileWrite:
@@ -657,12 +657,12 @@ def _setWriteFile():
 
     if not os.path.exists(conf.fileWrite):
         errMsg = "the provided local file '%s' does not exist" % conf.fileWrite
-        raise SqlmapFilePathException(errMsg)
+        raise FsqliFilePathException(errMsg)
 
     if not conf.fileDest:
         errMsg = "you did not provide the back-end DBMS absolute path "
         errMsg += "where you want to write the local file '%s'" % conf.fileWrite
-        raise SqlmapMissingMandatoryOptionException(errMsg)
+        raise FsqliMissingMandatoryOptionException(errMsg)
 
     conf.fileWriteType = getFileType(conf.fileWrite)
 
@@ -679,9 +679,9 @@ def _setOS():
         errMsg += "system. The supported DBMS operating systems for OS "
         errMsg += "and file system access are %s. " % ', '.join([o.capitalize() for o in SUPPORTED_OS])
         errMsg += "If you do not know the back-end DBMS underlying OS, "
-        errMsg += "do not provide it and sqlmap will fingerprint it for "
+        errMsg += "do not provide it and fsqli will fingerprint it for "
         errMsg += "you."
-        raise SqlmapUnsupportedDBMSException(errMsg)
+        raise FsqliUnsupportedDBMSException(errMsg)
 
     debugMsg = "forcing back-end DBMS operating system to user defined "
     debugMsg += "value '%s'" % conf.os
@@ -701,7 +701,7 @@ def _setTechnique():
                 errMsg = "value for --technique must be a string composed "
                 errMsg += "by the letters %s. Refer to the " % ", ".join(validLetters)
                 errMsg += "user's manual for details"
-                raise SqlmapSyntaxException(errMsg)
+                raise FsqliSyntaxException(errMsg)
 
             for validTech, validInt in validTechniques:
                 if letter == validTech[0]:
@@ -732,8 +732,8 @@ def _setDBMS():
         errMsg = "you provided an unsupported back-end database management "
         errMsg += "system. Supported DBMSes are as follows: %s. " % ', '.join(sorted((_ for _ in (list(DBMS_DICT) + getPublicTypeMembers(FORK, True))), key=str.lower))
         errMsg += "If you do not know the back-end DBMS, do not provide "
-        errMsg += "it and sqlmap will fingerprint it for you."
-        raise SqlmapUnsupportedDBMSException(errMsg)
+        errMsg += "it and fsqli will fingerprint it for you."
+        raise FsqliUnsupportedDBMSException(errMsg)
 
     for dbms, aliases in DBMS_ALIASES:
         if conf.dbms in aliases:
@@ -750,7 +750,7 @@ def _listTamperingFunctions():
         infoMsg = "listing available tamper scripts\n"
         logger.info(infoMsg)
 
-        for script in sorted(glob.glob(os.path.join(paths.SQLMAP_TAMPER_PATH, "*.py"))):
+        for script in sorted(glob.glob(os.path.join(paths.FSQLI_TAMPER_PATH, "*.py"))):
             content = openFile(script, "rb").read()
             match = re.search(r'(?s)__priority__.+"""(.+)"""', content)
             if match:
@@ -771,7 +771,7 @@ def _setTamperingFunctions():
         for script in re.split(PARAMETER_SPLITTING_REGEX, conf.tamper):
             found = False
 
-            path = safeFilepathEncode(paths.SQLMAP_TAMPER_PATH)
+            path = safeFilepathEncode(paths.FSQLI_TAMPER_PATH)
             script = safeFilepathEncode(script.strip())
 
             try:
@@ -783,14 +783,14 @@ def _setTamperingFunctions():
 
                 elif not os.path.exists(script):
                     errMsg = "tamper script '%s' does not exist" % script
-                    raise SqlmapFilePathException(errMsg)
+                    raise FsqliFilePathException(errMsg)
 
                 elif not script.endswith(".py"):
                     errMsg = "tamper script '%s' should have an extension '.py'" % script
-                    raise SqlmapSyntaxException(errMsg)
+                    raise FsqliSyntaxException(errMsg)
             except UnicodeDecodeError:
                 errMsg = "invalid character provided in option '--tamper'"
-                raise SqlmapSyntaxException(errMsg)
+                raise FsqliSyntaxException(errMsg)
 
             dirname, filename = os.path.split(script)
             dirname = os.path.abspath(dirname)
@@ -801,7 +801,7 @@ def _setTamperingFunctions():
             if not os.path.exists(os.path.join(dirname, "__init__.py")):
                 errMsg = "make sure that there is an empty file '__init__.py' "
                 errMsg += "inside of tamper scripts directory '%s'" % dirname
-                raise SqlmapGenericException(errMsg)
+                raise FsqliGenericException(errMsg)
 
             if dirname not in sys.path:
                 sys.path.insert(0, dirname)
@@ -809,7 +809,7 @@ def _setTamperingFunctions():
             try:
                 module = __import__(safeFilepathEncode(filename[:-3]))
             except Exception as ex:
-                raise SqlmapSyntaxException("cannot import tamper module '%s' (%s)" % (getUnicode(filename[:-3]), getSafeExString(ex)))
+                raise FsqliSyntaxException("cannot import tamper module '%s' (%s)" % (getUnicode(filename[:-3]), getSafeExString(ex)))
 
             priority = PRIORITY.NORMAL if not hasattr(module, "__priority__") else module.__priority__
 
@@ -828,7 +828,7 @@ def _setTamperingFunctions():
                         if choice == 'N':
                             resolve_priorities = False
                         elif choice == 'Q':
-                            raise SqlmapUserQuitException
+                            raise FsqliUserQuitException
                         else:
                             resolve_priorities = True
 
@@ -844,12 +844,12 @@ def _setTamperingFunctions():
                     except Exception as ex:
                         errMsg = "error occurred while checking dependencies "
                         errMsg += "for tamper module '%s' ('%s')" % (getUnicode(filename[:-3]), getSafeExString(ex))
-                        raise SqlmapGenericException(errMsg)
+                        raise FsqliGenericException(errMsg)
 
             if not found:
                 errMsg = "missing function 'tamper(payload, **kwargs)' "
                 errMsg += "in tamper script '%s'" % script
-                raise SqlmapGenericException(errMsg)
+                raise FsqliGenericException(errMsg)
 
         if kb.tamperFunctions and len(kb.tamperFunctions) > 3:
             warnMsg = "using too many tamper scripts is usually not "
@@ -881,14 +881,14 @@ def _setPreprocessFunctions():
 
                 if not os.path.exists(script):
                     errMsg = "preprocess script '%s' does not exist" % script
-                    raise SqlmapFilePathException(errMsg)
+                    raise FsqliFilePathException(errMsg)
 
                 elif not script.endswith(".py"):
                     errMsg = "preprocess script '%s' should have an extension '.py'" % script
-                    raise SqlmapSyntaxException(errMsg)
+                    raise FsqliSyntaxException(errMsg)
             except UnicodeDecodeError:
                 errMsg = "invalid character provided in option '--preprocess'"
-                raise SqlmapSyntaxException(errMsg)
+                raise FsqliSyntaxException(errMsg)
 
             dirname, filename = os.path.split(script)
             dirname = os.path.abspath(dirname)
@@ -899,7 +899,7 @@ def _setPreprocessFunctions():
             if not os.path.exists(os.path.join(dirname, "__init__.py")):
                 errMsg = "make sure that there is an empty file '__init__.py' "
                 errMsg += "inside of preprocess scripts directory '%s'" % dirname
-                raise SqlmapGenericException(errMsg)
+                raise FsqliGenericException(errMsg)
 
             if dirname not in sys.path:
                 sys.path.insert(0, dirname)
@@ -907,7 +907,7 @@ def _setPreprocessFunctions():
             try:
                 module = __import__(safeFilepathEncode(filename[:-3]))
             except Exception as ex:
-                raise SqlmapSyntaxException("cannot import preprocess module '%s' (%s)" % (getUnicode(filename[:-3]), getSafeExString(ex)))
+                raise FsqliSyntaxException("cannot import preprocess module '%s' (%s)" % (getUnicode(filename[:-3]), getSafeExString(ex)))
 
             for name, function in inspect.getmembers(module, inspect.isfunction):
                 try:
@@ -918,13 +918,13 @@ def _setPreprocessFunctions():
                         function.__name__ = module.__name__
 
                         break
-                except ValueError:  # Note: https://github.com/sqlmapproject/sqlmap/issues/4357
+                except ValueError:  # Note: https://github.com/fsqliproject/fsqli/issues/4357
                     pass
 
             if not found:
                 errMsg = "missing function 'preprocess(req)' "
                 errMsg += "in preprocess script '%s'" % script
-                raise SqlmapGenericException(errMsg)
+                raise FsqliGenericException(errMsg)
             else:
                 try:
                     function(_urllib.request.Request("http://localhost"))
@@ -944,7 +944,7 @@ def _setPreprocessFunctions():
                     errMsg += "in preprocess script '%s' " % script
                     errMsg += "had issues in a test run ('%s'). " % getSafeExString(ex)
                     errMsg += "You can find a template script at '%s'" % filename
-                    raise SqlmapGenericException(errMsg)
+                    raise FsqliGenericException(errMsg)
 
 def _setPostprocessFunctions():
     """
@@ -964,14 +964,14 @@ def _setPostprocessFunctions():
 
                 if not os.path.exists(script):
                     errMsg = "postprocess script '%s' does not exist" % script
-                    raise SqlmapFilePathException(errMsg)
+                    raise FsqliFilePathException(errMsg)
 
                 elif not script.endswith(".py"):
                     errMsg = "postprocess script '%s' should have an extension '.py'" % script
-                    raise SqlmapSyntaxException(errMsg)
+                    raise FsqliSyntaxException(errMsg)
             except UnicodeDecodeError:
                 errMsg = "invalid character provided in option '--postprocess'"
-                raise SqlmapSyntaxException(errMsg)
+                raise FsqliSyntaxException(errMsg)
 
             dirname, filename = os.path.split(script)
             dirname = os.path.abspath(dirname)
@@ -982,7 +982,7 @@ def _setPostprocessFunctions():
             if not os.path.exists(os.path.join(dirname, "__init__.py")):
                 errMsg = "make sure that there is an empty file '__init__.py' "
                 errMsg += "inside of postprocess scripts directory '%s'" % dirname
-                raise SqlmapGenericException(errMsg)
+                raise FsqliGenericException(errMsg)
 
             if dirname not in sys.path:
                 sys.path.insert(0, dirname)
@@ -990,7 +990,7 @@ def _setPostprocessFunctions():
             try:
                 module = __import__(safeFilepathEncode(filename[:-3]))
             except Exception as ex:
-                raise SqlmapSyntaxException("cannot import postprocess module '%s' (%s)" % (getUnicode(filename[:-3]), getSafeExString(ex)))
+                raise FsqliSyntaxException("cannot import postprocess module '%s' (%s)" % (getUnicode(filename[:-3]), getSafeExString(ex)))
 
             for name, function in inspect.getmembers(module, inspect.isfunction):
                 if name == "postprocess" and inspect.getargspec(function).args and all(_ in inspect.getargspec(function).args for _ in ("page", "headers", "code")):
@@ -1004,7 +1004,7 @@ def _setPostprocessFunctions():
             if not found:
                 errMsg = "missing function 'postprocess(page, headers=None, code=None)' "
                 errMsg += "in postprocess script '%s'" % script
-                raise SqlmapGenericException(errMsg)
+                raise FsqliGenericException(errMsg)
             else:
                 try:
                     _, _, _ = function("", {}, None)
@@ -1019,7 +1019,7 @@ def _setPostprocessFunctions():
                     errMsg += "in postprocess script '%s' " % script
                     errMsg += "should return a tuple '(page, headers, code)' "
                     errMsg += "(Note: find template script at '%s')" % filename
-                    raise SqlmapGenericException(errMsg)
+                    raise FsqliGenericException(errMsg)
 
 def _setThreads():
     if not isinstance(conf.threads, int) or conf.threads <= 0:
@@ -1125,7 +1125,7 @@ def _setHTTPHandlers():
                 _ = _urllib.parse.urlsplit(conf.proxy)
             except Exception as ex:
                 errMsg = "invalid proxy address '%s' ('%s')" % (conf.proxy, getSafeExString(ex))
-                raise SqlmapSyntaxException(errMsg)
+                raise FsqliSyntaxException(errMsg)
 
             hostnamePort = _.netloc.rsplit(":", 1)
 
@@ -1143,14 +1143,14 @@ def _setHTTPHandlers():
 
             if not all((scheme, hasattr(PROXY_TYPE, scheme), hostname, port)):
                 errMsg = "proxy value must be in format '(%s)://address:port'" % "|".join(_[0].lower() for _ in getPublicTypeMembers(PROXY_TYPE))
-                raise SqlmapSyntaxException(errMsg)
+                raise FsqliSyntaxException(errMsg)
 
             if conf.proxyCred:
                 _ = re.search(r"\A(.*?):(.*?)\Z", conf.proxyCred)
                 if not _:
                     errMsg = "proxy authentication credentials "
                     errMsg += "value must be in format username:password"
-                    raise SqlmapSyntaxException(errMsg)
+                    raise FsqliSyntaxException(errMsg)
                 else:
                     username = _.group(1)
                     password = _.group(2)
@@ -1262,7 +1262,7 @@ def _setSafeVisit():
                 kb.safeReq.post = None
         else:
             errMsg = "invalid format of a safe request file"
-            raise SqlmapSyntaxException(errMsg)
+            raise FsqliSyntaxException(errMsg)
     else:
         if not re.search(r"(?i)\Ahttp[s]*://", conf.safeUrl):
             if ":443/" in conf.safeUrl:
@@ -1272,7 +1272,7 @@ def _setSafeVisit():
 
     if (conf.safeFreq or 0) <= 0:
         errMsg = "please provide a valid value (>0) for safe frequency ('--safe-freq') while using safe visit features"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
 def _setPrefixSuffix():
     if conf.prefix is not None and conf.suffix is not None:
@@ -1329,17 +1329,17 @@ def _setHTTPAuthentication():
     elif conf.authType and not conf.authCred and not conf.authFile:
         errMsg = "you specified the HTTP authentication type, but "
         errMsg += "did not provide the credentials"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     elif not conf.authType and conf.authCred:
         errMsg = "you specified the HTTP authentication credentials, "
         errMsg += "but did not provide the type (e.g. --auth-type=\"basic\")"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     elif (conf.authType or "").lower() not in (AUTH_TYPE.BASIC, AUTH_TYPE.DIGEST, AUTH_TYPE.BEARER, AUTH_TYPE.NTLM, AUTH_TYPE.PKI):
         errMsg = "HTTP authentication type value must be "
         errMsg += "Basic, Digest, Bearer, NTLM or PKI"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if not conf.authFile:
         debugMsg = "setting the HTTP authentication type and credentials"
@@ -1361,12 +1361,12 @@ def _setHTTPAuthentication():
         elif authType == AUTH_TYPE.PKI:
             errMsg = "HTTP PKI authentication require "
             errMsg += "usage of option `--auth-file`"
-            raise SqlmapSyntaxException(errMsg)
+            raise FsqliSyntaxException(errMsg)
 
         aCredRegExp = re.search(regExp, conf.authCred)
 
         if not aCredRegExp:
-            raise SqlmapSyntaxException(errMsg)
+            raise FsqliSyntaxException(errMsg)
 
         conf.authUsername = aCredRegExp.group(1)
         conf.authPassword = aCredRegExp.group(2)
@@ -1385,10 +1385,10 @@ def _setHTTPAuthentication():
             try:
                 from ntlm import HTTPNtlmAuthHandler
             except ImportError:
-                errMsg = "sqlmap requires Python NTLM third-party library "
+                errMsg = "fsqli requires Python NTLM third-party library "
                 errMsg += "in order to authenticate via NTLM. Download from "
                 errMsg += "'https://github.com/mullender/python-ntlm'"
-                raise SqlmapMissingDependence(errMsg)
+                raise FsqliMissingDependence(errMsg)
 
             authHandler = HTTPNtlmAuthHandler.HTTPNtlmAuthHandler(kb.passwordMgr)
     else:
@@ -1420,7 +1420,7 @@ def _setHTTPExtraHeaders():
                 kb.headersFile = headerValue[1:]
             else:
                 errMsg = "invalid header value: %s. Valid header format is 'name:value'" % repr(headerValue).lstrip('u')
-                raise SqlmapSyntaxException(errMsg)
+                raise FsqliSyntaxException(errMsg)
 
     elif not conf.requestFile and len(conf.httpHeaders or []) < 2:
         if conf.encoding:
@@ -1435,7 +1435,7 @@ def _setHTTPUserAgent():
     Set the HTTP User-Agent header.
     Depending on the user options it can be:
 
-        * The default sqlmap string
+        * The default fsqli string
         * A default value read as user option
         * A random value read from a list of User-Agent headers from a
           file choosed as user option
@@ -1449,7 +1449,7 @@ def _setHTTPUserAgent():
             _ = random.sample([_[1] for _ in getPublicTypeMembers(MOBILES, True)], 1)[0]
             conf.httpHeaders.append((HTTP_HEADER.USER_AGENT, _))
         else:
-            message = "which smartphone do you want sqlmap to imitate "
+            message = "which smartphone do you want fsqli to imitate "
             message += "through HTTP User-Agent header?\n"
             items = sorted(getPublicTypeMembers(MOBILES, True))
 
@@ -1533,7 +1533,7 @@ def _setHostname():
         except ValueError as ex:
             errMsg = "problem occurred while "
             errMsg += "parsing an URL '%s' ('%s')" % (conf.url, getSafeExString(ex))
-            raise SqlmapDataException(errMsg)
+            raise FsqliDataException(errMsg)
 
 def _setHTTPTimeout():
     """
@@ -1547,7 +1547,7 @@ def _setHTTPTimeout():
         conf.timeout = float(conf.timeout)
 
         if conf.timeout < 3.0:
-            warnMsg = "the minimum HTTP timeout is 3 seconds, sqlmap "
+            warnMsg = "the minimum HTTP timeout is 3 seconds, fsqli "
             warnMsg += "will going to reset it"
             logger.warning(warnMsg)
 
@@ -1558,7 +1558,7 @@ def _setHTTPTimeout():
     try:
         socket.setdefaulttimeout(conf.timeout)
     except OverflowError as ex:
-        raise SqlmapValueException("invalid value used for option '--timeout' ('%s')" % getSafeExString(ex))
+        raise FsqliValueException("invalid value used for option '--timeout' ('%s')" % getSafeExString(ex))
 
 def _checkDependencies():
     """
@@ -1570,14 +1570,14 @@ def _checkDependencies():
 
 def _createHomeDirectories():
     """
-    Creates directories inside sqlmap's home directory
+    Creates directories inside fsqli's home directory
     """
 
     if conf.get("purge"):
         return
 
     for context in ("output", "history"):
-        directory = paths["SQLMAP_%s_PATH" % getUnicode(context).upper()]   # NOTE: https://github.com/sqlmapproject/sqlmap/issues/4363
+        directory = paths["FSQLI_%s_PATH" % getUnicode(context).upper()]   # NOTE: https://github.com/fsqliproject/fsqli/issues/4363
         try:
             if not os.path.isdir(directory):
                 os.makedirs(directory)
@@ -1590,13 +1590,13 @@ def _createHomeDirectories():
                 warnMsg = "using '%s' as the %s directory" % (directory, context)
                 logger.warning(warnMsg)
         except (OSError, IOError) as ex:
-            tempDir = tempfile.mkdtemp(prefix="sqlmap%s" % context)
+            tempDir = tempfile.mkdtemp(prefix="fsqli%s" % context)
             warnMsg = "unable to %s %s directory " % ("create" if not os.path.isdir(directory) else "write to the", context)
             warnMsg += "'%s' (%s). " % (directory, getUnicode(ex))
             warnMsg += "Using temporary directory '%s' instead" % getUnicode(tempDir)
             logger.warning(warnMsg)
 
-            paths["SQLMAP_%s_PATH" % context.upper()] = tempDir
+            paths["FSQLI_%s_PATH" % context.upper()] = tempDir
 
 def _pympTempLeakPatch(tempDir):  # Cross-referenced function
     raise NotImplementedError
@@ -1623,7 +1623,7 @@ def _createTemporaryDirectory():
         except (OSError, IOError) as ex:
             errMsg = "there has been a problem while accessing "
             errMsg += "temporary directory location(s) ('%s')" % getSafeExString(ex)
-            raise SqlmapSystemException(errMsg)
+            raise FsqliSystemException(errMsg)
     else:
         try:
             if not os.path.isdir(tempfile.gettempdir()):
@@ -1636,11 +1636,11 @@ def _createTemporaryDirectory():
             warnMsg += "writeable by the current user"
             logger.warning(warnMsg)
 
-    if "sqlmap" not in (tempfile.tempdir or "") or conf.tmpDir and tempfile.tempdir == conf.tmpDir:
+    if "fsqli" not in (tempfile.tempdir or "") or conf.tmpDir and tempfile.tempdir == conf.tmpDir:
         try:
-            tempfile.tempdir = tempfile.mkdtemp(prefix="sqlmap", suffix=str(os.getpid()))
+            tempfile.tempdir = tempfile.mkdtemp(prefix="fsqli", suffix=str(os.getpid()))
         except:
-            tempfile.tempdir = os.path.join(paths.SQLMAP_HOME_PATH, "tmp", "sqlmap%s%d" % (randomStr(6), os.getpid()))
+            tempfile.tempdir = os.path.join(paths.FSQLI_HOME_PATH, "tmp", "fsqli%s%d" % (randomStr(6), os.getpid()))
 
     kb.tempDir = tempfile.tempdir
 
@@ -1650,7 +1650,7 @@ def _createTemporaryDirectory():
         except Exception as ex:
             errMsg = "there has been a problem while setting "
             errMsg += "temporary directory location ('%s')" % getSafeExString(ex)
-            raise SqlmapSystemException(errMsg)
+            raise FsqliSystemException(errMsg)
 
     if six.PY3:
         _pympTempLeakPatch(kb.tempDir)
@@ -1665,7 +1665,7 @@ def _cleanupOptions():
             codecs.lookup(conf.encoding)
         except LookupError:
             errMsg = "unknown encoding '%s'" % conf.encoding
-            raise SqlmapValueException(errMsg)
+            raise FsqliValueException(errMsg)
 
     debugMsg = "cleaning up configuration parameters"
     logger.debug(debugMsg)
@@ -1696,7 +1696,7 @@ def _cleanupOptions():
                 conf.ignoreCode = [int(_) for _ in re.split(PARAMETER_SPLITTING_REGEX, conf.ignoreCode)]
             except ValueError:
                 errMsg = "option '--ignore-code' should contain a list of integer values or a wildcard value '%s'" % IGNORE_CODE_WILDCARD
-                raise SqlmapSyntaxException(errMsg)
+                raise FsqliSyntaxException(errMsg)
     else:
         conf.ignoreCode = []
 
@@ -1705,7 +1705,7 @@ def _cleanupOptions():
             conf.abortCode = [int(_) for _ in re.split(PARAMETER_SPLITTING_REGEX, conf.abortCode)]
         except ValueError:
             errMsg = "option '--abort-code' should contain a list of integer values"
-            raise SqlmapSyntaxException(errMsg)
+            raise FsqliSyntaxException(errMsg)
     else:
         conf.abortCode = []
 
@@ -1875,8 +1875,8 @@ def _cleanupOptions():
         conf.torType = conf.torType.upper()
 
     if conf.outputDir:
-        paths.SQLMAP_OUTPUT_PATH = os.path.realpath(os.path.expanduser(conf.outputDir))
-        setPaths(paths.SQLMAP_ROOT_PATH)
+        paths.FSQLI_OUTPUT_PATH = os.path.realpath(os.path.expanduser(conf.outputDir))
+        setPaths(paths.FSQLI_ROOT_PATH)
 
     if conf.string:
         conf.string = decodeStringEscape(conf.string)
@@ -1954,11 +1954,11 @@ def _cleanupEnvironment():
 
 def _purge():
     """
-    Safely removes (purges) sqlmap data directory.
+    Safely removes (purges) fsqli data directory.
     """
 
     if conf.purge:
-        purge(paths.SQLMAP_HOME_PATH)
+        purge(paths.FSQLI_HOME_PATH)
 
 def _setConfAttributes():
     """
@@ -2270,26 +2270,26 @@ def _useWizardInterface():
             for _ in options:
                 conf.__setitem__(_, True)
 
-    logger.debug("muting sqlmap.. it will do the magic for you")
+    logger.debug("muting fsqli.. it will do the magic for you")
     conf.verbose = 0
 
     conf.batch = True
     conf.threads = 4
 
-    dataToStdout("\nsqlmap is running, please wait..\n\n")
+    dataToStdout("\nfsqli is running, please wait..\n\n")
 
     kb.wizardMode = True
 
 def _saveConfig():
     """
-    Saves the command line options to a sqlmap configuration INI file
+    Saves the command line options to a fsqli configuration INI file
     Format.
     """
 
     if not conf.saveConfig:
         return
 
-    debugMsg = "saving command line options to a sqlmap configuration INI file"
+    debugMsg = "saving command line options to a fsqli configuration INI file"
     logger.debug(debugMsg)
 
     saveConfig(conf, conf.saveConfig)
@@ -2299,7 +2299,7 @@ def _saveConfig():
 
 def setVerbosity():
     """
-    This function set the verbosity of sqlmap output messages.
+    This function set the verbosity of fsqli output messages.
     """
 
     if conf.verbose is None:
@@ -2402,8 +2402,8 @@ def _mergeOptions(inputOptions, overrideOptions):
 
     envOptions = {}
     for key, value in os.environ.items():
-        if key.upper().startswith(SQLMAP_ENVIRONMENT_PREFIX):
-            _ = key[len(SQLMAP_ENVIRONMENT_PREFIX):].upper()
+        if key.upper().startswith(FSQLI_ENVIRONMENT_PREFIX):
+            _ = key[len(FSQLI_ENVIRONMENT_PREFIX):].upper()
             if _ in lut:
                 envOptions[lut[_]] = value
 
@@ -2443,13 +2443,13 @@ def _setDNSServer():
         except socket.error as ex:
             errMsg = "there was an error while setting up "
             errMsg += "DNS server instance ('%s')" % getSafeExString(ex)
-            raise SqlmapGenericException(errMsg)
+            raise FsqliGenericException(errMsg)
     else:
-        errMsg = "you need to run sqlmap as an administrator "
+        errMsg = "you need to run fsqli as an administrator "
         errMsg += "if you want to perform a DNS data exfiltration attack "
         errMsg += "as it will need to listen on privileged UDP port 53 "
         errMsg += "for incoming address resolution attempts"
-        raise SqlmapMissingPrivileges(errMsg)
+        raise FsqliMissingPrivileges(errMsg)
 
 def _setProxyList():
     if not conf.proxyFile:
@@ -2481,7 +2481,7 @@ def _setTorHttpProxySettings():
         errMsg = "can't establish connection with the Tor HTTP proxy. "
         errMsg += "Please make sure that you have Tor (bundle) installed and setup "
         errMsg += "so you could be able to successfully use switch '--tor' "
-        raise SqlmapConnectionException(errMsg)
+        raise FsqliConnectionException(errMsg)
 
     if not conf.checkTor:
         warnMsg = "use switch '--check-tor' at "
@@ -2501,7 +2501,7 @@ def _setTorSocksProxySettings():
         errMsg = "can't establish connection with the Tor SOCKS proxy. "
         errMsg += "Please make sure that you have Tor service installed and setup "
         errMsg += "so you could be able to successfully use switch '--tor' "
-        raise SqlmapConnectionException(errMsg)
+        raise FsqliConnectionException(errMsg)
 
     # SOCKS5 to prevent DNS leaks (http://en.wikipedia.org/wiki/Tor_%28anonymity_network%29)
     socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5 if conf.torType == PROXY_TYPE.SOCKS5 else socks.PROXY_TYPE_SOCKS4, LOCALHOST, port)
@@ -2526,9 +2526,9 @@ def _checkWebSocket():
         try:
             from websocket import ABNF
         except ImportError:
-            errMsg = "sqlmap requires third-party module 'websocket-client' "
+            errMsg = "fsqli requires third-party module 'websocket-client' "
             errMsg += "in order to use WebSocket functionality"
-            raise SqlmapMissingDependence(errMsg)
+            raise FsqliMissingDependence(errMsg)
 
 def _checkTor():
     if not conf.checkTor:
@@ -2539,12 +2539,12 @@ def _checkTor():
 
     try:
         page, _, _ = Request.getPage(url="https://check.torproject.org/", raise404=False)
-    except SqlmapConnectionException:
+    except FsqliConnectionException:
         page = None
 
     if not page or "Congratulations" not in page:
         errMsg = "it appears that Tor is not properly set. Please try using options '--tor-type' and/or '--tor-port'"
-        raise SqlmapConnectionException(errMsg)
+        raise FsqliConnectionException(errMsg)
     else:
         infoMsg = "Tor is properly being used"
         logger.info(infoMsg)
@@ -2552,19 +2552,19 @@ def _checkTor():
 def _basicOptionValidation():
     if conf.limitStart is not None and not (isinstance(conf.limitStart, int) and conf.limitStart > 0):
         errMsg = "value for option '--start' (limitStart) must be an integer value greater than zero (>0)"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.limitStop is not None and not (isinstance(conf.limitStop, int) and conf.limitStop > 0):
         errMsg = "value for option '--stop' (limitStop) must be an integer value greater than zero (>0)"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.level is not None and not (isinstance(conf.level, int) and conf.level >= 1 and conf.level <= 5):
         errMsg = "value for option '--level' must be an integer value from range [1, 5]"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.risk is not None and not (isinstance(conf.risk, int) and conf.risk >= 1 and conf.risk <= 3):
         errMsg = "value for option '--risk' must be an integer value from range [1, 3]"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if isinstance(conf.limitStart, int) and conf.limitStart > 0 and \
        isinstance(conf.limitStop, int) and conf.limitStop < conf.limitStart:
@@ -2574,7 +2574,7 @@ def _basicOptionValidation():
     if isinstance(conf.firstChar, int) and conf.firstChar > 0 and \
        isinstance(conf.lastChar, int) and conf.lastChar < conf.firstChar:
         errMsg = "value for option '--first' (firstChar) must be smaller than or equal to value for --last (lastChar) option"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.proxyFile and not any((conf.randomAgent, conf.mobile, conf.agent, conf.requestFile)):
         warnMsg = "usage of switch '--random-agent' is strongly recommended when "
@@ -2583,93 +2583,93 @@ def _basicOptionValidation():
 
     if conf.textOnly and conf.nullConnection:
         errMsg = "switch '--text-only' is incompatible with switch '--null-connection'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.uValues and conf.uChar:
         errMsg = "option '--union-values' is incompatible with option '--union-char'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.base64Parameter and conf.tamper:
         errMsg = "option '--base64' is incompatible with option '--tamper'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.eta and conf.verbose > defaults.verbose:
         errMsg = "switch '--eta' is incompatible with option '-v'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.secondUrl and conf.secondReq:
         errMsg = "option '--second-url' is incompatible with option '--second-req')"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.direct and conf.url:
         errMsg = "option '-d' is incompatible with option '-u' ('--url')"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.direct and conf.dbms:
         errMsg = "option '-d' is incompatible with option '--dbms'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.titles and conf.nullConnection:
         errMsg = "switch '--titles' is incompatible with switch '--null-connection'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.dumpTable and conf.search:
         errMsg = "switch '--dump' is incompatible with switch '--search'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.chunked and not any((conf.data, conf.requestFile, conf.forms)):
         errMsg = "switch '--chunked' requires usage of (POST) options/switches '--data', '-r' or '--forms'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.api and not conf.configFile:
         errMsg = "switch '--api' requires usage of option '-c'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.data and conf.nullConnection:
         errMsg = "option '--data' is incompatible with switch '--null-connection'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.string and conf.nullConnection:
         errMsg = "option '--string' is incompatible with switch '--null-connection'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.notString and conf.nullConnection:
         errMsg = "option '--not-string' is incompatible with switch '--null-connection'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.tor and conf.osPwn:
         errMsg = "option '--tor' is incompatible with switch '--os-pwn'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.noCast and conf.hexConvert:
         errMsg = "switch '--no-cast' is incompatible with switch '--hex'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.crawlDepth:
         try:
             xrange(conf.crawlDepth)
         except OverflowError as ex:
             errMsg = "invalid value used for option '--crawl' ('%s')" % getSafeExString(ex)
-            raise SqlmapSyntaxException(errMsg)
+            raise FsqliSyntaxException(errMsg)
 
     if conf.dumpAll and conf.search:
         errMsg = "switch '--dump-all' is incompatible with switch '--search'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.string and conf.notString:
         errMsg = "option '--string' is incompatible with switch '--not-string'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.regexp and conf.nullConnection:
         errMsg = "option '--regexp' is incompatible with switch '--null-connection'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.regexp:
         try:
             re.compile(conf.regexp)
         except Exception as ex:
             errMsg = "invalid regular expression '%s' ('%s')" % (conf.regexp, getSafeExString(ex))
-            raise SqlmapSyntaxException(errMsg)
+            raise FsqliSyntaxException(errMsg)
 
     if conf.paramExclude:
         if re.search(r"\A\w+,", conf.paramExclude):
@@ -2679,14 +2679,14 @@ def _basicOptionValidation():
             re.compile(conf.paramExclude)
         except Exception as ex:
             errMsg = "invalid regular expression '%s' ('%s')" % (conf.paramExclude, getSafeExString(ex))
-            raise SqlmapSyntaxException(errMsg)
+            raise FsqliSyntaxException(errMsg)
 
     if conf.retryOn:
         try:
             re.compile(conf.retryOn)
         except Exception as ex:
             errMsg = "invalid regular expression '%s' ('%s')" % (conf.retryOn, getSafeExString(ex))
-            raise SqlmapSyntaxException(errMsg)
+            raise FsqliSyntaxException(errMsg)
 
         if conf.retries == defaults.retries:
             conf.retries = 5 * conf.retries
@@ -2699,163 +2699,163 @@ def _basicOptionValidation():
 
     if conf.cookieDel and len(conf.cookieDel) != 1:
         errMsg = "option '--cookie-del' should contain a single character (e.g. ';')"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.crawlExclude:
         try:
             re.compile(conf.crawlExclude)
         except Exception as ex:
             errMsg = "invalid regular expression '%s' ('%s')" % (conf.crawlExclude, getSafeExString(ex))
-            raise SqlmapSyntaxException(errMsg)
+            raise FsqliSyntaxException(errMsg)
 
     if conf.scope:
         try:
             re.compile(conf.scope)
         except Exception as ex:
             errMsg = "invalid regular expression '%s' ('%s')" % (conf.scope, getSafeExString(ex))
-            raise SqlmapSyntaxException(errMsg)
+            raise FsqliSyntaxException(errMsg)
 
     if conf.dumpTable and conf.dumpAll:
         errMsg = "switch '--dump' is incompatible with switch '--dump-all'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.predictOutput and (conf.threads > 1 or conf.optimize):
         errMsg = "switch '--predict-output' is incompatible with option '--threads' and switch '-o'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.threads > MAX_NUMBER_OF_THREADS and not conf.get("skipThreadCheck"):
         errMsg = "maximum number of used threads is %d avoiding potential connection issues" % MAX_NUMBER_OF_THREADS
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.forms and not any((conf.url, conf.googleDork, conf.bulkFile)):
         errMsg = "switch '--forms' requires usage of option '-u' ('--url'), '-g' or '-m'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.crawlExclude and not conf.crawlDepth:
         errMsg = "option '--crawl-exclude' requires usage of switch '--crawl'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.safePost and not conf.safeUrl:
         errMsg = "option '--safe-post' requires usage of option '--safe-url'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.safeFreq and not any((conf.safeUrl, conf.safeReqFile)):
         errMsg = "option '--safe-freq' requires usage of option '--safe-url' or '--safe-req'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.safeReqFile and any((conf.safeUrl, conf.safePost)):
         errMsg = "option '--safe-req' is incompatible with option '--safe-url' and option '--safe-post'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.csrfUrl and not conf.csrfToken:
         errMsg = "option '--csrf-url' requires usage of option '--csrf-token'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.csrfMethod and not conf.csrfToken:
         errMsg = "option '--csrf-method' requires usage of option '--csrf-token'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.csrfData and not conf.csrfToken:
         errMsg = "option '--csrf-data' requires usage of option '--csrf-token'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.csrfToken and conf.threads > 1:
         errMsg = "option '--csrf-url' is incompatible with option '--threads'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.requestFile and conf.url and conf.url != DUMMY_URL:
         errMsg = "option '-r' is incompatible with option '-u' ('--url')"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.direct and conf.proxy:
         errMsg = "option '-d' is incompatible with option '--proxy'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.direct and conf.tor:
         errMsg = "option '-d' is incompatible with switch '--tor'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if not conf.technique:
         errMsg = "option '--technique' can't be empty"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.tor and conf.ignoreProxy:
         errMsg = "switch '--tor' is incompatible with switch '--ignore-proxy'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.tor and conf.proxy:
         errMsg = "switch '--tor' is incompatible with option '--proxy'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.proxy and conf.proxyFile:
         errMsg = "switch '--proxy' is incompatible with option '--proxy-file'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.proxyFreq and not conf.proxyFile:
         errMsg = "option '--proxy-freq' requires usage of option '--proxy-file'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.checkTor and not any((conf.tor, conf.proxy)):
         errMsg = "switch '--check-tor' requires usage of switch '--tor' (or option '--proxy' with HTTP proxy address of Tor service)"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.torPort is not None and not (isinstance(conf.torPort, int) and conf.torPort >= 0 and conf.torPort <= 65535):
         errMsg = "value for option '--tor-port' must be in range [0, 65535]"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.torType not in getPublicTypeMembers(PROXY_TYPE, True):
         errMsg = "option '--tor-type' accepts one of following values: %s" % ", ".join(getPublicTypeMembers(PROXY_TYPE, True))
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.dumpFormat not in getPublicTypeMembers(DUMP_FORMAT, True):
         errMsg = "option '--dump-format' accepts one of following values: %s" % ", ".join(getPublicTypeMembers(DUMP_FORMAT, True))
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.uValues and (not re.search(r"\A['\w\s.,()%s-]+\Z" % CUSTOM_INJECTION_MARK_CHAR, conf.uValues) or conf.uValues.count(CUSTOM_INJECTION_MARK_CHAR) != 1):
         errMsg = "option '--union-values' must contain valid UNION column values, along with the injection position "
         errMsg += "(e.g. 'NULL,1,%s,NULL')" % CUSTOM_INJECTION_MARK_CHAR
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.skip and conf.testParameter:
         if intersect(conf.skip, conf.testParameter):
             errMsg = "option '--skip' is incompatible with option '-p'"
-            raise SqlmapSyntaxException(errMsg)
+            raise FsqliSyntaxException(errMsg)
 
     if conf.rParam and conf.testParameter:
         if intersect(conf.rParam, conf.testParameter):
             errMsg = "option '--randomize' is incompatible with option '-p'"
-            raise SqlmapSyntaxException(errMsg)
+            raise FsqliSyntaxException(errMsg)
 
     if conf.mobile and conf.agent:
         errMsg = "switch '--mobile' is incompatible with option '--user-agent'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.proxy and conf.ignoreProxy:
         errMsg = "option '--proxy' is incompatible with switch '--ignore-proxy'"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.alert and conf.alert.startswith('-'):
         errMsg = "value for option '--alert' must be valid operating system command(s)"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.timeSec < 1:
         errMsg = "value for option '--time-sec' must be a positive integer"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.hashFile and any((conf.direct, conf.url, conf.logFile, conf.bulkFile, conf.googleDork, conf.configFile, conf.requestFile, conf.updateAll, conf.smokeTest, conf.wizard, conf.dependencies, conf.purge, conf.listTampers)):
         errMsg = "option '--crack' should be used as a standalone"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if isinstance(conf.uCols, six.string_types):
         if not conf.uCols.isdigit() and ("-" not in conf.uCols or len(conf.uCols.split("-")) != 2):
             errMsg = "value for option '--union-cols' must be a range with hyphon "
             errMsg += "(e.g. 1-10) or integer value (e.g. 5)"
-            raise SqlmapSyntaxException(errMsg)
+            raise FsqliSyntaxException(errMsg)
 
     if conf.dbmsCred and ':' not in conf.dbmsCred:
         errMsg = "value for option '--dbms-cred' must be in "
         errMsg += "format <username>:<password> (e.g. \"root:pass\")"
-        raise SqlmapSyntaxException(errMsg)
+        raise FsqliSyntaxException(errMsg)
 
     if conf.encoding:
         _ = checkCharEncoding(conf.encoding, False)
@@ -2863,17 +2863,17 @@ def _basicOptionValidation():
             errMsg = "unknown encoding '%s'. Please visit " % conf.encoding
             errMsg += "'%s' to get the full list of " % CODECS_LIST_PAGE
             errMsg += "supported encodings"
-            raise SqlmapSyntaxException(errMsg)
+            raise FsqliSyntaxException(errMsg)
         else:
             conf.encoding = _
 
     if conf.fileWrite and not os.path.isfile(conf.fileWrite):
         errMsg = "file '%s' does not exist" % os.path.abspath(conf.fileWrite)
-        raise SqlmapFilePathException(errMsg)
+        raise FsqliFilePathException(errMsg)
 
     if conf.loadCookies and not os.path.exists(conf.loadCookies):
         errMsg = "cookies file '%s' does not exist" % os.path.abspath(conf.loadCookies)
-        raise SqlmapFilePathException(errMsg)
+        raise FsqliFilePathException(errMsg)
 
 def initOptions(inputOptions=AttribDict(), overrideOptions=False):
     _setConfAttributes()

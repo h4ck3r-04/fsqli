@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -64,12 +64,12 @@ from lib.core.enums import PAYLOAD
 from lib.core.enums import PLACE
 from lib.core.enums import REDIRECTION
 from lib.core.enums import WEB_PLATFORM
-from lib.core.exception import SqlmapConnectionException
-from lib.core.exception import SqlmapDataException
-from lib.core.exception import SqlmapNoneDataException
-from lib.core.exception import SqlmapSilentQuitException
-from lib.core.exception import SqlmapSkipTargetException
-from lib.core.exception import SqlmapUserQuitException
+from lib.core.exception import FsqliConnectionException
+from lib.core.exception import FsqliDataException
+from lib.core.exception import FsqliNoneDataException
+from lib.core.exception import FsqliSilentQuitException
+from lib.core.exception import FsqliSkipTargetException
+from lib.core.exception import FsqliUserQuitException
 from lib.core.settings import BOUNDED_INJECTION_MARKER
 from lib.core.settings import CANDIDATE_SENTENCE_MIN_LENGTH
 from lib.core.settings import CHECK_INTERNET_ADDRESS
@@ -650,7 +650,7 @@ def checkSqlInjection(place, parameter, value):
 
                                         injectable = True
 
-                            except SqlmapConnectionException as ex:
+                            except FsqliConnectionException as ex:
                                 debugMsg = "problem occurred most likely because the "
                                 debugMsg += "server hasn't recovered as expected from the "
                                 debugMsg += "used error-based payload ('%s')" % getSafeExString(ex)
@@ -810,7 +810,7 @@ def checkSqlInjection(place, parameter, value):
 
             if choice == 'X':
                 if conf.multipleTargets:
-                    raise SqlmapSkipTargetException
+                    raise FsqliSkipTargetException
             elif choice == 'C':
                 choice = None
                 while not ((choice or "").isdigit() and 0 <= int(choice) <= 6):
@@ -829,7 +829,7 @@ def checkSqlInjection(place, parameter, value):
             elif choice == 'E':
                 kb.endDetection = True
             elif choice == 'Q':
-                raise SqlmapUserQuitException
+                raise FsqliUserQuitException
 
         finally:
             # Reset forced back-end DBMS value
@@ -1011,7 +1011,7 @@ def checkFilteredChars(injection):
         if not checkBooleanExpression("(%d)=%d" % (randInt, randInt)):
             warnMsg = "it appears that some non-alphanumeric characters (i.e. ()) are "
             warnMsg += "filtered by the back-end server. There is a strong "
-            warnMsg += "possibility that sqlmap won't be able to properly "
+            warnMsg += "possibility that fsqli won't be able to properly "
             warnMsg += "exploit this vulnerability"
             logger.warning(warnMsg)
 
@@ -1170,7 +1170,7 @@ def checkDynParam(place, parameter, value):
     try:
         payload = agent.payload(place, parameter, value, getUnicode(randInt))
         dynResult = Request.queryPage(payload, place, raise404=False)
-    except SqlmapConnectionException:
+    except FsqliConnectionException:
         pass
 
     result = None if dynResult is None else not dynResult
@@ -1226,7 +1226,7 @@ def checkDynamicContent(firstPage, secondPage):
                 return
 
             warnMsg = "target URL content appears to be heavily dynamic. "
-            warnMsg += "sqlmap is going to retry the request(s)"
+            warnMsg += "fsqli is going to retry the request(s)"
             singleTimeLogMessage(warnMsg, logging.CRITICAL)
 
             kb.heavilyDynamic = True
@@ -1273,7 +1273,7 @@ def checkStability():
             logger.error(errMsg)
 
     else:
-        warnMsg = "target URL content is not stable (i.e. content differs). sqlmap will base the page "
+        warnMsg = "target URL content is not stable (i.e. content differs). fsqli will base the page "
         warnMsg += "comparison on a sequence matcher. If no dynamic nor "
         warnMsg += "injectable parameters are detected, or in case of "
         warnMsg += "junk results, refer to user's manual paragraph "
@@ -1284,7 +1284,7 @@ def checkStability():
         choice = readInput(message, default='C').upper()
 
         if choice == 'Q':
-            raise SqlmapUserQuitException
+            raise FsqliUserQuitException
 
         elif choice == 'S':
             showStaticWords(firstPage, secondPage)
@@ -1303,7 +1303,7 @@ def checkStability():
                     kb.nullConnection = None
             else:
                 errMsg = "Empty value supplied"
-                raise SqlmapNoneDataException(errMsg)
+                raise FsqliNoneDataException(errMsg)
 
         elif choice == 'R':
             message = "please enter value for parameter 'regex': "
@@ -1320,7 +1320,7 @@ def checkStability():
                     kb.nullConnection = None
             else:
                 errMsg = "Empty value supplied"
-                raise SqlmapNoneDataException(errMsg)
+                raise FsqliNoneDataException(errMsg)
 
         else:
             checkDynamicContent(firstPage, secondPage)
@@ -1374,7 +1374,7 @@ def checkWaf():
 
     try:
         retVal = (Request.queryPage(place=place, value=value, getRatioValue=True, noteResponseTime=False, silent=True, raise404=False, disableTampering=True)[1] or 0) < IPS_WAF_CHECK_RATIO
-    except SqlmapConnectionException:
+    except FsqliConnectionException:
         retVal = True
     finally:
         kb.matchRatio = None
@@ -1396,7 +1396,7 @@ def checkWaf():
         choice = readInput(message, default='Y', boolean=True)
 
         if not choice:
-            raise SqlmapUserQuitException
+            raise FsqliUserQuitException
         else:
             if not conf.tamper:
                 warnMsg = "please consider usage of tamper scripts (option '--tamper')"
@@ -1453,7 +1453,7 @@ def checkNullConnection():
                         infoMsg = "NULL connection is supported with 'skip-read' method"
                         logger.info(infoMsg)
 
-        except SqlmapConnectionException:
+        except FsqliConnectionException:
             pass
 
         finally:
@@ -1474,15 +1474,15 @@ def checkConnection(suppressOutput=False):
                 socket.getaddrinfo(conf.hostname, None)
             except socket.gaierror:
                 errMsg = "host '%s' does not exist" % conf.hostname
-                raise SqlmapConnectionException(errMsg)
+                raise FsqliConnectionException(errMsg)
             except socket.error as ex:
                 errMsg = "problem occurred while "
                 errMsg += "resolving a host name '%s' ('%s')" % (conf.hostname, getSafeExString(ex))
-                raise SqlmapConnectionException(errMsg)
+                raise FsqliConnectionException(errMsg)
             except UnicodeError as ex:
                 errMsg = "problem occurred while "
                 errMsg += "handling a host name '%s' ('%s')" % (conf.hostname, getSafeExString(ex))
-                raise SqlmapDataException(errMsg)
+                raise FsqliDataException(errMsg)
 
     if not suppressOutput and not conf.dummy and not conf.offline:
         infoMsg = "testing connection to the target URL"
@@ -1502,7 +1502,7 @@ def checkConnection(suppressOutput=False):
             if conf.string not in rawResponse:
                 warnMsg = "you provided '%s' as the string to " % conf.string
                 warnMsg += "match, but such a string is not within the target "
-                warnMsg += "URL raw response, sqlmap will carry on anyway"
+                warnMsg += "URL raw response, fsqli will carry on anyway"
                 logger.warning(warnMsg)
 
         if conf.regexp:
@@ -1512,7 +1512,7 @@ def checkConnection(suppressOutput=False):
 
             if not re.search(conf.regexp, rawResponse, re.I | re.M):
                 warnMsg = "you provided '%s' as the regular expression " % conf.regexp
-                warnMsg += "which does not have any match within the target URL raw response. sqlmap "
+                warnMsg += "which does not have any match within the target URL raw response. fsqli "
                 warnMsg += "will carry on anyway"
                 logger.warning(warnMsg)
 
@@ -1525,7 +1525,7 @@ def checkConnection(suppressOutput=False):
         if not kb.originalPage and wasLastResponseHTTPError():
             if getLastRequestHTTPError() not in (conf.ignoreCode or []):
                 errMsg = "unable to retrieve page content"
-                raise SqlmapConnectionException(errMsg)
+                raise FsqliConnectionException(errMsg)
         elif wasLastResponseDBMSError():
             warnMsg = "there is a DBMS error found in the HTTP response body "
             warnMsg += "which could interfere with the results of the tests"
@@ -1545,12 +1545,12 @@ def checkConnection(suppressOutput=False):
                 port = match.group(1) if match else 443
                 conf.url = re.sub(r":\d+(/|\Z)", r":%s\g<1>" % port, conf.url)
 
-    except SqlmapConnectionException as ex:
+    except FsqliConnectionException as ex:
         if conf.ipv6:
             warnMsg = "check connection to a provided "
             warnMsg += "IPv6 address with a tool like ping6 "
             warnMsg += "(e.g. 'ping6 -I eth0 %s') " % conf.hostname
-            warnMsg += "prior to running sqlmap to avoid "
+            warnMsg += "prior to running fsqli to avoid "
             warnMsg += "any addressing issues"
             singleTimeWarnMessage(warnMsg)
 
@@ -1563,7 +1563,7 @@ def checkConnection(suppressOutput=False):
 
             msg = "it is not recommended to continue in this kind of cases. Do you want to quit and make sure that everything is set up properly? [Y/n] "
             if readInput(msg, default='Y', boolean=True):
-                raise SqlmapSilentQuitException
+                raise FsqliSilentQuitException
             else:
                 kb.ignoreNotFound = True
         else:

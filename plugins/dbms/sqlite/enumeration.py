@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
 from lib.core.data import logger
-from lib.core.exception import SqlmapUnsupportedFeatureException
+from lib.core.exception import FsqliUnsupportedFeatureException
 from plugins.generic.enumeration import Enumeration as GenericEnumeration
 
 class Enumeration(GenericEnumeration):
@@ -56,7 +56,7 @@ class Enumeration(GenericEnumeration):
 
     def searchColumn(self):
         errMsg = "on SQLite it is not possible to search columns"
-        raise SqlmapUnsupportedFeatureException(errMsg)
+        raise FsqliUnsupportedFeatureException(errMsg)
 
     def getHostname(self):
         warnMsg = "on SQLite it is not possible to enumerate the hostname"

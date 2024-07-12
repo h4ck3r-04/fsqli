@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2006-2024 sqlmap developers (https://sqlmap.org/)
+Copyright (c) 2006-2024 fsqli developers (https://fsqli.org/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -10,9 +10,9 @@ import sqlite3
 from lib.core.common import cleanReplaceUnicode
 from lib.core.common import getSafeExString
 from lib.core.common import unsafeSQLIdentificatorNaming
-from lib.core.exception import SqlmapConnectionException
-from lib.core.exception import SqlmapGenericException
-from lib.core.exception import SqlmapValueException
+from lib.core.exception import FsqliConnectionException
+from lib.core.exception import FsqliGenericException
+from lib.core.exception import FsqliValueException
 from lib.core.settings import UNICODE_ENCODING
 from lib.utils.safe2bin import safechardecode
 
@@ -31,7 +31,7 @@ class Replication(object):
         except sqlite3.OperationalError as ex:
             errMsg = "error occurred while opening a replication "
             errMsg += "file '%s' ('%s')" % (dbpath, getSafeExString(ex))
-            raise SqlmapConnectionException(errMsg)
+            raise FsqliConnectionException(errMsg)
 
     class DataType(object):
         """
@@ -67,7 +67,7 @@ class Replication(object):
                 except Exception as ex:
                     errMsg = "problem occurred ('%s') while initializing the sqlite database " % getSafeExString(ex, UNICODE_ENCODING)
                     errMsg += "located at '%s'" % self.parent.dbpath
-                    raise SqlmapGenericException(errMsg)
+                    raise FsqliGenericException(errMsg)
 
         def insert(self, values):
             """
@@ -78,7 +78,7 @@ class Replication(object):
                 self.execute('INSERT INTO "%s" VALUES (%s)' % (self.name, ','.join(['?'] * len(values))), safechardecode(values))
             else:
                 errMsg = "wrong number of columns used in replicating insert"
-                raise SqlmapValueException(errMsg)
+                raise FsqliValueException(errMsg)
 
         def execute(self, sql, parameters=None):
             try:
@@ -90,7 +90,7 @@ class Replication(object):
                 errMsg = "problem occurred ('%s') while accessing sqlite database " % getSafeExString(ex, UNICODE_ENCODING)
                 errMsg += "located at '%s'. Please make sure that " % self.parent.dbpath
                 errMsg += "it's not used by some other program"
-                raise SqlmapGenericException(errMsg)
+                raise FsqliGenericException(errMsg)
 
         def beginTransaction(self):
             """
